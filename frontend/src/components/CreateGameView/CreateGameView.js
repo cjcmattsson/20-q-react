@@ -11,7 +11,7 @@ class CreateGameView extends Component {
 
   searchWikiApi = () => {
     if (this.state.secretPerson) {
-      fetch(`https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=intitle:${this.state.secretPerson}&format=json&srlimit=3&origin=*`)
+      fetch(`https://sv.wikipedia.org/w/api.php?action=query&list=search&srsearch=intitle:${this.state.secretPerson}&format=json&srlimit=5&origin=*`)
       .then(res => res.json())
       .then((result) => {
         const searchResults = result.query.search;
@@ -37,6 +37,7 @@ class CreateGameView extends Component {
       remainingGuesses: 20,
       gameOwnerId: firebase.auth().currentUser.uid,
       gameOwnerName: firebase.auth().currentUser.displayName,
+      gameGuesserId: {},
     }
     games.push(game);
     this.setState({secretPerson: ""})
