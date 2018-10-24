@@ -1,0 +1,11 @@
+.guessListWrapper {
+  height: 1200px;
+  position: relative;
+}
+
+.guessList {
+  width: 100%;
+  background-color:#ddd;
+  position: fixed;
+  margin: auto;
+}

@@ -24,7 +24,7 @@ class HomeView extends Component {
         const owner = database.ref(`games`).orderByChild('gameOwnerId').equalTo(`${user.uid}`);
         if (owner) {
           owner.on('value', (snapshot) => {
-            if (this._isMounted && snapshot != null) {
+            if (this._isMounted) {
               if (snapshot.val()) {
                 this.setState({myGamesOwner: Object.entries(snapshot.val())})
                 console.log(this.state.myGamesOwner);

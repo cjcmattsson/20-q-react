@@ -8,7 +8,7 @@ class GameOwnerView extends Component {
 
   state = {
     thisGame: false,
-    thisGamesGuesses: [],
+    thisGamesAnsweredGuesses: [],
     lastGuess: false,
   }
 
@@ -23,7 +23,6 @@ class GameOwnerView extends Component {
     firebase.database()
     .ref(`games/${this.props.gameID}`)
     .on('value', (data) => {
-      console.log(data.val());
       if (this._isMounted) {
         this.setState({thisGame: data.val()})
       }
@@ -35,20 +34,32 @@ class GameOwnerView extends Component {
     .ref(`games/${this.props.gameID}/guesses`)
     .on('value', (data) => {
       if (data.val()) {
-        console.log(Object.entries(data.val()));
+        const answeredQuestionsList = [];
         if (this._isMounted) {
-          this.setState({thisGamesGuesses: Object.entries(data.val())})
-          this.setState({lastGuess: this.state.thisGamesGuesses.slice(-1)[0]})
+        Object.entries(data.val()).map(guess => {
+          if (guess[1].answere != null) {
+            answeredQuestionsList.push(guess);
+          }
+          return answeredQuestionsList;
+        })
+      }
+        console.log(answeredQuestionsList);
+        if (this._isMounted) {
+          this.setState({thisGamesAnsweredGuesses: answeredQuestionsList})
+          this.setState({lastGuess: Object.entries(data.val()).slice(-1)[0][1].answere ? false : Object.entries(data.val()).slice(-1)[0]})
         }
       }
     });
   }
 
-  answereYes = (thisGuess, answere) => {
+  answereQuestion = (thisGuess, answere) => {
     firebase.database().ref(`games/${this.props.gameID}/guesses/${thisGuess}`)
     .update({
       answere: answere,
     })
+    if (this._isMounted) {
+      this.setState({lastGuess: false})
+    }
   }
 
   componentWillUnmount() {
@@ -56,27 +67,30 @@ class GameOwnerView extends Component {
   }
 
   render() {
-    const {lastGuess, thisGame, thisGamesGuesses} = this.state;
+    const {lastGuess, thisGame, thisGamesAnsweredGuesses} = this.state;
     return(
       <div className="gameOwnerView">
-        <h2>{thisGame.gameGuesserId ? `Answere ${thisGame.gameGuesserName}'s questions` : "Wait for someone to start guessing!"}</h2>
-        <h3>Correct answere: {thisGame.secretPerson}</h3>
+        <h2>{thisGame.gameGuesserId ? `Answere ${thisGame.gameGuesserName}'s questions` : "Answere the player's questions"}</h2>
+        <h3>{thisGame.secretPerson ? `Correct answere: ${thisGame.secretPerson}` : `Correct answere: wait for it...`}</h3>
         <Swiper>
           <div>
-            {lastGuess &&
+            {lastGuess ?
                 <div>
-                  <h2 className="testThisShit">{lastGuess[1].guess}</h2>
-                  <button onClick={() => this.answereYes(lastGuess[0], true)}>Yes</button>
-                  <button onClick={() => this.answereYes(lastGuess[0], false)}>No</button>
+                  <h2 className="testThisShit">{lastGuess[1].guess && lastGuess[1].guess}</h2>
+                  <button onClick={() => this.answereQuestion(lastGuess[0], true)}>Yes</button>
+                  <button onClick={() => this.answereQuestion(lastGuess[0], false)}>No</button>
+                </div>
+                : <div>
+                  <h2 className="testThisShit">Väntar på nästa fråga</h2>
                 </div>
               }
           </div>
           <div>
-            {thisGamesGuesses && thisGamesGuesses.slice(0).reverse().map((game, key) => {
+            {thisGamesAnsweredGuesses && thisGamesAnsweredGuesses.slice(0).reverse().map((game, key) => {
               return <div key={key}>
                 <p>{game[1].guess}</p>
-                <button onClick={() => this.answereYes(game[0], true)}>Yes</button>
-                <button onClick={() => this.answereYes(game[0], false)}>No</button>
+                <button onClick={() => this.answereQuestion(game[0], true)}>Yes</button>
+                <button onClick={() => this.answereQuestion(game[0], false)}>No</button>
               </div>
             })}
           </div>
