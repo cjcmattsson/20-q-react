@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import firebase from '../../utils/firebase';
-import'./GameOwnerView.css'
+import Swiper from 'react-id-swiper';
+import { Link } from '@reach/router';
+import'./GameOwnerView.css';
 
 class GameOwnerView extends Component {
 
@@ -57,21 +59,29 @@ class GameOwnerView extends Component {
     const {lastGuess, thisGame, thisGamesGuesses} = this.state;
     return(
       <div className="gameOwnerView">
-        <h1>{thisGame.gameGuesserId ? `Answere ${thisGame.gameGuesserName}'s questions :)` : "Wait for someone to start guessing!"}</h1>
-        {lastGuess &&
+        <h2>{thisGame.gameGuesserId ? `Answere ${thisGame.gameGuesserName}'s questions` : "Wait for someone to start guessing!"}</h2>
+        <h3>Correct answere: {thisGame.secretPerson}</h3>
+        <Swiper>
           <div>
-            <h2 className="testThisShit">{lastGuess[1].guess}</h2>
-            <button onClick={() => this.answereYes(lastGuess[0], "yes")}>Yes</button>
-            <button onClick={() => this.answereYes(lastGuess[0], "no")}>No</button>
+            {lastGuess &&
+                <div>
+                  <h2 className="testThisShit">{lastGuess[1].guess}</h2>
+                  <button onClick={() => this.answereYes(lastGuess[0], true)}>Yes</button>
+                  <button onClick={() => this.answereYes(lastGuess[0], false)}>No</button>
+                </div>
+              }
           </div>
-        }
-        {thisGamesGuesses && thisGamesGuesses.slice(0).reverse().map((game, key) => {
-          return <div key={key}>
-            <p>{game[1].guess}</p>
-            <button onClick={() => this.answereYes(game[0], false)}>Yes</button>
-            <button onClick={() => this.answereYes(game[0], true)}>No</button>
+          <div>
+            {thisGamesGuesses && thisGamesGuesses.slice(0).reverse().map((game, key) => {
+              return <div key={key}>
+                <p>{game[1].guess}</p>
+                <button onClick={() => this.answereYes(game[0], true)}>Yes</button>
+                <button onClick={() => this.answereYes(game[0], false)}>No</button>
+              </div>
+            })}
           </div>
-        })}
+        </Swiper>
+        <Link to="/">Go to start</Link>
 
       </div>
     )

@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
 import firebase from '../../utils/firebase';
+import Swiper from 'react-id-swiper';
+import { Link } from '@reach/router';
 
 class GameGuesserView extends Component {
 
   state = {
-    guess: false,
+    guessInputField: "",
     thisGame: false,
     thisGamesGuesses: false,
   }
@@ -34,7 +36,7 @@ class GameGuesserView extends Component {
   sendGuess = (game) => {
     firebase.database().ref(`games/${this.props.gameID}/guesses`)
     .push({
-      guess: this.state.guess,
+      guess: this.state.guessInputField,
     })
     firebase.database().ref(`games/${this.props.gameID}/remainingGuesses`)
     .transaction((remainingGuesses) => {
@@ -59,7 +61,7 @@ class GameGuesserView extends Component {
   }
 
   handleChange = (e) => {
-    this.setState({ [e.target.name] : e.target.value,});
+    this.setState({ [e.target.className] : e.target.value,});
   }
 
   render() {
@@ -67,14 +69,23 @@ class GameGuesserView extends Component {
     return(
       <div className="gameGuesserView">
         <h1>{thisGame && `Now guess who ${thisGame.gameOwnerName} is thinking of!`}</h1>
-        <input onChange={this.handleChange} type="text" name="guess" className="guessInputField"/>
-        <button onClick={this.sendGuess} className="sendGuess">-></button>
-        <br/>
         <h2>Remaining guesses: {thisGame && `${thisGame.remainingGuesses}`}</h2>
-        <h2>History</h2>
-        {thisGamesGuesses && thisGamesGuesses.map((guess, key) => {
-          return <p style={{color: guess[1].answere ? "green" : "red"}} key={key}>{guess[1].guess}</p>
-        })}
+
+      <Swiper>
+        <div>
+          <div style={{width: "200px", height: "200px", border: "1px solid black", margin: "0 auto"}}>
+            <textarea onChange={this.handleChange} className="guessInputField" value={this.state.guessInputField}> </textarea>
+            <button onClick={this.sendGuess} className="sendGuess">-></button>
+          </div>
+        </div>
+        <div>
+          <h2>History</h2>
+          {thisGamesGuesses && thisGamesGuesses.map((guess, key) => {
+            return <p style={{color: guess[1].answere ? "green" : "red"}} key={key}>{guess[1].guess}</p>
+          })}
+        </div>
+      </Swiper>
+      <Link to="/">Go to start</Link>
       </div>
     )
   }
