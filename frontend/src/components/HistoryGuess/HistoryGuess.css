@@ -1,0 +1,9 @@
+.historyGuess {
+  position: sticky;
+  top: -1px;
+  bottom: -1px;
+  margin: 0 auto;
+  border: 1px solid black;
+  z-index: 10;
+  transition: all 0.5s ease;
+}

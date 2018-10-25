@@ -15,8 +15,10 @@ class GameOwnerView extends Component {
   _isMounted = true;
 
   componentDidMount() {
-    this.getThisGame();
-    this.getAllGuesses();
+    if (this._isMounted) {
+      this.getThisGame();
+      this.getAllGuesses();
+    }
   }
 
   getThisGame = () => {
@@ -72,7 +74,16 @@ class GameOwnerView extends Component {
       <div className="gameOwnerView">
         <h2>{thisGame.gameGuesserId ? `Answere ${thisGame.gameGuesserName}'s questions` : "Answere the player's questions"}</h2>
         <h3>{thisGame.secretPerson ? `Correct answere: ${thisGame.secretPerson}` : `Correct answere: wait for it...`}</h3>
-        <Swiper>
+        <Swiper initialSlide={1}>
+          <div>
+            {thisGamesAnsweredGuesses && thisGamesAnsweredGuesses.slice(0).reverse().map((game, key) => {
+              return <div key={key}>
+                <p>{game[1].guess}</p>
+                <button onClick={() => this.answereQuestion(game[0], true)}>Yes</button>
+                <button onClick={() => this.answereQuestion(game[0], false)}>No</button>
+              </div>
+            })}
+          </div>
           <div>
             {lastGuess ?
                 <div>
@@ -84,15 +95,6 @@ class GameOwnerView extends Component {
                   <h2 className="testThisShit">Väntar på nästa fråga</h2>
                 </div>
               }
-          </div>
-          <div>
-            {thisGamesAnsweredGuesses && thisGamesAnsweredGuesses.slice(0).reverse().map((game, key) => {
-              return <div key={key}>
-                <p>{game[1].guess}</p>
-                <button onClick={() => this.answereQuestion(game[0], true)}>Yes</button>
-                <button onClick={() => this.answereQuestion(game[0], false)}>No</button>
-              </div>
-            })}
           </div>
         </Swiper>
         <Link to="/">Go to start</Link>

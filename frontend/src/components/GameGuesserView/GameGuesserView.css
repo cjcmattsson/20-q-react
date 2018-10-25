@@ -1,11 +1,14 @@
-.guessListWrapper {
-  height: 1200px;
-  position: relative;
+h2 {
+  margin: 0;
 }
 
 .guessList {
-  width: 100%;
-  background-color:#ddd;
-  position: fixed;
-  margin: auto;
+  border: 1px solid black;
+  padding: 25px;
+  width: 260px;
+  background-color:#fff;
+  margin: 0;
+  position: -webkit-sticky;
+  height: 300px;
+  overflow-y: scroll;
 }

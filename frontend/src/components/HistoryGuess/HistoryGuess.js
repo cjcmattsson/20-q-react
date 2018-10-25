@@ -1,31 +1,25 @@
 import React, { Component } from 'react';
+import './HistoryGuess.css';
 
 class HistoryGuess extends Component {
 
-  constructor(props) {
-   super(props);
-   this.historyItem = React.createRef();
- }
-
-  componentDidMount() {
-    this.io();
+  state = {
+    guessWidth: this.props.offsetTop,
   }
 
-  io = () => {
-    const io = new IntersectionObserver(entries => {
-      for(const entry of entries)
-        console.log(`${entry.target.textContent} is in target: ${entry.isIntersecting}`);
-    })
-    const historyItem = this.historyItem.current;
-    io.observe(historyItem);
+  showOffset = (e) => {
+    console.dir(e.target);
   }
 
   render() {
     return (
-      <div ref={this.historyItem} style={this.props.styleProps} className="historyGuess">
-        <p style={{color: "white"}}>
-        {this.props.content}
-        </p>
+      <div
+        style={{...this.props.styleProps, width: `${this.state.guessWidth}px`}}
+        className="historyGuess"
+        onClick={(e) => this.showOffset(e)}>
+          <p style={{color: "white"}}>
+          {this.props.content}
+          </p>
       </div>
     )
   }

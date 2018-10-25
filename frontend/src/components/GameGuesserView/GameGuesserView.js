@@ -2,12 +2,10 @@ import React, { Component } from 'react';
 import firebase from '../../utils/firebase';
 import Swiper from 'react-id-swiper';
 import { Link } from '@reach/router';
+import HistoryContainer from '../HistoryContainer/HistoryContainer';
 import './GameGuesserView.css';
-import HistoryGuess from '../HistoryGuess/HistoryGuess';
 
 class GameGuesserView extends Component {
-
-
 
   state = {
     guessInputField: "",
@@ -25,9 +23,6 @@ class GameGuesserView extends Component {
   componentWillUnmount() {
     this._isMounted = false;
   }
-
-
-
 
   getThisGame = () => {
     firebase.database()
@@ -73,28 +68,29 @@ class GameGuesserView extends Component {
   }
 
   render() {
+    const params = {
+      speed: 600,
+      parallax: true,
+      parallaxEl: {
+        el: '.parallax-bg',
+        value: '-23%'
+      }
+    };
     const {thisGame, thisGamesGuesses} = this.state;
+
     return(
       <div className="gameGuesserView">
-        <Swiper>
+        <Swiper {...params} initialSlide={0}>
+          <div style={{height: "90vh", overflowY: "scroll"}}>
+            <h2>History</h2>
+            <HistoryContainer guesses={thisGamesGuesses} />
+          </div>
           <div>
             <h1>{thisGame ? `Now guess who ${thisGame.gameOwnerName} is thinking of!` : `Now guess who the player is thinking of!`}</h1>
             <h2>Remaining guesses: {thisGame ? `${thisGame.remainingGuesses}` : `wait for it...`}</h2>
             <div style={{width: "200px", height: "200px", border: "1px solid black", margin: "0 auto"}}>
               <textarea onChange={this.handleChange} className="guessInputField" value={this.state.guessInputField}> </textarea>
               <button onClick={this.sendGuess} className="sendGuess">-></button>
-            </div>
-          </div>
-          <div >
-            <div className="guessListWrapper">
-              <h2>History</h2>
-              <div className="guessList">
-                {thisGamesGuesses && thisGamesGuesses.map((guess, key) => {
-                  return (
-                    <HistoryGuess key={key} styleProps={{border: "1px solid black", backgroundColor: guess[1].answere ? "green" : "red"}} content={guess[1].guess}/>
-                  )
-                })}
-              </div>
             </div>
           </div>
         </Swiper>
