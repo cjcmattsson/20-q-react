@@ -1,9 +1,8 @@
 import styled from 'styled-components';
-import bg from './cows.jpg';
 
 export const AllGameContainer = styled.div `
 .parallax-bg {
-    ${'' /* background-image: url(${bg}); */}
+    background-color: #FFE9DD;
     position: absolute;
     left: 0;
     top: 0;
@@ -39,6 +38,7 @@ export const GameHeader = styled.div `
       height: 61px;
       width: 61px;
       background-color:hotpink;
+      border-radius: 2px;
     }
 
     .headerText {
@@ -53,10 +53,14 @@ export const GameHeader = styled.div `
 `;
 
 export const GuessCard = styled.div `
+  background-color: white;
   width: 100%;
   height: 320px;
-  border: 1px solid black;
   padding: 15px;
+  border-radius: 4px;
+  -webkit-box-shadow: 0px 3px 8px 0px rgba(0,0,0,0.16);
+  -moz-box-shadow: 0px 3px 8px 0px rgba(0,0,0,0.16);
+  box-shadow: 0px 3px 8px 0px rgba(0,0,0,0.16);
 
   .guessInputField {
     width: 100%;
@@ -103,10 +107,12 @@ export const GuessCardHeader = styled.div `
 `;
 
 export const GuessWhoItIs = styled.div `
+  color: white;
   width: 70%;
   height: 61px;
-  border: 1px solid black;
+  border: 2px solid white;
   border-radius: 50px;
+  background-color: rgba(255, 154, 158, 0.3);
   display: flex;
   align-items: center;
   justify-content: center;

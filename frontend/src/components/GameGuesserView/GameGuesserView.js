@@ -89,7 +89,7 @@ class GameGuesserView extends Component {
 
     return(
       <AllGameContainer>
-        <Swiper {...params} initialSlide={0}>
+        <Swiper {...params} initialSlide={1}>
 
           <History>
             <HistoryContainer guesses={thisGamesGuesses} />
@@ -100,7 +100,7 @@ class GameGuesserView extends Component {
             <GameHeader>
               <div className="blurredImage"></div>
               <div className="headerText">
-                <p>{thisGame.remainingGuesses && `${thisGame.remainingGuesses}/20`}</p>
+                <p>{thisGame.remainingGuesses && `${20-thisGame.remainingGuesses}/20`}</p>
                 <p>{thisGame ? `Spelar med ${thisGame.gameOwnerName}` : `Spelar med en sköning`}</p>
               </div>
             </GameHeader>
@@ -108,7 +108,7 @@ class GameGuesserView extends Component {
             <GuessCard>
               <GuessCardHeader>
                 <div className="guessInfo">
-                  <p>{thisGame.remainingGuesses}</p>
+                  <p>{`${20-thisGame.remainingGuesses}`}</p>
                   <div className="lastGuesser"></div>
                 </div>
                 <p className="getRandomQuestion">X</p>

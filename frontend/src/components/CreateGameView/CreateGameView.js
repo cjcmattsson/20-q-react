@@ -34,7 +34,7 @@ class CreateGameView extends Component {
     const games = database.ref('games');
     const game = {
       secretPerson: this.state.secretPerson,
-      remainingGuesses: 20,
+      remainingGuesses: 19,
       gameOwnerId: firebase.auth().currentUser.uid,
       gameOwnerName: firebase.auth().currentUser.displayName,
       gameGuesserId: {},
