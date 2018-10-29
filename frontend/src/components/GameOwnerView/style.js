@@ -1,3 +1,6 @@
+import styled from 'styled-components';
+
+export const Container = styled.div `
 .testThisShit {
   animation-name: slide-in;
   animation-duration: 1s;
@@ -17,3 +20,5 @@
       opacity: 1;
     }
 }
+
+`;

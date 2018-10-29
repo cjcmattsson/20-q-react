@@ -3,7 +3,16 @@ import firebase from '../../utils/firebase';
 import Swiper from 'react-id-swiper';
 import { Link } from '@reach/router';
 import HistoryContainer from '../HistoryContainer/HistoryContainer';
-import './GameGuesserView.css';
+import {
+  AllGameContainer,
+  GameContainer,
+  GameHeader,
+  GuessCard,
+  GameFooter,
+  History,
+  GuessCardHeader,
+  GuessWhoItIs
+} from './style';
 
 class GameGuesserView extends Component {
 
@@ -79,23 +88,47 @@ class GameGuesserView extends Component {
     const {thisGame, thisGamesGuesses} = this.state;
 
     return(
-      <div className="gameGuesserView">
+      <AllGameContainer>
         <Swiper {...params} initialSlide={0}>
-          <div style={{height: "90vh", overflowY: "scroll"}}>
-            <h2>History</h2>
+
+          <History>
             <HistoryContainer guesses={thisGamesGuesses} />
-          </div>
-          <div>
-            <h1>{thisGame ? `Now guess who ${thisGame.gameOwnerName} is thinking of!` : `Now guess who the player is thinking of!`}</h1>
-            <h2>Remaining guesses: {thisGame ? `${thisGame.remainingGuesses}` : `wait for it...`}</h2>
-            <div style={{width: "200px", height: "200px", border: "1px solid black", margin: "0 auto"}}>
-              <textarea onChange={this.handleChange} className="guessInputField" value={this.state.guessInputField}> </textarea>
-              <button onClick={this.sendGuess} className="sendGuess">-></button>
+            <p>Gissa -></p>
+          </History>
+
+          <GameContainer>
+            <GameHeader>
+              <div className="blurredImage"></div>
+              <div className="headerText">
+                <p>{thisGame.remainingGuesses && `${thisGame.remainingGuesses}/20`}</p>
+                <p>{thisGame ? `Spelar med ${thisGame.gameOwnerName}` : `Spelar med en sköning`}</p>
+              </div>
+            </GameHeader>
+
+            <GuessCard>
+              <GuessCardHeader>
+                <div className="guessInfo">
+                  <p>{thisGame.remainingGuesses}</p>
+                  <div className="lastGuesser"></div>
+                </div>
+                <p className="getRandomQuestion">X</p>
+              </GuessCardHeader>
+              <textarea onChange={this.handleChange} className="guessInputField" value={this.state.guessInputField} placeholder="Ställ din fråga här!"> </textarea>
+            <div className="sendGuess">
+              <button onClick={this.sendGuess}>-></button>
             </div>
-          </div>
+            </GuessCard>
+
+            <GuessWhoItIs>Jag tror jag vet!</GuessWhoItIs>
+
+            <GameFooter>
+              <p>Historik</p>
+              <Link to="/">Hem</Link>
+            </GameFooter>
+
+          </GameContainer>
         </Swiper>
-        <Link to="/">Go to start</Link>
-      </div>
+      </AllGameContainer>
     )
   }
 }

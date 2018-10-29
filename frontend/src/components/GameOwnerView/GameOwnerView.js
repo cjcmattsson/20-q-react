@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import firebase from '../../utils/firebase';
 import Swiper from 'react-id-swiper';
 import { Link } from '@reach/router';
-import'./GameOwnerView.css';
+import { Container } from './style';
 
 class GameOwnerView extends Component {
 
@@ -71,7 +71,7 @@ class GameOwnerView extends Component {
   render() {
     const {lastGuess, thisGame, thisGamesAnsweredGuesses} = this.state;
     return(
-      <div className="gameOwnerView">
+      <Container>
         <h2>{thisGame.gameGuesserId ? `Answere ${thisGame.gameGuesserName}'s questions` : "Answere the player's questions"}</h2>
         <h3>{thisGame.secretPerson ? `Correct answere: ${thisGame.secretPerson}` : `Correct answere: wait for it...`}</h3>
         <Swiper initialSlide={1}>
@@ -98,8 +98,7 @@ class GameOwnerView extends Component {
           </div>
         </Swiper>
         <Link to="/">Go to start</Link>
-
-      </div>
+    </Container>
     )
   }
 }
