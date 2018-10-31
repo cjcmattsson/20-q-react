@@ -1,6 +1,14 @@
 import React, { Component } from 'react';
 import { Link } from "@reach/router";
 import firebase from '../../utils/firebase';
+import GameCardLink from '../GameCardLink/GameCardLink';
+import ButtonLarge from '../ButtonLarge/ButtonLarge';
+import {
+  HomeViewContainer,
+  ProfileTop,
+  HomeGamesContainer,
+  HomeButtonsWrapper
+ } from './style';
 
 class HomeView extends Component {
 
@@ -59,35 +67,54 @@ class HomeView extends Component {
 
 
   render() {
-    return (
-      <div className="startPageView">
-        <h1>Startsida</h1>
-        <Link to="/createGameView">Create Game!</Link><br/>
-        <Link to="/publicGamesView">Find games!</Link><br/>
 
-          <h1> Hello {this.props.user && this.props.user.displayName} </h1>
-          <h2>Games you host</h2>
-          <div>
-            {this.state.myGamesOwner &&
-            this.state.myGamesOwner.map((game, key) => {
-              return <div key={key} className="goToGame">
-                <Link to={`/gameOwnerView/${game[0]}`}>{game[1].secretPerson}</Link><br/>
-              </div>
-            })}
+    const {myGamesOwner, myGamesGuesser} = this.state;
+    const {user} = this.props;
+    return (
+      <HomeViewContainer>
+
+        <ProfileTop>
+          <div className="profilePic"></div>
+          <div className="userNameAndStats">
+            <h1>{user && user.displayName}</h1>
+            <p>15 vinster / 23 förluster</p>
           </div>
-          <h2>Games you Play</h2>
-          <div>
-            {this.state.myGamesGuesser &&
-            this.state.myGamesGuesser.map((game, key) => {
-              return <div key={key} className="goToGame">
-                <Link to={`/gameGuesserView/${game[0]}`}>{game[1].secretPerson}</Link><br/>
-              </div>
-            })}
+        </ProfileTop>
+
+        <HomeGamesContainer>
+          <h2>Spel du hostar</h2>
+          <div className="gamesWrapper">
+            {myGamesOwner &&
+              myGamesOwner.map((game, key) => {
+                return <GameCardLink
+                  key={key}
+                  redirectTo={`/gameOwnerView/${game[0]}`}
+                  remainingGuesses={`${20-game[1].remainingGuesses}/20`}
+                  guesser={game[1].gameGuesserName} />
+              })}
           </div>
-          <br/>
-          <h2>Logout</h2>
-          <Link onClick={this.logout} to="/">Logout</Link>
-      </div>
+        </HomeGamesContainer>
+
+        <HomeGamesContainer>
+          <h2>Spel du gissar på</h2>
+            {myGamesGuesser &&
+              myGamesGuesser.map((game, key) => {
+              return <GameCardLink
+                key={key}
+                redirectTo={`/gameGuesserView/${game[0]}`}
+                remainingGuesses={`${20-game[1].remainingGuesses}/20`}
+                owner={game[1].gameOwnerName} />
+            })}
+        </HomeGamesContainer>
+
+        <HomeButtonsWrapper>
+          <ButtonLarge buttonText={"Skapa spel"} redirectTo={"createGameView"} />
+          <ButtonLarge buttonText={"Öppna spel"} redirectTo={"publicGamesView"} />
+        </HomeButtonsWrapper>
+
+        <Link onClick={this.logout} to="/">Logout</Link>
+
+      </HomeViewContainer>
     )
   }
 }
