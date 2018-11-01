@@ -1,17 +1,36 @@
 import styled from 'styled-components';
 
+const blobColor = ({answere}) => {
+  if (answere == null) return "#FFE9DD";
+  else if (answere == true) return "#3778FF";
+  else if (answere == false) return "#FB7B7E";
+}
+
+const blobSize = ({answere}) => {
+  if (answere == null) return "1";
+  else if (answere == true || false) return "5";
+}
+
 export const AllGameContainer = styled.div `
 .parallax-bg {
-    background-color: #FFE9DD;
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 200%;
-    height: 100%;
-    -webkit-background-size: cover;
-    background-size: cover;
-    background-position: left;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 200%;
+  height: 100%;
+  -webkit-background-size: cover;
+  background-size: cover;
+  background-position: left;
 }
+
+.bg div svg g g path {
+  transform: scale(${blobSize});
+  fill: ${blobColor};
+  transition-property: transform,fill;
+  transition-duration: 1s;
+  transition-timing-function: ease;
+}
+
 `;
 
 export const GameContainer = styled.div `
@@ -55,8 +74,9 @@ export const GameHeader = styled.div `
 export const GuessCard = styled.div `
   background-color: white;
   width: 100%;
-  height: 320px;
-  padding: 15px;
+  max-width: 314px;
+  height: 314px;
+  padding: 16px;
   border-radius: 4px;
   -webkit-box-shadow: 0px 3px 8px 0px rgba(0,0,0,0.16);
   -moz-box-shadow: 0px 3px 8px 0px rgba(0,0,0,0.16);
@@ -64,19 +84,28 @@ export const GuessCard = styled.div `
 
   .guessInputField {
     width: 100%;
-    height: 80%;
+    height: 70%;
     font-size: 30px;
+    text-align: left;
+    padding: 0;
+    border: none;
 
     &:focus {
       outline: none;
     }
   }
 
-  .sendGuess {
+  .sendGuessWrapper {
     width: 100%;
     display: flex;
-    align-items: center;
+    align-items: flex-end;
     justify-content: flex-end;
+
+    .sendGuessButton {
+      transform: translateY(7px) translateX(5px);
+      height: 50px;
+      width: 50px;
+    }
   }
 `;
 
@@ -100,7 +129,7 @@ export const GuessCardHeader = styled.div `
       height: 25px;
       width: 25px;
       margin-left: 10px;
-      border-radius: 25px;
+      border-radius: 2px;
       background-color: hotpink;
     }
   }

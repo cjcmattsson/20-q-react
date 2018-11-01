@@ -13,7 +13,6 @@ import {
 class HomeView extends Component {
 
   state = {
-    isMounted: false,
     user : false,
     myGamesOwner: false,
     myGamesGuesser: false,

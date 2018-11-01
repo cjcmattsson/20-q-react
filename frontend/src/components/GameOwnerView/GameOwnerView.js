@@ -2,7 +2,16 @@ import React, { Component } from 'react';
 import firebase from '../../utils/firebase';
 import Swiper from 'react-id-swiper';
 import { Link } from '@reach/router';
-import { Container } from './style';
+import {
+  AllGameContainer,
+  GameContainer,
+  GameHeader,
+  GameFooter,
+  History,
+  AnswereGuessContainer,
+  IncomingGuessCard,
+  AnswereButton
+ } from './style';
 
 class GameOwnerView extends Component {
 
@@ -71,11 +80,9 @@ class GameOwnerView extends Component {
   render() {
     const {lastGuess, thisGame, thisGamesAnsweredGuesses} = this.state;
     return(
-      <Container>
-        <h2>{thisGame.gameGuesserId ? `Answere ${thisGame.gameGuesserName}'s questions` : "Answere the player's questions"}</h2>
-        <h3>{thisGame.secretPerson ? `Correct answere: ${thisGame.secretPerson}` : `Correct answere: wait for it...`}</h3>
+      <AllGameContainer>
         <Swiper initialSlide={1}>
-          <div>
+          <History>
             {thisGamesAnsweredGuesses && thisGamesAnsweredGuesses.slice(0).reverse().map((game, key) => {
               return <div key={key}>
                 <p>{game[1].guess}</p>
@@ -83,22 +90,44 @@ class GameOwnerView extends Component {
                 <button onClick={() => this.answereQuestion(game[0], false)}>No</button>
               </div>
             })}
-          </div>
-          <div>
-            {lastGuess ?
-                <div>
-                  <h2 className="testThisShit">{lastGuess[1].guess && lastGuess[1].guess}</h2>
-                  <button onClick={() => this.answereQuestion(lastGuess[0], true)}>Yes</button>
-                  <button onClick={() => this.answereQuestion(lastGuess[0], false)}>No</button>
-                </div>
-                : <div>
-                  <h2 className="testThisShit">Väntar på nästa fråga</h2>
-                </div>
-              }
-          </div>
+          </History>
+
+          <GameContainer>
+            <GameHeader>
+              <div className="blurredImage"></div>
+              <div className="headerText">
+                <p>{thisGame.remainingGuesses && `${20-thisGame.remainingGuesses}/20`}</p>
+                <p>{thisGame && thisGame.secretPerson}</p>
+              </div>
+            </GameHeader>
+
+            <AnswereGuessContainer>
+              <AnswereButton yes></AnswereButton>
+              <IncomingGuessCard>
+                {lastGuess ?
+                  <div>
+                    <h2 className="testThisShit">{lastGuess[1].guess && lastGuess[1].guess}</h2>
+                    <button onClick={() => this.answereQuestion(lastGuess[0], true)}>Yes</button>
+                    <button onClick={() => this.answereQuestion(lastGuess[0], false)}>No</button>
+                  </div>
+                  : <div>
+                    <h2 className="testThisShit">Väntar på nästa fråga</h2>
+                  </div>
+                }
+              </IncomingGuessCard>
+
+              <AnswereButton></AnswereButton>
+            </AnswereGuessContainer>
+
+            <GameFooter>
+              <p>Historik</p>
+              <Link to="/">Hem</Link>
+            </GameFooter>
+
+          </GameContainer>
+
         </Swiper>
-        <Link to="/">Go to start</Link>
-    </Container>
+    </AllGameContainer>
     )
   }
 }

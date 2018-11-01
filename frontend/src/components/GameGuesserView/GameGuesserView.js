@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import firebase from '../../utils/firebase';
 import Swiper from 'react-id-swiper';
 import { Link } from '@reach/router';
+import Lottie from 'react-lottie';
 import HistoryContainer from '../HistoryContainer/HistoryContainer';
 import {
   AllGameContainer,
@@ -20,6 +21,11 @@ class GameGuesserView extends Component {
     guessInputField: "",
     thisGame: false,
     thisGamesGuesses: false,
+    questionIsNotSent: true,
+    waitingForAnswere: false,
+    answere: null,
+    answereRecieved: false,
+    lastGuess: null,
   }
 
   _isMounted = true;
@@ -56,6 +62,8 @@ class GameGuesserView extends Component {
       }
       return remainingGuesses;
     })
+    this.setState({questionIsNotSent: false})
+    setTimeout(() => {this.setState({waitingForAnswere: true})}, 1200);
   }
 
   getAllGuesses = () => {
@@ -65,7 +73,12 @@ class GameGuesserView extends Component {
       if (data.val()) {
         if (this._isMounted) {
           this.setState({thisGamesGuesses: Object.entries(data.val())})
+          this.setState({lastGuess: Object.entries(data.val()).slice(-1)[0][1].guess})
         }
+        let latestAnswere = Object.entries(data.val()).slice(-1)[0][1].answere;
+        if (latestAnswere == undefined) {this.setState({answere: null})}
+        else if (latestAnswere == true) {this.setState({answere: true, answereRecieved: true})}
+        else if (latestAnswere == false) {this.setState({answere: false, answereRecieved: true})}
       }
     });
   }
@@ -85,12 +98,53 @@ class GameGuesserView extends Component {
         value: '-23%'
       }
     };
-    const {thisGame, thisGamesGuesses} = this.state;
+
+        const options = {
+          loop: false,
+          autoplay: false,
+          animationData: require('./send.json'),
+          rendererSettings: {
+            preserveAspectRatio: 'xMidYMid slice'
+          }
+        };
+        const optionsWaiting = {
+          loop: true,
+          autoplay: false,
+          animationData: require('./blobload.json'),
+          rendererSettings: {
+            preserveAspectRatio: 'xMidYMid slice'
+          }
+        };
+        const optionsBackgroundAnim = {
+          loop: true,
+          autoplay: true,
+          animationData: require('./backgroundpink.json'),
+          rendererSettings: {
+            preserveAspectRatio: 'xMidYMid slice'
+          }
+        };
+        const optionsAnswereRecieved = {
+          loop: false,
+          autoplay: true,
+          animationData: this.state.answere == true ? require('./yes.json') : require('./no.json'),
+          rendererSettings: {
+            preserveAspectRatio: 'xMidYMid slice'
+          }
+        };
+
+    const {thisGame, thisGamesGuesses, questionIsNotSent, waitingForAnswere} = this.state;
 
     return(
-      <AllGameContainer>
-        <Swiper {...params} initialSlide={1}>
+      <AllGameContainer answere={this.state.answere}>
+        <div className="bg">
+          <Lottie
+            style={{width: "100%", position: "absolute", fill: "green"}}
+            options={optionsBackgroundAnim}
+            isStopped={false}
+          />
+        </div>
 
+        <Swiper {...params} initialSlide={1}>
           <History>
             <HistoryContainer guesses={thisGamesGuesses} />
             <p>Gissa -></p>
@@ -98,8 +152,8 @@ class GameGuesserView extends Component {
 
           <GameContainer>
             <GameHeader>
-              <div className="blurredImage"></div>
-              <div className="headerText">
+              <div className="blurredImage" onClick={() => {this.setState({answere: true})}}></div>
+              <div className="headerText" onClick={() => {this.setState({answere: false})}}>
                 <p>{thisGame.remainingGuesses && `${20-thisGame.remainingGuesses}/20`}</p>
                 <p>{thisGame ? `Spelar med ${thisGame.gameOwnerName}` : `Spelar med en sköning`}</p>
               </div>
@@ -111,11 +165,40 @@ class GameGuesserView extends Component {
                   <p>{`${20-thisGame.remainingGuesses}`}</p>
                   <div className="lastGuesser"></div>
                 </div>
-                <p className="getRandomQuestion">X</p>
               </GuessCardHeader>
-              <textarea onChange={this.handleChange} className="guessInputField" value={this.state.guessInputField} placeholder="Ställ din fråga här!"> </textarea>
-            <div className="sendGuess">
-              <button onClick={this.sendGuess}>-></button>
+              {questionIsNotSent
+                ? <textarea
+                onChange={this.handleChange}
+                className="guessInputField"
+                value={this.state.guessInputField}
+                placeholder="Ställ din fråga här!"> </textarea>
+              : <div className="guessInputField">{this.state.lastGuess}</div>}
+            <div className="sendGuessWrapper">
+              {this.state.answereRecieved ?
+                <div className="sendGuessButton">
+                  <Lottie options={optionsAnswereRecieved}
+                    height={50}
+                    width={50}
+                    isStopped={false}
+                  />
+                </div>
+                : waitingForAnswere
+                ? <div className="sendGuessButton">
+                    <Lottie options={optionsWaiting}
+                      height={50}
+                      width={50}
+                      isStopped={questionIsNotSent}
+                    />
+              </div>
+              : <div className="sendGuessButton" onClick={this.sendGuess}>
+                <Lottie options={options}
+                  height={50}
+                  width={50}
+                  isStopped={questionIsNotSent}
+                />
+              </div>
+
+          }
             </div>
             </GuessCard>
 
