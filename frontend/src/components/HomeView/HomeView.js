@@ -22,6 +22,7 @@ class HomeView extends Component {
 
   componentDidMount() {
     this.getUser();
+
   }
 
   getUser = () => {
@@ -73,7 +74,7 @@ class HomeView extends Component {
       <HomeViewContainer>
 
         <ProfileTop>
-          <div className="profilePic"></div>
+          <div className="profilePic" style={{backgroundImage: `url("${this.props.user.photoURL}?height=500")`}}></div>
           <div className="userNameAndStats">
             <h1>{user && user.displayName}</h1>
             <p>15 vinster / 23 förluster</p>

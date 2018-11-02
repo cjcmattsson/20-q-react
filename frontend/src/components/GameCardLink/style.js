@@ -2,9 +2,9 @@ import styled from 'styled-components';
 
 export const GameCardLinkContainer = styled.div `
   border-radius: 4px;
-  -webkit-box-shadow: 0px 3px 8px 0px rgba(0,0,0,0.16);
-  -moz-box-shadow: 0px 3px 8px 0px rgba(0,0,0,0.16);
-  box-shadow: 0px 3px 8px 0px rgba(0,0,0,0.16);
+  -webkit-box-shadow: var(--box-shadow);
+  -moz-box-shadow: var(--box-shadow);
+  box-shadow: var(--box-shadow);
   margin-top: 8px;
 
   a {

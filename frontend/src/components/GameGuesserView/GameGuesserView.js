@@ -33,10 +33,35 @@ class GameGuesserView extends Component {
   componentDidMount() {
     this.getThisGame();
     this.getAllGuesses();
+    this.checkIfAnswereRecieved();
+    if (localStorage.getItem("waitingForAnswere")) {
+      this.setState({waitingForAnswere: true, questionIsNotSent: false})
+    }
   }
 
   componentWillUnmount() {
     this._isMounted = false;
+  }
+
+  componentDidUpdate() {
+    if (this.state.answereRecieved === true) {
+      this.checkIfAnswereRecieved();
+    }
+  }
+
+  checkIfAnswereRecieved = () => {
+    setTimeout(() => {
+      if (this.state.answereRecieved === true) {
+        this.setState({
+          answere: null,
+          answereRecieved: false,
+          questionIsNotSent: true,
+          waitingForAnswere: false,
+          lastGuess: false,
+          guessInputField: "",
+        })
+      }
+    }, 2500)
   }
 
   getThisGame = () => {
@@ -63,7 +88,10 @@ class GameGuesserView extends Component {
       return remainingGuesses;
     })
     this.setState({questionIsNotSent: false})
-    setTimeout(() => {this.setState({waitingForAnswere: true})}, 1200);
+    setTimeout(() => {
+      this.setState({waitingForAnswere: true});
+      localStorage.setItem('waitingForAnswere', true);
+    }, 1200);
   }
 
   getAllGuesses = () => {
@@ -76,9 +104,16 @@ class GameGuesserView extends Component {
           this.setState({lastGuess: Object.entries(data.val()).slice(-1)[0][1].guess})
         }
         let latestAnswere = Object.entries(data.val()).slice(-1)[0][1].answere;
-        if (latestAnswere == undefined) {this.setState({answere: null})}
-        else if (latestAnswere == true) {this.setState({answere: true, answereRecieved: true})}
-        else if (latestAnswere == false) {this.setState({answere: false, answereRecieved: true})}
+        console.log(latestAnswere);
+        if (latestAnswere === undefined || latestAnswere === null) {this.setState({answere: null})}
+        else if (latestAnswere === true) {
+          this.setState({answere: true, answereRecieved: true});
+          localStorage.setItem('waitingForAnswere', false);
+        }
+        else if (latestAnswere === false) {
+          this.setState({answere: false, answereRecieved: true});
+          localStorage.setItem('waitingForAnswere', false);
+        }
       }
     });
   }
@@ -92,11 +127,6 @@ class GameGuesserView extends Component {
   render() {
     const params = {
       speed: 600,
-      parallax: true,
-      parallaxEl: {
-        el: '.parallax-bg',
-        value: '-23%'
-      }
     };
 
         const options = {
@@ -123,10 +153,18 @@ class GameGuesserView extends Component {
             preserveAspectRatio: 'xMidYMid slice'
           }
         };
+        const optionsBackgroundAnimGrey = {
+          loop: true,
+          autoplay: true,
+          animationData: require('./backgroundgrey.json'),
+          rendererSettings: {
+            preserveAspectRatio: 'xMidYMid slice'
+          }
+        };
         const optionsAnswereRecieved = {
           loop: false,
           autoplay: true,
-          animationData: this.state.answere == true ? require('./yes.json') : require('./no.json'),
+          animationData: this.state.answere === true ? require('./yes.json') : require('./no.json'),
           rendererSettings: {
             preserveAspectRatio: 'xMidYMid slice'
           }
@@ -138,7 +176,12 @@ class GameGuesserView extends Component {
       <AllGameContainer answere={this.state.answere}>
         <div className="bg">
           <Lottie
-            style={{width: "100%", position: "absolute", fill: "green"}}
+            style={{width: "100%", position: "absolute"}}
+            options={optionsBackgroundAnimGrey}
+            isStopped={false}
+          />
+          <Lottie
+            style={{width: "100%", position: "absolute"}}
             options={optionsBackgroundAnim}
             isStopped={false}
           />
@@ -159,20 +202,21 @@ class GameGuesserView extends Component {
               </div>
             </GameHeader>
 
-            <GuessCard>
+            <GuessCard answere={this.state.answere}>
               <GuessCardHeader>
                 <div className="guessInfo">
                   <p>{`${20-thisGame.remainingGuesses}`}</p>
                   <div className="lastGuesser"></div>
                 </div>
               </GuessCardHeader>
-              {questionIsNotSent
-                ? <textarea
+              {this.state.waitingForAnswere
+                ? <div className="guessInputField">{this.state.lastGuess}</div>
+                : <textarea
                 onChange={this.handleChange}
                 className="guessInputField"
                 value={this.state.guessInputField}
                 placeholder="Ställ din fråga här!"> </textarea>
-              : <div className="guessInputField">{this.state.lastGuess}</div>}
+               }
             <div className="sendGuessWrapper">
               {this.state.answereRecieved ?
                 <div className="sendGuessButton">

@@ -17,8 +17,9 @@ export const ProfileTop = styled.div `
   .profilePic {
     height: 100%;
     width: 61px;
-    background-color: salmon;
     border-radius: 2px;
+    background-position: center;
+    background-size: cover;
   }
 
   .userNameAndStats {
@@ -28,9 +29,16 @@ export const ProfileTop = styled.div `
     flex: 1;
     padding: 0 8px;
 
+
     h1 {
-      font-size: 32px;
+      font-size: 28px;
       margin: 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 220px;
+
+
     }
 
     p {

@@ -1,14 +1,20 @@
 import styled from 'styled-components';
 
 const blobColor = ({answere}) => {
-  if (answere == null) return "#FFE9DD";
-  else if (answere == true) return "#3778FF";
-  else if (answere == false) return "#FB7B7E";
+  if (answere === null) return "var(--soft-pink)";
+  else if (answere === true) return "var(--victory-blue)";
+  else if (answere === false) return "var(--error-red)";
 }
 
 const blobSize = ({answere}) => {
-  if (answere == null) return "1";
-  else if (answere == true || false) return "5";
+  if (answere === null) return "1";
+  else if (answere === true || answere === false) return "5";
+}
+
+const moveCard = ({answere}) => {
+  if (answere === null) return "nothing";
+  else if (answere === true) return "correct";
+  else if (answere === false) return "wrong";
 }
 
 export const AllGameContainer = styled.div `
@@ -23,13 +29,26 @@ export const AllGameContainer = styled.div `
   background-position: left;
 }
 
-.bg div svg g g path {
+.bg div:nth-child(2) svg g g path {
+  z-index: 100;
   transform: scale(${blobSize});
   fill: ${blobColor};
   transition-property: transform,fill;
   transition-duration: 1s;
   transition-timing-function: ease;
 }
+
+@keyframes correct {
+    0% {transform: translateY(0)}
+    50% {transform: translateY(-20px)}
+    100% {transform: translateY(0)}
+}
+@keyframes wrong {
+    0% {transform: translateY(0)}
+    50% {transform: translateY(20px)}
+    100% {transform: translateY(0)}
+}
+
 
 `;
 
@@ -56,7 +75,7 @@ export const GameHeader = styled.div `
     .blurredImage {
       height: 61px;
       width: 61px;
-      background-color:hotpink;
+      background-color: var(--strong-pink);
       border-radius: 2px;
     }
 
@@ -72,15 +91,16 @@ export const GameHeader = styled.div `
 `;
 
 export const GuessCard = styled.div `
+  animation: ${moveCard} 1s linear;
   background-color: white;
   width: 100%;
   max-width: 314px;
   height: 314px;
   padding: 16px;
   border-radius: 4px;
-  -webkit-box-shadow: 0px 3px 8px 0px rgba(0,0,0,0.16);
-  -moz-box-shadow: 0px 3px 8px 0px rgba(0,0,0,0.16);
-  box-shadow: 0px 3px 8px 0px rgba(0,0,0,0.16);
+  -webkit-box-shadow: var(--box-shadow);
+  -moz-box-shadow: var(--box-shadow);
+  box-shadow: var(--box-shadow);
 
   .guessInputField {
     width: 100%;
@@ -130,7 +150,7 @@ export const GuessCardHeader = styled.div `
       width: 25px;
       margin-left: 10px;
       border-radius: 2px;
-      background-color: hotpink;
+      background-color: var(--strong-pink);
     }
   }
 `;
@@ -139,9 +159,8 @@ export const GuessWhoItIs = styled.div `
   color: white;
   width: 70%;
   height: 61px;
-  border: 2px solid white;
   border-radius: 50px;
-  background-color: rgba(255, 154, 158, 0.3);
+  background-color: var(--strong-pink);
   display: flex;
   align-items: center;
   justify-content: center;

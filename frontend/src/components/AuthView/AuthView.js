@@ -1,7 +1,16 @@
 import React, { Component } from 'react';
 import firebase from '../../utils/firebase';
-import './AuthView.css';
-import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
+import Lottie from 'react-lottie';
+import NoLinkButton from '../NoLinkButton/NoLinkButton';
+import Swiper from 'react-id-swiper';
+import {
+  AuthViewContainer,
+  AuthHeader,
+  WelcomeMessage,
+  UserInfoContainer,
+  UserInputFields,
+  RandomContentWrapper,
+ } from './style.js';
 
 class AuthView extends Component {
 
@@ -9,21 +18,20 @@ state = {
   email:'',
   password:'',
   username:'',
-  showSignUpFields: false,
-}
-
-uiConfig = {
-  signInFlow: 'popup',
-  signInOptions: [firebase.auth.FacebookAuthProvider.PROVIDER_ID],
-  callbacks: {
-    signInSuccessWithAuthResult: () => false
-  }
+  showSignUpFields: true,
+  login: false,
 }
 
 login = (e) => {
   e.preventDefault();
   const promise = firebase.auth().signInWithEmailAndPassword(this.state.email, this.state.password);
   promise.catch(e => console.log(e.message));
+}
+
+facebookLogin = () => {
+  const auth = firebase.auth
+  const provider = new firebase.auth.FacebookAuthProvider();
+  auth().signInWithPopup(provider)
 }
 
 signUp = (e) => {
@@ -44,26 +52,125 @@ showSignUpFields = () => {
   this.setState({showSignUpFields: !this.state.showSignUpFields})
 }
 
+constructor(props) {
+    super(props)
+    this.swiper = null
+  }
+
+  goNext = () => {
+    if (this.swiper) this.swiper.slideNext();
+    this.setState({login: !this.state.login});
+  }
+
+  goPrev = () => {
+    if (this.swiper) this.swiper.slidePrev();
+    this.setState({login: !this.state.login});
+  }
+
   render() {
     const {email, password, username, showSignUpFields} = this.state;
-    return (
-      <div className="authView">
-        <h1>LOGIN VIEW</h1>
-        <form className="loginForm">
-          <div className="userInputFields">
-            <input value={username}  onChange={this.handleChange} style={{display: showSignUpFields ? "block" : "none"}} type="text" name="username" placeholder="name"/>
-            <input value={email} onChange={this.handleChange} type="email" name="email" placeholder="email"/>
-            <input value={password} onChange={this.handleChange} type="password" name="password" placeholder="password"/>
-          </div>
-          <div className="formButtons">
-            <button className="loginButton" style={{display: showSignUpFields ? "none" : "block"}} type="submit" onClick={this.login}>LOGIN</button>
-            <button className="signUpButton" style={{display: showSignUpFields ? "block" : "none"}} onClick={this.signUp}>SIGN UP</button>
-          </div>
-        </form>
-        <p onClick={this.showSignUpFields}>{showSignUpFields ? "Dont sign up with email" : "Sign up with email"}</p>
 
-        <StyledFirebaseAuth uiConfig={this.uiConfig} firebaseAuth={firebase.auth()}/>
-      </div>
+    const params = {
+      speed: 600,
+    };
+
+    const optionsBackgroundAnim = {
+      loop: true,
+      autoplay: true,
+      animationData: require('../utils/backgroundpink.json'),
+      rendererSettings: {
+        preserveAspectRatio: 'xMidYMid slice'
+      }
+    };
+    const optionsBackgroundAnimGrey = {
+      loop: true,
+      autoplay: true,
+      animationData: require('../utils/backgroundgrey.json'),
+      rendererSettings: {
+        preserveAspectRatio: 'xMidYMid slice'
+      }
+    };
+
+    return (
+      <AuthViewContainer>
+        <div className="bg">
+          <Lottie
+            style={{width: "100%", position: "absolute"}}
+            options={optionsBackgroundAnimGrey}
+            isStopped={false}
+          />
+          <Lottie
+            style={{width: "100%", position: "absolute"}}
+            options={optionsBackgroundAnim}
+            isStopped={false}
+          />
+        </div>
+        <AuthHeader>
+          <div className="blob"></div>
+          <WelcomeMessage>
+            <h2>Hej kompis!</h2>
+            <p>Här börjar din 20 frågor-resa</p>
+          </WelcomeMessage>
+        </AuthHeader>
+
+        <Swiper {...params} ref={node => {if(node) this.swiper = node.swiper}}>
+
+          <UserInfoContainer>
+            <form>
+              <UserInputFields>
+                <div>
+                  <label htmlFor="signUpUsername">Användarnamn</label>
+                  <input id="signUpUsername" value={username}  onChange={this.handleChange} style={{display: showSignUpFields ? "block" : "none"}} type="text" name="username" placeholder="användarnamn"/>
+                </div>
+                <div>
+                  <label htmlFor="signUpEmail">Email</label>
+                  <input id="signUpEmail" value={email} onChange={this.handleChange} type="email" name="email" placeholder="email"/>
+                </div>
+                <div>
+                  <label htmlFor="signUpPassword">Lösenord</label>
+                  <input id="signUpPassword" value={password} onChange={this.handleChange} type="password" name="password" placeholder="lösenord"/>
+                </div>
+              </UserInputFields>
+                <NoLinkButton
+                  color={"var(--strong-pink)"}
+                  text={"Skapa användare"}
+                  function={this.signUp}
+                  type={"submit"}/>
+            </form>
+          </UserInfoContainer>
+
+          <UserInfoContainer>
+            <form>
+              <UserInputFields>
+                <div>
+                  <label htmlFor="loginEmail">Email</label>
+                  <input id="loginEmail" value={email} onChange={this.handleChange} type="email" name="email" placeholder="email"/>
+                </div>
+                <div>
+                  <label htmlFor="loginPassword">Lösenord</label>
+                  <input id="loginPassword" value={password} onChange={this.handleChange} type="password" name="password" placeholder="password"/>
+                  <p>Glömt lösenordet?</p>
+                </div>
+              </UserInputFields>
+                <NoLinkButton
+                  color={"var(--strong-pink)"}
+                  text={"Logga in"}
+                  function={this.login}
+                  type={"submit"}/>
+            </form>
+          </UserInfoContainer>
+        </Swiper>
+
+        <RandomContentWrapper>
+          <NoLinkButton
+            color={"var(--victory-blue)"}
+            text={"Logga in med facebook"}
+            function={this.facebookLogin}
+          />
+
+        </RandomContentWrapper>
+        <button className="loginOrCreateUser" onClick={this.state.login ? this.goPrev : this.goNext}>{this.state.login ? "Skapa account" : "Redan medlem?"}</button>
+      </AuthViewContainer>
     )
   }
 }

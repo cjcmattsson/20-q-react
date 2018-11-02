@@ -1,3 +1,9 @@
-.App {
-  text-align: center;
+:root {
+  --soft-pink: #FFE9DD;
+  --strong-pink: #ff9a9e;
+  --victory-blue: #3778FF;
+  --error-red: #FB7B7E;
+  --light-grey: #C4C4C4;
+  --text-grey: #4B4B4B;
+  --box-shadow: 0px 3px 8px 0px rgba(0,0,0,0.16);
 }
