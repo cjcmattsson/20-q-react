@@ -74,7 +74,7 @@ class HomeView extends Component {
       <HomeViewContainer>
 
         <ProfileTop>
-          <div className="profilePic" style={{backgroundImage: `url("${this.props.user.photoURL}?height=500")`}}></div>
+          <div className="profilePic" style={{backgroundImage: this.props.user.photoURL ? `url("${this.props.user.photoURL}?height=500")` : `url("./profile-avatar.svg")`}}></div>
           <div className="userNameAndStats">
             <h1>{user && user.displayName}</h1>
             <p>15 vinster / 23 förluster</p>
@@ -108,8 +108,8 @@ class HomeView extends Component {
         </HomeGamesContainer>
 
         <HomeButtonsWrapper>
-          <ButtonLarge buttonText={"Skapa spel"} redirectTo={"createGameView"} />
-          <ButtonLarge buttonText={"Öppna spel"} redirectTo={"publicGamesView"} />
+          <ButtonLarge buttonText={"Starta nytt spel"} redirectTo={"createGameView"} />
+          <ButtonLarge buttonText={"Spela öppet spel"} redirectTo={"publicGamesView"} />
         </HomeButtonsWrapper>
 
         <Link onClick={this.logout} to="/">Logout</Link>

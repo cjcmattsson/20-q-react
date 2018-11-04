@@ -107,6 +107,7 @@ export const GuessCard = styled.div `
     height: 70%;
     font-size: 30px;
     text-align: left;
+    display: inline-block;
     padding: 0;
     border: none;
 

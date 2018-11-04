@@ -1,6 +1,11 @@
 import React, { Component } from 'react';
-import './CreateGameView.css';
 import firebase from '../../utils/firebase';
+import {
+  CreateGameContainer,
+  SearchResultWrapper,
+  SearchResult,
+  StarGameButton,
+ } from './style';
 
 class CreateGameView extends Component {
 
@@ -11,7 +16,7 @@ class CreateGameView extends Component {
 
   searchWikiApi = () => {
     if (this.state.secretPerson) {
-      fetch(`https://sv.wikipedia.org/w/api.php?action=query&list=search&srsearch=intitle:${this.state.secretPerson}&format=json&srlimit=5&origin=*`)
+      fetch(`https://sv.wikipedia.org/w/api.php?action=query&list=search&srsearch=intitle:${this.state.secretPerson}&format=json&srlimit=3&origin=*`)
       .then(res => res.json())
       .then((result) => {
         const searchResults = result.query.search;
@@ -45,20 +50,23 @@ class CreateGameView extends Component {
 
   render() {
     return (
-      <div className="createGameView">
-        <h1>Create Game!! :D</h1>
-        <form>
-          <input value={this.state.secretPerson} onChange={this.handleChange} onKeyUp={this.searchWikiApi} name="secretPerson" type="text" className="person"/>
-          <button type="submit" onClick={this.createGame}>Start game</button>
-        </form>
-        <ul>
+      <CreateGameContainer>
+        <h1>Jag tänker på: </h1>
+          <input value={this.state.secretPerson} onChange={this.handleChange} onKeyUp={this.searchWikiApi} name="secretPerson" type="text" className="searchField"/>
+        <SearchResultWrapper>
           {this.state.wikiApiRequest &&
             this.state.wikiApiRequest.map((person, key) => {
-              return <li key={key}>{person.title}</li>
+              return (
+                <SearchResult key={key}>
+                  <div className="profilePic"></div>
+                  <p>{person.title}</p>
+                </SearchResult>
+              )
             })
           }
-        </ul>
-      </div>
+        </SearchResultWrapper>
+        <StarGameButton onClick={this.createGame}></StarGameButton>
+      </CreateGameContainer>
     )
   }
 }
