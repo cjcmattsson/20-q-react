@@ -9,7 +9,7 @@ class GameCardLink extends Component {
     return (
       <GameCardLinkContainer>
         <Link to={this.props.redirectTo}>
-          <div className="gamePicBlurred">
+          <div className="gamePicBlurred" style={{backgroundImage: `url(${this.props.image})`}}>
             {this.props.remainingGuesses}
           </div>
           <div className="gameInfo">

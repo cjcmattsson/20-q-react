@@ -7,3 +7,26 @@
   --text-grey: #4B4B4B;
   --box-shadow: 0px 3px 8px 0px rgba(0,0,0,0.16);
 }
+
+@import url('https://fonts.googleapis.com/css?family=Roboto');
+
+@font-face {
+  font-family: 'Manrope Light';
+  src: url('./fonts/manrope-light.woff');
+}
+
+@font-face {
+  font-family: 'Manrope Semibold';
+  src: url('./fonts/manrope-semibold.woff');
+}
+
+@font-face {
+  font-family: 'Manrope Bold';
+  src: url('./fonts/manrope-bold.woff');
+}
+
+input[type=text],
+input[type=email],
+input[type=password], {
+  font-family: 'Roboto', sans-serif;
+}

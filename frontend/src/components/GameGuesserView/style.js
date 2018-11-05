@@ -77,6 +77,8 @@ export const GameHeader = styled.div `
       width: 61px;
       background-color: var(--strong-pink);
       border-radius: 2px;
+      background-position: center;
+      background-size: cover;
     }
 
     .headerText {
@@ -85,6 +87,13 @@ export const GameHeader = styled.div `
 
       p {
         margin: 0;
+      }
+
+      .guessNr {
+        font-size: 32px;
+      }
+      .opponent {
+        font-size: 16px;
       }
     }
   }
@@ -173,6 +182,21 @@ export const GameFooter = styled.div `
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  align-items: center;
+  font-size: 16px;
+
+  p {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    color: var(--text-grey);
+    img {
+      height: 12px;
+      width: 17px;
+      margin-right: 5px;
+    }
+  }
 `;
 
 export const History = styled.div `

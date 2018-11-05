@@ -28,6 +28,8 @@ export const ProfileTop = styled.div `
     flex-direction: column;
     flex: 1;
     padding: 0 8px;
+    font-family: "Manrope Semibold";
+    color: var(--text-grey);
 
 
     h1 {
@@ -37,8 +39,6 @@ export const ProfileTop = styled.div `
       overflow: hidden;
       text-overflow: ellipsis;
       max-width: 220px;
-
-
     }
 
     p {
@@ -55,6 +55,8 @@ export const HomeGamesContainer = styled.div `
   flex-direction: column;
 
   h2 {
+    font-family: "Manrope Semibold";
+    color: var(--text-grey);
     margin: 0;
     text-transform: uppercase;
     font-size: 16px;

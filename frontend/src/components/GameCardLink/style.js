@@ -24,6 +24,8 @@ export const GameCardLinkContainer = styled.div `
       display: flex;
       justify-content: center;
       align-items: center;
+      background-size: cover;
+      background-position: center;
     }
 
     .gameInfo {

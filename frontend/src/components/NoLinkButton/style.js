@@ -11,4 +11,6 @@ export const NoLinkButtonContainer = styled.button `
   background-color: ${props => props.color};
   text-transform: uppercase;
   font-size: 16px;
+  border: none;
+  font-family: "Manrope Semibold";
 `;

@@ -84,6 +84,7 @@ export const UserInputFields = styled.div `
     padding: 4px 0;
     font-weight: 500;
     background-color:transparent;
+    font-size: 16px;
 
     :placeholder {
       color: var(--light-grey);
@@ -91,6 +92,7 @@ export const UserInputFields = styled.div `
     }
     :focus {
       outline: none;
+      font-size: 16px;
     }
   }
 

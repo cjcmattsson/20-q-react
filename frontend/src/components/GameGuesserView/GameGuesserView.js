@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import firebase from '../../utils/firebase';
 import Swiper from 'react-id-swiper';
-import { Link } from '@reach/router';
 import Lottie from 'react-lottie';
 import HistoryContainer from '../HistoryContainer/HistoryContainer';
+import DirectionButton from '../DirectionButton/DirectionButton';
+import BackToHome from '../BackToHome/BackToHome';
 import {
   AllGameContainer,
   GameContainer,
@@ -132,7 +133,7 @@ class GameGuesserView extends Component {
         const options = {
           loop: false,
           autoplay: false,
-          animationData: require('./send.json'),
+          animationData: require('./anims/send.json'),
           rendererSettings: {
             preserveAspectRatio: 'xMidYMid slice'
           }
@@ -140,7 +141,7 @@ class GameGuesserView extends Component {
         const optionsWaiting = {
           loop: true,
           autoplay: false,
-          animationData: require('./blobload.json'),
+          animationData: require('./anims/blobload.json'),
           rendererSettings: {
             preserveAspectRatio: 'xMidYMid slice'
           }
@@ -148,7 +149,7 @@ class GameGuesserView extends Component {
         const optionsBackgroundAnim = {
           loop: true,
           autoplay: true,
-          animationData: require('./backgroundpink.json'),
+          animationData: require('./anims/backgroundpink.json'),
           rendererSettings: {
             preserveAspectRatio: 'xMidYMid slice'
           }
@@ -156,7 +157,7 @@ class GameGuesserView extends Component {
         const optionsBackgroundAnimGrey = {
           loop: true,
           autoplay: true,
-          animationData: require('./backgroundgrey.json'),
+          animationData: require('./anims/backgroundgrey.json'),
           rendererSettings: {
             preserveAspectRatio: 'xMidYMid slice'
           }
@@ -164,7 +165,7 @@ class GameGuesserView extends Component {
         const optionsAnswereRecieved = {
           loop: false,
           autoplay: true,
-          animationData: this.state.answere === true ? require('./yes.json') : require('./no.json'),
+          animationData: this.state.answere === true ? require('./anims/yes.json') : require('./anims/no.json'),
           rendererSettings: {
             preserveAspectRatio: 'xMidYMid slice'
           }
@@ -195,10 +196,10 @@ class GameGuesserView extends Component {
 
           <GameContainer>
             <GameHeader>
-              <div className="blurredImage" onClick={() => {this.setState({answere: true})}}></div>
-              <div className="headerText" onClick={() => {this.setState({answere: false})}}>
-                <p>{thisGame.remainingGuesses && `${20-thisGame.remainingGuesses}/20`}</p>
-                <p>{thisGame ? `Spelar med ${thisGame.gameOwnerName}` : `Spelar med en sköning`}</p>
+              <div className="blurredImage" style={{backgroundImage: `url(${thisGame.secretPersonImage})`}}></div>
+              <div className="headerText">
+                <p className="guessNr">{thisGame.remainingGuesses && `${20-thisGame.remainingGuesses}/20`}</p>
+                <p className="opponent">{thisGame ? `Spelar med ${thisGame.gameOwnerName}` : `Spelar med en sköning`}</p>
               </div>
             </GameHeader>
 
@@ -249,8 +250,8 @@ class GameGuesserView extends Component {
             <GuessWhoItIs>Jag tror jag vet!</GuessWhoItIs>
 
             <GameFooter>
-              <p>Historik</p>
-              <Link to="/">Hem</Link>
+              <DirectionButton text="Historik" arrowLeft={true}/>
+              <BackToHome />
             </GameFooter>
 
           </GameContainer>

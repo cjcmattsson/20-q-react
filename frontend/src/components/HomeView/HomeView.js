@@ -74,7 +74,7 @@ class HomeView extends Component {
       <HomeViewContainer>
 
         <ProfileTop>
-          <div className="profilePic" style={{backgroundImage: this.props.user.photoURL ? `url("${this.props.user.photoURL}?height=500")` : `url("./profile-avatar.svg")`}}></div>
+          <div className="profilePic" style={{backgroundImage: this.props.user.photoURL ? `url("${this.props.user.photoURL}?height=500")` : `url("./images/profile-avatar.svg")`}}></div>
           <div className="userNameAndStats">
             <h1>{user && user.displayName}</h1>
             <p>15 vinster / 23 förluster</p>
@@ -88,6 +88,7 @@ class HomeView extends Component {
               myGamesOwner.map((game, key) => {
                 return <GameCardLink
                   key={key}
+                  image={game[1].secretPersonImage}
                   redirectTo={`/gameOwnerView/${game[0]}`}
                   remainingGuesses={`${20-game[1].remainingGuesses}/20`}
                   guesser={game[1].gameGuesserName} />
@@ -97,14 +98,17 @@ class HomeView extends Component {
 
         <HomeGamesContainer>
           <h2>Spel du gissar på</h2>
+          <div className="gamesWrapper">
             {myGamesGuesser &&
               myGamesGuesser.map((game, key) => {
               return <GameCardLink
                 key={key}
+                image={game[1].secretPersonImage}
                 redirectTo={`/gameGuesserView/${game[0]}`}
                 remainingGuesses={`${20-game[1].remainingGuesses}/20`}
                 owner={game[1].gameOwnerName} />
             })}
+            </div>
         </HomeGamesContainer>
 
         <HomeButtonsWrapper>
