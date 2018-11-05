@@ -17,11 +17,10 @@ class AuthView extends Component {
 state = {
   emailLogin:'',
   passwordLogin:'',
-  emailSignup:'',
+
   passwordSignup:'',
   usernameSignup:'',
-  showSignUpFields: true,
-  login: false,
+  emailSignup:'',
 }
 
 login = (e) => {
@@ -33,25 +32,22 @@ login = (e) => {
 facebookLogin = () => {
   const auth = firebase.auth
   const provider = new firebase.auth.FacebookAuthProvider();
-  auth().signInWithPopup(provider)
+  auth().signInWithPopup(provider);
+
 }
 
 signUp = (e) => {
   e.preventDefault();
   firebase.auth().createUserWithEmailAndPassword(this.state.emailSignup, this.state.passwordSignup)
   .then(() => {
-    var user = firebase.auth().currentUser
-    user.updateProfile({displayName: this.state.usernameSignup})
+    var user = firebase.auth().currentUser;
+    user.updateProfile({displayName: this.state.usernameSignup});
     }).catch(e => console.log(e.message));
   }
 
 
 handleChange = (e) => {
   this.setState({ [e.target.name] : e.target.value,});
-}
-
-showSignUpFields = () => {
-  this.setState({showSignUpFields: !this.state.showSignUpFields})
 }
 
 constructor(props) {
@@ -70,7 +66,7 @@ constructor(props) {
   }
 
   render() {
-    const {email, password, username, showSignUpFields} = this.state;
+    const {email, password, username} = this.state;
 
     const params = {
       speed: 600,
@@ -122,7 +118,7 @@ constructor(props) {
               <UserInputFields>
                 <div>
                   <label htmlFor="signUpUsername">Användarnamn</label>
-                  <input id="signUpUsername" value={username}  onChange={this.handleChange} style={{display: showSignUpFields ? "block" : "none"}} type="text" name="usernameSignup" placeholder="användarnamn"/>
+                  <input id="signUpUsername" value={username}  onChange={this.handleChange} type="text" name="usernameSignup" placeholder="användarnamn"/>
                 </div>
                 <div>
                   <label htmlFor="signUpEmail">Email</label>
@@ -130,7 +126,7 @@ constructor(props) {
                 </div>
                 <div>
                   <label htmlFor="signUpPassword">Lösenord</label>
-                  <input id="signUpPassword" value={password} onChange={this.handleChange} type="passwordSignup" name="password" placeholder="lösenord"/>
+                  <input id="signUpPassword" value={password} onChange={this.handleChange} type="password" name="passwordSignup" placeholder="lösenord"/>
                 </div>
               </UserInputFields>
                 <NoLinkButton

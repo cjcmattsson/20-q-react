@@ -22,7 +22,7 @@ class HomeView extends Component {
 
   componentDidMount() {
     this.getUser();
-
+    this.checkIfUserIsRegistered();
   }
 
   getUser = () => {
@@ -53,6 +53,27 @@ class HomeView extends Component {
         }
       } else {
         console.log("no user logged in");
+      }
+    });
+  }
+
+  checkIfUserIsRegistered = () => {
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        const database = firebase.database();
+        database.ref('users').on('value', (data) => {
+          const checkIfReg = data.val() && Object.values(data.val()).find(player => player.uid === user.uid);
+          if (checkIfReg === null || checkIfReg === undefined) {
+            let player = {
+              uid: user.uid,
+              name: user.displayName,
+              photo: user.photoURL ? user.photoURL: "./images/profile-avatar.svg",
+            }
+            database.ref('users').push(player);
+          } else {
+            console.log("user is already registered");
+          }
+        });
       }
     });
   }
