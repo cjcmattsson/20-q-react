@@ -6,6 +6,12 @@ import HistoryContainer from '../HistoryContainer/HistoryContainer';
 import DirectionButton from '../DirectionButton/DirectionButton';
 import BackToHome from '../BackToHome/BackToHome';
 import {
+  optionsSend,
+  optionsWaiting,
+  optionsBackgroundAnimPink,
+  optionsBackgroundAnimGrey
+} from '../utils/LottieOptions.js';
+import {
   AllGameContainer,
   GameContainer,
   GameHeader,
@@ -32,11 +38,14 @@ class GameGuesserView extends Component {
   _isMounted = true;
 
   componentDidMount() {
-    this.getThisGame();
-    this.getAllGuesses();
-    this.checkIfAnswereRecieved();
-    if (localStorage.getItem("waitingForAnswere")) {
-      this.setState({waitingForAnswere: true, questionIsNotSent: false})
+    if (this._isMounted) {
+      this.getThisGame();
+      this.checkIfAnswereRecieved();
+      if (localStorage.getItem("waitingForAnswere")) {
+        this.setState({waitingForAnswere: true, questionIsNotSent: false})
+      }
+      this.getAllGuesses();
+      this.checkIfThereAreAnyGuesses();
     }
   }
 
@@ -48,6 +57,15 @@ class GameGuesserView extends Component {
     if (this.state.answereRecieved === true) {
       this.checkIfAnswereRecieved();
     }
+  }
+
+  checkIfThereAreAnyGuesses = () => {
+      firebase.database().ref(`games/${this.props.gameID}/guesses`).on('value', (data) => {
+      console.log(data.val());
+      if (data.val() === null) {
+        this.setState({waitingForAnswere: false, questionIsNotSent: true})
+      }
+    });
   }
 
   checkIfAnswereRecieved = () => {
@@ -69,10 +87,8 @@ class GameGuesserView extends Component {
     firebase.database()
     .ref(`games/${this.props.gameID}`)
     .on('value', (data) => {
-      if (this._isMounted) {
         this.setState({thisGame: data.val()})
         console.log(data.val());
-      }
     });
   }
 
@@ -100,12 +116,9 @@ class GameGuesserView extends Component {
     .ref(`games/${this.props.gameID}/guesses`)
     .on('value', (data) => {
       if (data.val()) {
-        if (this._isMounted) {
           this.setState({thisGamesGuesses: Object.entries(data.val())})
-          this.setState({lastGuess: Object.entries(data.val()).slice(-1)[0][1].guess})
-        }
+          this.setState({lastGuess: Object.entries(data.val()).slice(-1)[0][1].guess});
         let latestAnswere = Object.entries(data.val()).slice(-1)[0][1].answere;
-        console.log(latestAnswere);
         if (latestAnswere === undefined || latestAnswere === null) {this.setState({answere: null})}
         else if (latestAnswere === true) {
           this.setState({answere: true, answereRecieved: true});
@@ -121,7 +134,7 @@ class GameGuesserView extends Component {
 
   handleChange = (e) => {
     if (this._isMounted) {
-      this.setState({ [e.target.className] : e.target.value,});
+      this.setState({ [e.target.className] : e.target.value});
     }
   }
 
@@ -130,46 +143,14 @@ class GameGuesserView extends Component {
       speed: 600,
     };
 
-        const options = {
-          loop: false,
-          autoplay: false,
-          animationData: require('./anims/send.json'),
-          rendererSettings: {
-            preserveAspectRatio: 'xMidYMid slice'
-          }
-        };
-        const optionsWaiting = {
-          loop: true,
-          autoplay: false,
-          animationData: require('./anims/blobload.json'),
-          rendererSettings: {
-            preserveAspectRatio: 'xMidYMid slice'
-          }
-        };
-        const optionsBackgroundAnim = {
-          loop: true,
-          autoplay: true,
-          animationData: require('./anims/backgroundpink.json'),
-          rendererSettings: {
-            preserveAspectRatio: 'xMidYMid slice'
-          }
-        };
-        const optionsBackgroundAnimGrey = {
-          loop: true,
-          autoplay: true,
-          animationData: require('./anims/backgroundgrey.json'),
-          rendererSettings: {
-            preserveAspectRatio: 'xMidYMid slice'
-          }
-        };
-        const optionsAnswereRecieved = {
-          loop: false,
-          autoplay: true,
-          animationData: this.state.answere === true ? require('./anims/yes.json') : require('./anims/no.json'),
-          rendererSettings: {
-            preserveAspectRatio: 'xMidYMid slice'
-          }
-        };
+    const optionsAnswereRecieved = {
+      loop: false,
+      autoplay: true,
+      animationData: this.state.answere === true ? require('./anims/yes.json') : require('./anims/no.json'),
+      rendererSettings: {
+        preserveAspectRatio: 'xMidYMid slice'
+      }
+    };
 
     const {thisGame, thisGamesGuesses, questionIsNotSent, waitingForAnswere} = this.state;
 
@@ -183,7 +164,7 @@ class GameGuesserView extends Component {
           />
           <Lottie
             style={{width: "100%", position: "absolute"}}
-            options={optionsBackgroundAnim}
+            options={optionsBackgroundAnimPink}
             isStopped={false}
           />
         </div>
@@ -213,52 +194,52 @@ class GameGuesserView extends Component {
               {this.state.waitingForAnswere
                 ? <div className="guessInputField">{this.state.lastGuess}</div>
                 : <textarea
-                onChange={this.handleChange}
-                className="guessInputField"
-                value={this.state.guessInputField}
-                placeholder="Ställ din fråga här!"> </textarea>
-               }
-            <div className="sendGuessWrapper">
-              {this.state.answereRecieved ?
-                <div className="sendGuessButton">
-                  <Lottie options={optionsAnswereRecieved}
-                    height={50}
-                    width={50}
-                    isStopped={false}
-                  />
+                  onChange={this.handleChange}
+                  className="guessInputField"
+                  value={this.state.guessInputField}
+                  placeholder="Ställ din fråga här!"> </textarea>
+                }
+                <div className="sendGuessWrapper">
+                  {this.state.answereRecieved ?
+                    <div className="sendGuessButton">
+                      <Lottie options={optionsAnswereRecieved}
+                        height={50}
+                        width={50}
+                        isStopped={false}
+                      />
+                    </div>
+                    : waitingForAnswere
+                    ? <div className="sendGuessButton">
+                      <Lottie options={optionsWaiting}
+                        height={50}
+                        width={50}
+                        isStopped={questionIsNotSent}
+                      />
+                    </div>
+                    : <div className="sendGuessButton" onClick={this.sendGuess}>
+                      <Lottie options={optionsSend}
+                        height={50}
+                        width={50}
+                        isStopped={questionIsNotSent}
+                      />
+                    </div>
+
+                  }
                 </div>
-                : waitingForAnswere
-                ? <div className="sendGuessButton">
-                    <Lottie options={optionsWaiting}
-                      height={50}
-                      width={50}
-                      isStopped={questionIsNotSent}
-                    />
-              </div>
-              : <div className="sendGuessButton" onClick={this.sendGuess}>
-                <Lottie options={options}
-                  height={50}
-                  width={50}
-                  isStopped={questionIsNotSent}
-                />
-              </div>
+              </GuessCard>
 
-          }
-            </div>
-            </GuessCard>
+              <GuessWhoItIs>Jag tror jag vet!</GuessWhoItIs>
 
-            <GuessWhoItIs>Jag tror jag vet!</GuessWhoItIs>
+              <GameFooter>
+                <DirectionButton text="Historik" arrowLeft={true}/>
+                <BackToHome />
+              </GameFooter>
 
-            <GameFooter>
-              <DirectionButton text="Historik" arrowLeft={true}/>
-              <BackToHome />
-            </GameFooter>
-
-          </GameContainer>
-        </Swiper>
-      </AllGameContainer>
-    )
+            </GameContainer>
+          </Swiper>
+        </AllGameContainer>
+      )
+    }
   }
-}
 
-export default GameGuesserView;
+  export default GameGuesserView;

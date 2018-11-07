@@ -61,86 +61,70 @@ export const InvitePageHeader = styled.div `
   }
 `;
 
-export const CreateGameContainer = styled.div `
-  height: 100vh;
-  width: 100vw;
-  padding: 47px;
-  padding-top: 150px;
-
-  h2 {
-    font-size: 24px;
-    margin: 0 0 16px;
-  }
-
-  .searchField {
-    height: 38px;
-    width: 100%;
-    font-size: 32px;
-    border: none;
-    padding-left: 0;
-    margin-bottom: 12px;
-
-    :focus {
-      outline: none;
-    }
-  }
-
-  .goBack {
-    position: absolute;
-    bottom: 20px;
-    left: 47px;
-  }
-`;
-
-export const SearchResultWrapper = styled.div `
-  width: 100%;
+export const AllUsers = styled.div `
+  z-index: 100;
   display: flex;
   flex-direction: column;
+  margin-top: 24px;
+  color: var(--text-grey);
 
-  @keyframes fadein {
-    from { opacity: 0; }
-    to   { opacity: 1; }
-}
+  h2 {
+    margin: 0;
+    font-family: "Manrope Bold";
+    font-size: 16px;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+  }
 `;
 
-export const SearchResult = styled.div `
+const checkedOrNot = ({checked}) => {
+  if (checked === false) return "var(--soft-pink)";
+  else if (checked === true) return "var(--victory-blue)";
+}
+
+export const OneUser = styled.div `
   width: 100%;
   display: flex;
   flex-direction: row;
+  align-items: center;
   justify-content: space-between;
-  margin: 10px 0 0;
-  animation: fadein 0.5s;
+  margin-bottom: 16px;
 
-  .profilePic {
-    height: 38px;
-    width: 38px;
-    background-position: center;
-    background-size: contain;
-    background-color: white;
-  }
-
-  p {
-    font-size: 16px;
-    margin: 0;
-    padding-left: 8px;
-    flex: 1;
-    text-align: left;
+  .userInfo {
     display: flex;
+    flex-direction: row;
     align-items: center;
+    flex: 1;
+    img {
+      height: 38px;
+      width: 38px;
+      border-radius: 2px;
+    }
+
+    .name {
+      margin: 0;
+      margin-left: 8px;
+      font-family: "Manrope Semibold";
+      font-size: 16px;
+    }
   }
 
+  .selectUser {
+    border: 2px solid var(--text-grey);
+    border-radius: 50%;
+    height: 23px; width: 23px;
 
-`;
+    input {
+      display: none;
+    }
 
-export const StarGameButton = styled.div `
-  position: absolute;
-  bottom: 25vh;
-  right: 46px;
-  height: 38px;
-  width: 38px;
-
-  img {
-    height: 100%;
-    width: 100%;
+    .selected {
+      height: 100%;
+      width: 100%;
+      border-radius: 50%;
+      border: 1px solid white;
+      transition: all 0.5s ease;
+      background-color: ${props => props.selected ? "var(--text-grey)" : "white"};
+    }
   }
-`;
+`

@@ -1,12 +1,14 @@
 import React, { Component } from 'react';
 import firebase from '../../utils/firebase';
+import Swiper from 'react-id-swiper';
 import DirectionButton from '../DirectionButton/DirectionButton';
+import InviteToGame from '../InviteToGame/InviteToGame';
 import {
   CreateGameContainer,
   SearchResultWrapper,
   SearchResult,
   StarGameButton,
- } from './style';
+} from './style';
 
 class CreateGameView extends Component {
 
@@ -69,45 +71,56 @@ class CreateGameView extends Component {
   }
 
   render() {
-    return (
-      <CreateGameContainer>
-        <h2>Jag tänker på:</h2>
-        {this.state.chosenPerson ?
-          <SearchResult>
-            <div className="profilePic" style={{backgroundImage: this.state.chosenImg && `url(${this.state.chosenImg})`}}></div>
-            <p>{this.state.chosenPerson}</p>
-            <div onClick={this.unSelectPerson}>X</div>
-          </SearchResult> :
-          <input
-            value={this.state.secretPerson}
-            onChange={this.handleChange}
-            onKeyUp={this.searchWikiApi}
-            name="secretPerson"
-            type="text"
-            className="searchField"
-            placeholder="Personens namn"/>
-          }
-        <SearchResultWrapper>
-          {this.state.wikiApiRequest &&
-            this.state.wikiApiRequest.map((person, key) => {
-              return (
-                <SearchResult key={key} onClick={() => {this.selectSecretPerson(person)}}>
-                  <div className="profilePic" style={{backgroundImage: person.thumbnail ? `url(${person.thumbnail.source})` : `url(${"https://banner2.kisspng.com/20180131/fvw/kisspng-question-mark-icon-question-mark-5a7214f2980a92.2259030715174259066228.jpg"})`}}></div>
-                  <p>{person.title}</p>
-                </SearchResult>
-              )
-            })
-          }
-        </SearchResultWrapper>
-        <StarGameButton onClick={this.createGame}>
-          <img src={require('./send.svg')} alt=""/>
-        </StarGameButton>
-        <div className="goBack">
-          <DirectionButton text="Tillbaka" arrowLeft={true}/>
-        </div>
-      </CreateGameContainer>
-    )
-  }
-}
 
-export default CreateGameView;
+
+
+    const params = {
+      speed: 600,
+    };
+    return (
+      <Swiper {...params} initialSlide={0}>
+        <div>
+          <InviteToGame />
+        </div>
+        <CreateGameContainer>
+          <h2>Jag tänker på:</h2>
+          {this.state.chosenPerson ?
+            <SearchResult>
+              <div className="profilePic" style={{backgroundImage: this.state.chosenImg && `url(${this.state.chosenImg})`}}></div>
+              <p>{this.state.chosenPerson}</p>
+              <div onClick={this.unSelectPerson}>X</div>
+            </SearchResult> :
+            <input
+              value={this.state.secretPerson}
+              onChange={this.handleChange}
+              onKeyUp={this.searchWikiApi}
+              name="secretPerson"
+              type="text"
+              className="searchField"
+              placeholder="Personens namn"/>
+            }
+            <SearchResultWrapper>
+              {this.state.wikiApiRequest &&
+                this.state.wikiApiRequest.map((person, key) => {
+                  return (
+                    <SearchResult key={key} onClick={() => {this.selectSecretPerson(person)}}>
+                      <div className="profilePic" style={{backgroundImage: person.thumbnail ? `url(${person.thumbnail.source})` : `url(${"https://banner2.kisspng.com/20180131/fvw/kisspng-question-mark-icon-question-mark-5a7214f2980a92.2259030715174259066228.jpg"})`}}></div>
+                      <p>{person.title}</p>
+                    </SearchResult>
+                  )
+                })
+              }
+            </SearchResultWrapper>
+            <StarGameButton onClick={this.createGame}>
+              <img src={require('./send.svg')} alt=""/>
+            </StarGameButton>
+            <div className="goBack">
+              <DirectionButton text="Tillbaka" arrowLeft={true}/>
+            </div>
+          </CreateGameContainer>
+        </Swiper>
+      )
+    }
+  }
+
+  export default CreateGameView;

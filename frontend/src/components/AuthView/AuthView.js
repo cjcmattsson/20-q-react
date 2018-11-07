@@ -4,6 +4,10 @@ import Lottie from 'react-lottie';
 import NoLinkButton from '../NoLinkButton/NoLinkButton';
 import Swiper from 'react-id-swiper';
 import {
+  optionsBackgroundAnimPink,
+  optionsBackgroundAnimGrey
+} from '../utils/LottieOptions.js';
+import {
   AuthViewContainer,
   AuthHeader,
   WelcomeMessage,
@@ -72,36 +76,11 @@ constructor(props) {
       speed: 600,
     };
 
-    const optionsBackgroundAnim = {
-      loop: true,
-      autoplay: true,
-      animationData: require('../utils/backgroundpink.json'),
-      rendererSettings: {
-        preserveAspectRatio: 'xMidYMid slice'
-      }
-    };
-    const optionsBackgroundAnimGrey = {
-      loop: true,
-      autoplay: true,
-      animationData: require('../utils/backgroundgrey.json'),
-      rendererSettings: {
-        preserveAspectRatio: 'xMidYMid slice'
-      }
-    };
-
     return (
       <AuthViewContainer>
         <div className="bg">
-          <Lottie
-            style={{width: "100%", position: "absolute"}}
-            options={optionsBackgroundAnimGrey}
-            isStopped={false}
-          />
-          <Lottie
-            style={{width: "100%", position: "absolute"}}
-            options={optionsBackgroundAnim}
-            isStopped={false}
-          />
+          <Lottie style={{width: "100%", position: "absolute"}} options={optionsBackgroundAnimGrey} isStopped={false} />
+          <Lottie style={{width: "100%", position: "absolute"}} options={optionsBackgroundAnimPink} isStopped={false} />
         </div>
         <AuthHeader>
           <div className="blob"></div>
