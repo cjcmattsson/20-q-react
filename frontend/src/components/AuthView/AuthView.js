@@ -19,13 +19,21 @@ import {
 class AuthView extends Component {
 
 state = {
-  emailLogin:'',
-  passwordLogin:'',
-
-  passwordSignup:'',
   usernameSignup:'',
   emailSignup:'',
+  passwordSignup:'',
+  emailLogin:'',
+  passwordLogin:'',
 }
+
+signUp = (e) => {
+  e.preventDefault();
+  firebase.auth().createUserWithEmailAndPassword(this.state.emailSignup, this.state.passwordSignup)
+  .then(() => {
+    var user = firebase.auth().currentUser;
+    user.updateProfile({displayName: this.state.usernameSignup});
+    }).catch(e => console.log(e.message));
+  }
 
 login = (e) => {
   e.preventDefault();
@@ -39,16 +47,6 @@ facebookLogin = () => {
   auth().signInWithPopup(provider);
 
 }
-
-signUp = (e) => {
-  e.preventDefault();
-  firebase.auth().createUserWithEmailAndPassword(this.state.emailSignup, this.state.passwordSignup)
-  .then(() => {
-    var user = firebase.auth().currentUser;
-    user.updateProfile({displayName: this.state.usernameSignup});
-    }).catch(e => console.log(e.message));
-  }
-
 
 handleChange = (e) => {
   this.setState({ [e.target.name] : e.target.value,});

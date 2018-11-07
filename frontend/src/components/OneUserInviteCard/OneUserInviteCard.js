@@ -12,8 +12,7 @@ class OneUserInviteCard extends Component {
     const target = event.target;
     const value = target.type === 'checkbox' ? target.checked : target.value;
     this.setState({checked: value})
-    console.log(value);
-    console.log(target.value);
+    this.props.myFunc(event);
   }
 
   render () {

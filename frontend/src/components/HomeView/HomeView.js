@@ -13,7 +13,7 @@ import {
 class HomeView extends Component {
 
   state = {
-    user : false,
+    user : {},
     myGamesOwner: false,
     myGamesGuesser: false,
   }
@@ -21,12 +21,33 @@ class HomeView extends Component {
   _isMounted = true;
 
   componentDidMount() {
-    this.getUser();
-    this.checkIfUserIsRegistered();
+    this.getYourGames();
+    setTimeout(() => {
+      this.checkIfRegistered();
+    }, 500)
   }
 
-  getUser = () => {
-    firebase.auth().onAuthStateChanged((user) => {
+  checkIfRegistered = () => {
+    this.setState({user: this.props.user})
+    const database = firebase.database();
+    database.ref('users').off();
+    database.ref('users').on('value', (data) => {
+      const checkIfReg = data.val() && Object.values(data.val()).find(player => player.uid === this.state.user.uid);
+      if (checkIfReg === null || checkIfReg === undefined) {
+        let player = {
+          uid: this.state.user.uid,
+          name: this.state.user.displayName,
+          photo: this.state.user.photoURL ? this.state.user.photoURL: "./images/profile-avatar.svg",
+        }
+        database.ref('users').push(player);
+      } else {
+        console.log("user is already registered");
+      }
+    })
+  }
+
+  getYourGames = () => {
+    firebase.auth().onAuthStateChanged(user => {
       if (user) {
         const database = firebase.database();
         const owner = database.ref(`games`).orderByChild('gameOwnerId').equalTo(`${user.uid}`);
@@ -51,31 +72,8 @@ class HomeView extends Component {
             }
           })
         }
-      } else {
-        console.log("no user logged in");
-      }
-    });
-  }
-
-  checkIfUserIsRegistered = () => {
-    firebase.auth().onAuthStateChanged((user) => {
-      if (user) {
-        const database = firebase.database();
-        database.ref('users').on('value', (data) => {
-          const checkIfReg = data.val() && Object.values(data.val()).find(player => player.uid === user.uid);
-          if (checkIfReg === null || checkIfReg === undefined) {
-            let player = {
-              uid: user.uid,
-              name: user.displayName,
-              photo: user.photoURL ? user.photoURL: "./images/profile-avatar.svg",
-            }
-            database.ref('users').push(player);
-          } else {
-            console.log("user is already registered");
-          }
-        });
-      }
-    });
+      };
+    })
   }
 
   logout = () => {
@@ -86,7 +84,6 @@ class HomeView extends Component {
     this._isMounted = false;
   }
 
-
   render() {
 
     const {myGamesOwner, myGamesGuesser} = this.state;
@@ -95,9 +92,9 @@ class HomeView extends Component {
       <HomeViewContainer>
 
         <ProfileTop>
-          <div className="profilePic" style={{backgroundImage: this.props.user.photoURL ? `url("${this.props.user.photoURL}?height=500")` : `url("./images/profile-avatar.svg")`}}></div>
+          <div className="profilePic" style={{backgroundImage: user.photoURL ? `url("${this.props.user.photoURL}?height=500")` : `url("./images/profile-avatar.svg")`}}></div>
           <div className="userNameAndStats">
-            <h1>{user && user.displayName}</h1>
+            <h1>{user ? user.displayName : "..."}</h1>
             <p>15 vinster / 23 förluster</p>
           </div>
         </ProfileTop>

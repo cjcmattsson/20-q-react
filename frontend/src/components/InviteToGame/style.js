@@ -77,11 +77,6 @@ export const AllUsers = styled.div `
   }
 `;
 
-const checkedOrNot = ({checked}) => {
-  if (checked === false) return "var(--soft-pink)";
-  else if (checked === true) return "var(--victory-blue)";
-}
-
 export const OneUser = styled.div `
   width: 100%;
   display: flex;

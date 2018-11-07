@@ -9,8 +9,6 @@ import GameGuesserView from '../GameGuesserView/GameGuesserView';
 import GameOwnerView from '../GameOwnerView/GameOwnerView';
 import { Router } from "@reach/router";
 
-
-
 class App extends Component {
 
   state = {
@@ -24,7 +22,7 @@ class App extends Component {
   authListener() {
     firebase.auth().onAuthStateChanged(user => {
       if (user) {
-        this.setState({user})
+        this.setState({user});
         console.log(user);
       } else {
         this.setState({user : null})
