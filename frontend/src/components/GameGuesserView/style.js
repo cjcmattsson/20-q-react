@@ -18,16 +18,7 @@ const moveCard = ({answere}) => {
 }
 
 export const AllGameContainer = styled.div `
-.parallax-bg {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 200%;
-  height: 100%;
-  -webkit-background-size: cover;
-  background-size: cover;
-  background-position: left;
-}
+  color: var(--text-grey);
 
 .bg div:nth-child(2) svg g g path {
   z-index: 100;
@@ -114,11 +105,13 @@ export const GuessCard = styled.div `
   .guessInputField {
     width: 100%;
     height: 70%;
-    font-size: 30px;
+    font-size: 32px;
     text-align: left;
     display: inline-block;
-    padding: 0;
+    padding: 16px 0;
+    color: var(--text-grey);
     border: none;
+    font-family: 'Roboto', sans-serif;
 
     &:focus {
       outline: none;
@@ -182,15 +175,14 @@ export const GameFooter = styled.div `
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  align-items: center;
   font-size: 16px;
+  align-items: flex-end;
 
   p {
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    color: var(--text-grey);
     img {
       height: 12px;
       width: 17px;
@@ -200,10 +192,20 @@ export const GameFooter = styled.div `
 `;
 
 export const History = styled.div `
-  padding: 25px 0;
+  padding: 0 0 25px;
   height: 100vh;
   width: 100vw;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+
+  .historyFooter {
+    margin: 0 25px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+    p {
+      margin: 0;
+    }
+  }
 `;

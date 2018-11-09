@@ -138,6 +138,19 @@ class GameGuesserView extends Component {
     }
   }
 
+  constructor(props) {
+      super(props)
+      this.swiper = null
+    }
+
+    goNext = () => {
+      if (this.swiper) this.swiper.slideNext();
+    }
+
+    goPrev = () => {
+      if (this.swiper) this.swiper.slidePrev();
+    }
+
   render() {
     const params = {
       speed: 600,
@@ -169,10 +182,15 @@ class GameGuesserView extends Component {
           />
         </div>
 
-        <Swiper {...params} initialSlide={1}>
+        <Swiper
+          {...params}
+          initialSlide={1}
+          ref={node => {if(node) this.swiper = node.swiper}}>
           <History>
             <HistoryContainer guesses={thisGamesGuesses} />
-            <p>Gissa -></p>
+            <div className="historyFooter">
+              <DirectionButton text="Tillbaka" arrowRight={true} swipe={this.goNext}/>
+            </div>
           </History>
 
           <GameContainer>
@@ -231,7 +249,7 @@ class GameGuesserView extends Component {
               <GuessWhoItIs>Jag tror jag vet!</GuessWhoItIs>
 
               <GameFooter>
-                <DirectionButton text="Historik" arrowLeft={true}/>
+                <DirectionButton text="Historik" arrowLeft={true} swipe={this.goPrev}/>
                 <BackToHome />
               </GameFooter>
 

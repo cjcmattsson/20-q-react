@@ -39,7 +39,7 @@ class HomeView extends Component {
           name: this.state.user.displayName,
           photo: this.state.user.photoURL ? this.state.user.photoURL: "./images/profile-avatar.svg",
         }
-        database.ref('users').push(player);
+        database.ref('users').push(JSON.parse(JSON.stringify(player)));
       } else {
         console.log("user is already registered");
       }

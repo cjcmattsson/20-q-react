@@ -1,7 +1,14 @@
 import React, { Component } from 'react';
 import firebase from '../../utils/firebase';
 import Swiper from 'react-id-swiper';
-import { Link } from '@reach/router';
+import Lottie from 'react-lottie';
+import {
+  optionsBackgroundAnimPink,
+  optionsBackgroundAnimGrey
+} from '../utils/LottieOptions.js';
+import DirectionButton from '../DirectionButton/DirectionButton';
+import BackToHome from '../BackToHome/BackToHome';
+import HistoryContainer from '../HistoryContainer/HistoryContainer';
 import {
   AllGameContainer,
   GameContainer,
@@ -9,6 +16,7 @@ import {
   GameFooter,
   History,
   AnswereGuessContainer,
+  GuessCardHeader,
   IncomingGuessCard,
   AnswereButton
  } from './style';
@@ -19,6 +27,7 @@ class GameOwnerView extends Component {
     thisGame: false,
     thisGamesAnsweredGuesses: [],
     lastGuess: false,
+    opponents: [],
   }
 
   _isMounted = true;
@@ -36,6 +45,16 @@ class GameOwnerView extends Component {
     .on('value', (data) => {
       if (this._isMounted) {
         this.setState({thisGame: data.val()})
+        console.log(data.val());
+        let players = firebase.database().ref(`users`).orderByChild('uid').equalTo(`${data.val().gameGuesserId}`);
+        if (players) {
+          players.on('value', (snapshot) => {
+            if (snapshot.val()) {
+              this.setState({opponents: Object.values(snapshot.val())[0]})
+              console.log(this.state.opponents);
+            }
+          })
+        }
       }
     })
   }
@@ -77,51 +96,102 @@ class GameOwnerView extends Component {
     this._isMounted = true;
   }
 
+  constructor(props) {
+      super(props)
+      this.swiper = null
+    }
+
+    goNext = () => {
+      if (this.swiper) this.swiper.slideNext();
+    }
+
+    goPrev = () => {
+      if (this.swiper) this.swiper.slidePrev();
+    }
+
   render() {
-    const {lastGuess, thisGame, thisGamesAnsweredGuesses} = this.state;
+    const {lastGuess, thisGame, thisGamesAnsweredGuesses, opponents} = this.state;
+    const params = {
+      speed: 600,
+    };
     return(
       <AllGameContainer>
-        <Swiper initialSlide={1}>
+
+        <div className="bg">
+          <Lottie
+            style={{width: "100%", position: "absolute"}}
+            options={optionsBackgroundAnimGrey}
+            isStopped={false}
+          />
+          <Lottie
+            style={{width: "100%", position: "absolute"}}
+            options={optionsBackgroundAnimPink}
+            isStopped={false}
+          />
+        </div>
+
+        <Swiper
+          {...params}
+          initialSlide={1}
+          ref={node => {if(node) this.swiper = node.swiper}}>
           <History>
-            {thisGamesAnsweredGuesses && thisGamesAnsweredGuesses.slice(0).reverse().map((game, key) => {
+            <HistoryContainer guesses={thisGamesAnsweredGuesses} />
+            {/*{thisGamesAnsweredGuesses && thisGamesAnsweredGuesses.slice(0).reverse().map((game, key) => {
               return <div key={key}>
                 <p>{game[1].guess}</p>
                 <button onClick={() => this.answereQuestion(game[0], true)}>Yes</button>
                 <button onClick={() => this.answereQuestion(game[0], false)}>No</button>
               </div>
-            })}
+            })}*/}
+            <div className="historyFooter">
+              <DirectionButton text="Tillbaka" arrowRight={true} swipe={this.goNext}/>
+            </div>
           </History>
 
           <GameContainer>
             <GameHeader>
-              <div className="blurredImage"></div>
+              <div className="blurredImage" style={{backgroundImage: `url(${thisGame.secretPersonImage})`}}></div>
               <div className="headerText">
-                <p>{thisGame.remainingGuesses && `${20-thisGame.remainingGuesses}/20`}</p>
-                <p>{thisGame && thisGame.secretPerson}</p>
+                <p className="guessNr">{thisGame.remainingGuesses && `${20-thisGame.remainingGuesses}/20`}</p>
+                <p className="secretPerson">{thisGame && thisGame.secretPerson}</p>
               </div>
             </GameHeader>
 
             <AnswereGuessContainer>
-              <AnswereButton yes></AnswereButton>
+              <AnswereButton yes>
+                <img
+                  onClick={() => this.answereQuestion(lastGuess[0], true)}
+                  src={require('./icons/yes.svg')}
+                  alt=""/>
+              </AnswereButton>
               <IncomingGuessCard>
+                <GuessCardHeader>
+                  <div className="guessInfo">
+                    <p>{`${20-thisGame.remainingGuesses}`}</p>
+                    <div className="lastGuesser" style={{backgroundImage: `url(${opponents.photo})`}}></div>
+                  </div>
+                </GuessCardHeader>
                 {lastGuess ?
                   <div>
-                    <h2 className="testThisShit">{lastGuess[1].guess && lastGuess[1].guess}</h2>
-                    <button onClick={() => this.answereQuestion(lastGuess[0], true)}>Yes</button>
-                    <button onClick={() => this.answereQuestion(lastGuess[0], false)}>No</button>
+                    <div className="questionText">{lastGuess[1].guess && lastGuess[1].guess}</div>
                   </div>
                   : <div>
-                    <h2 className="testThisShit">Väntar på nästa fråga</h2>
+                    <div className="questionText">Väntar på nästa fråga</div>
                   </div>
                 }
               </IncomingGuessCard>
 
-              <AnswereButton></AnswereButton>
+              <AnswereButton>
+                <img
+                  onClick={() => this.answereQuestion(lastGuess[0], false)}
+                  src={require('./icons/no.svg')}
+                  alt=""/>
+              </AnswereButton>
             </AnswereGuessContainer>
 
             <GameFooter>
-              <p>Historik</p>
-              <Link to="/">Hem</Link>
+              <DirectionButton text="Historik" arrowLeft={true} swipe={this.goPrev}/>
+              <BackToHome />
             </GameFooter>
 
           </GameContainer>

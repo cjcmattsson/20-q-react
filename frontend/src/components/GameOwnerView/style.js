@@ -1,17 +1,7 @@
 import styled from 'styled-components';
 
 export const AllGameContainer = styled.div `
-.parallax-bg {
-    background-color: #FFE9DD;
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 200%;
-    height: 100%;
-    -webkit-background-size: cover;
-    background-size: cover;
-    background-position: left;
-}
+  color: var(--text-grey);
 `;
 
 export const GameContainer = styled.div `
@@ -37,8 +27,10 @@ export const GameHeader = styled.div `
     .blurredImage {
       height: 61px;
       width: 61px;
-      background-color:hotpink;
+      background-color: var(--strong-pink);
       border-radius: 2px;
+      background-position: center;
+      background-size: cover;
     }
 
     .headerText {
@@ -47,6 +39,13 @@ export const GameHeader = styled.div `
 
       p {
         margin: 0;
+      }
+
+      .guessNr {
+        font-size: 32px;
+      }
+      .secretPerson {
+        font-size: 16px;
       }
     }
   }
@@ -61,10 +60,11 @@ export const AnswereGuessContainer = styled.div `
 `;
 
 export const AnswereButton = styled.div `
-  height: 50px;
+  height: 61px;
+  width: 61px;
   border-radius: 50%;
-  width: 50px;
-  border: 2px solid ${props => props.yes ? "green" : "red"};
+  margin: 24px;
+  border: 2px solid ${props => props.yes ? "var(--victory-blue)" : "var(--error-red)"};
 `;
 
 export const IncomingGuessCard = styled.div `
@@ -77,8 +77,44 @@ export const IncomingGuessCard = styled.div `
   -webkit-box-shadow: var(--box-shadow);
   -moz-box-shadow: var(--box-shadow);
   box-shadow: var(--box-shadow);
+
+  .questionText {
+    width: 100%;
+    height: 70%;
+    font-size: 32px;
+    text-align: left;
+    display: inline-block;
+    padding: 16px 0;
+    border: none;
+  }
 `;
 
+export const GuessCardHeader = styled.div `
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+
+  p {
+    font-size: 25px;
+  }
+
+  .guessInfo {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    .lastGuesser {
+      height: 25px;
+      width: 25px;
+      margin-left: 10px;
+      border-radius: 2px;
+      background-position: center;
+      background-size: cover;
+      background-color: var(--strong-pink);
+    }
+  }
+`;
 
 
 export const GameFooter = styled.div `
@@ -86,13 +122,24 @@ export const GameFooter = styled.div `
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  align-items: flex-end;
 `;
 
 export const History = styled.div `
-  padding: 25px 0;
+  padding: 0 0 25px;
   height: 100vh;
   width: 100vw;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+
+  .historyFooter {
+    margin: 0 25px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+    p {
+      margin: 0;
+    }
+  }
 `;
