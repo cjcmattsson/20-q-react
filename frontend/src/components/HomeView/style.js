@@ -4,9 +4,24 @@ export const HomeViewContainer = styled.div `
   padding: 24px 30px;
   display: flex;
   flex-direction: column;
+  width: 100vw;
+  height: auto;
+
+  .logout {
+    position: relative;
+  }
+
+  .bg {
+    height: 130%;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
 `;
 
 export const ProfileTop = styled.div `
+  position: relative;
   height: 61px;
   width: 100%;
   display: flex;
@@ -49,6 +64,7 @@ export const ProfileTop = styled.div `
 `;
 
 export const HomeGamesContainer = styled.div `
+  position: relative;
   margin-top: 32px;
   text-align: left;
   display: flex;
@@ -72,6 +88,7 @@ export const HomeGamesContainer = styled.div `
 `;
 
 export const HomeButtonsWrapper = styled.div `
+  position: relative;
   height: auto;
   width: 100%;
   display: flex;

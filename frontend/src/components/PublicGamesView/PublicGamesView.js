@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import firebase from '../../utils/firebase';
-import GameCardLink from '../GameCardLink/GameCardLink';
 import { PublicGamesViewContainer } from './style';
 import { Link } from '@reach/router';
 
@@ -46,6 +45,7 @@ class PublicGamesView extends Component {
     .update({
       gameGuesserId: this.state.user.uid,
       gameGuesserName: this.props.user.displayName,
+      gameGuesserImage: this.props.user.photoURL ? this.props.user.photoURL : "./images/profile-avatar.svg",
     })
   }
 
@@ -61,10 +61,6 @@ class PublicGamesView extends Component {
           this.state.allGames.map((game, key) => {
             return (
             <div key={key}>
-              <GameCardLink
-                redirectTo={`/gameGuesserView/${game[0]}`}
-                remainingGuesses={`${20-game[1].remainingGuesses}/20`}
-                guesser={game[1].gameGuesserName} />
               <h2 onClick={() => this.joinGame(game[0])}>Play with: {game[1].gameOwnerName}</h2>
               <p>(pssst! The correct answere is {game[1].secretPerson})</p>
               {this.props.user.uid===game[1].gameOwnerId

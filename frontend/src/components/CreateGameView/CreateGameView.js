@@ -54,6 +54,7 @@ class CreateGameView extends Component {
       remainingGuesses: 19,
       gameOwnerId: firebase.auth().currentUser.uid,
       gameOwnerName: firebase.auth().currentUser.displayName,
+      gameOwnerImage: firebase.auth().currentUser.photoURL ? firebase.auth().currentUser.photoURL : "./images/profile-avatar.svg",
       gameGuesserId: {},
     }
     games.push(game);

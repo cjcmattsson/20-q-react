@@ -1,8 +1,14 @@
 import React, { Component } from 'react';
 import { Link } from "@reach/router";
 import firebase from '../../utils/firebase';
-import GameCardLink from '../GameCardLink/GameCardLink';
+import GameCardOwner from '../GameCardOwner/GameCardOwner';
+import GameCardGuesser from '../GameCardGuesser/GameCardGuesser';
 import ButtonLarge from '../ButtonLarge/ButtonLarge';
+import Lottie from 'react-lottie';
+import {
+  optionsBackgroundAnimPink,
+  optionsBackgroundAnimGrey
+} from '../utils/LottieOptions.js';
 import {
   HomeViewContainer,
   ProfileTop,
@@ -56,7 +62,6 @@ class HomeView extends Component {
             if (this._isMounted) {
               if (snapshot.val()) {
                 this.setState({myGamesOwner: Object.entries(snapshot.val())})
-                console.log(this.state.myGamesOwner);
               }
             }
           })
@@ -67,7 +72,6 @@ class HomeView extends Component {
             if (this._isMounted) {
               if (snapshot.val()) {
                 this.setState({myGamesGuesser: Object.entries(snapshot.val())})
-                console.log(this.state.myGamesGuesser);
               }
             }
           })
@@ -90,7 +94,18 @@ class HomeView extends Component {
     const {user} = this.props;
     return (
       <HomeViewContainer>
-
+        <div className="bg">
+          <Lottie
+            style={{width: "100%", position: "absolute"}}
+            options={optionsBackgroundAnimGrey}
+            isStopped={false}
+          />
+          <Lottie
+            style={{width: "100%", position: "absolute"}}
+            options={optionsBackgroundAnimPink}
+            isStopped={false}
+          />
+        </div>
         <ProfileTop>
           <div className="profilePic" style={{backgroundImage: user.photoURL ? `url("${this.props.user.photoURL}?height=500")` : `url("./images/profile-avatar.svg")`}}></div>
           <div className="userNameAndStats">
@@ -104,12 +119,15 @@ class HomeView extends Component {
           <div className="gamesWrapper">
             {myGamesOwner &&
               myGamesOwner.map((game, key) => {
-                return <GameCardLink
+                return <GameCardOwner
+                  gameID={game[0]}
                   key={key}
                   image={game[1].secretPersonImage}
                   redirectTo={`/gameOwnerView/${game[0]}`}
                   remainingGuesses={`${20-game[1].remainingGuesses}/20`}
-                  guesser={game[1].gameGuesserName} />
+                  guesser={game[1].gameGuesserName}
+                  opponentImage={game[1].gameGuesserImage}
+                />
               })}
           </div>
         </HomeGamesContainer>
@@ -119,12 +137,15 @@ class HomeView extends Component {
           <div className="gamesWrapper">
             {myGamesGuesser &&
               myGamesGuesser.map((game, key) => {
-              return <GameCardLink
+              return <GameCardGuesser
+                gameID={game[0]}
                 key={key}
                 image={game[1].secretPersonImage}
                 redirectTo={`/gameGuesserView/${game[0]}`}
                 remainingGuesses={`${20-game[1].remainingGuesses}/20`}
-                owner={game[1].gameOwnerName} />
+                owner={game[1].gameOwnerName}
+                ownerImage={game[1].gameOwnerImage}
+               />
             })}
             </div>
         </HomeGamesContainer>
@@ -134,7 +155,7 @@ class HomeView extends Component {
           <ButtonLarge buttonText={"Spela öppet spel"} redirectTo={"publicGamesView"} />
         </HomeButtonsWrapper>
 
-        <Link onClick={this.logout} to="/">Logout</Link>
+        <Link className="logout" onClick={this.logout} to="/">Logout</Link>
 
       </HomeViewContainer>
     )
