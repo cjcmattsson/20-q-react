@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import Lottie from 'react-lottie';
 import DirectionButton from '../DirectionButton/DirectionButton';
 import OneUserInviteCard from '../OneUserInviteCard/OneUserInviteCard';
+import NoLinkButton from '../NoLinkButton/NoLinkButton';
+import { Link } from '@reach/router';
 import firebase from '../../utils/firebase';
 import {
   optionsBackgroundAnimPink,
@@ -11,6 +13,8 @@ import {
   InvitePeopleToPlay,
   InvitePageHeader,
   AllUsers,
+  InvitedUsers,
+  StartGameSection
 } from './style';
 
 class InviteToGame extends Component {
@@ -18,10 +22,14 @@ class InviteToGame extends Component {
   state = {
     users: false,
     invitedUsers: false,
+    selectedPlayer: false,
+    searchField: "",
+    searchResult: false,
   }
 
   componentDidMount() {
     this.getAllUsers();
+    this.searchUsers();
   }
 
   getAllUsers = () => {
@@ -44,6 +52,7 @@ class InviteToGame extends Component {
         oneUser.on('value', (snapshot) => {
           if (snapshot.val()) {
             console.log(Object.values(snapshot.val())[0]);
+            this.setState({selectedPlayer: Object.values(snapshot.val())[0]})
           }
         })
       }
@@ -57,8 +66,28 @@ class InviteToGame extends Component {
     }
   }
 
+  searchUsers = () => {
+    let searchString = `${this.state.searchField}`;
+    let userSearch = firebase.database().ref(`users`).orderByChild('name').startAt(`${searchString}`).endAt(`${searchString}\uf8ff`);
+    if (userSearch) {
+      userSearch.on('value', (data) => {
+        if (data.val()) {
+          console.log(data.val());
+        }
+      })
+    }
+  }
+
+  handleChange = (e) => {
+    this.setState({ [e.target.name] : e.target.value,});
+  }
+
+  componentDidUpdate() {
+    this.searchUsers();
+  }
+
   render() {
-    const {users, invitedUsers} = this.state;
+    const {users, selectedPlayer, searchField, searchResult} = this.state;
 
     return (
       <InvitePeopleToPlay>
@@ -68,19 +97,29 @@ class InviteToGame extends Component {
         </div>
         <InvitePageHeader>
           <div className="topContent">
-            <DirectionButton text="Tillbaka" arrowLeft={true}/>
-            <p>Välj 1-4 motståndare</p>
+            <Link to="/">
+              <DirectionButton text="Tillbaka" arrowLeft={true}/>
+            </Link>
+            <p>Välj en motståndare</p>
           </div>
-          <input type="text" placeholder="Sök"/>
+          <input type="text" onChange={this.handleChange} name="searchField" placeholder="Sök" value={searchField}/>
         </InvitePageHeader>
-        {invitedUsers ? invitedUsers.map((user, key) => {
-        return <h1 key={key}>{user}</h1>
-      }) : <div>empty</div>
-      }
+          {selectedPlayer
+            ? <StartGameSection>
+                <InvitedUsers>
+                  <div className="image" style={{backgroundImage: `url(${selectedPlayer.photo})`}}></div>
+                  <div className="text">
+                    <p>Spela med:</p>
+                    <p>{selectedPlayer.name}</p>
+                  </div>
+                </InvitedUsers>
+                <NoLinkButton text={"Starta spel"} color={"var(--strong-pink)"} function={this.props.nextSwiperSlide}/>
+              </StartGameSection>
+            : <div>no one invited</div>}
         <AllUsers>
           <h2>20 frågor-vänner</h2>
           {users && users.map((user, key) => {
-            return (
+            return (user.name &&
               <OneUserInviteCard
                 key={key}
                 myFunc={this.addUser}

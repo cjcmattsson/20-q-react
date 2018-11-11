@@ -39,6 +39,11 @@ export const InvitePageHeader = styled.div `
     display: flex;
     flex-direction: row;
 
+    a {
+      color: var(--text-grey);
+      text-decoration: none;
+    }
+
     p {
       margin: 0;
       flex: 1;
@@ -57,6 +62,42 @@ export const InvitePageHeader = styled.div `
 
     :focus {
       outline: none;
+    }
+  }
+`;
+
+export const StartGameSection = styled.div `
+  position: relative;
+`;
+
+export const InvitedUsers = styled.div `
+  margin: 24px 0;
+  position: relative;
+  height: 61px;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  transition: all 1s ease;
+
+  .image {
+    height: 100%;
+    width: 61px;
+    background-position: center;
+    background-size: cover;
+    border-radius: 2px;
+  }
+
+  .text {
+    flex: 1;
+    padding-left: 8px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+    flex-direction: column;
+
+    p {
+      margin: 0;
     }
   }
 `;

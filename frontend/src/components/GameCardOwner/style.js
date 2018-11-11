@@ -19,7 +19,7 @@ export const GameCardLinkContainer = styled.div `
 
 `;
 
-export const GamePicBlurred = styled.div `
+export const SecretPerson = styled.div `
   height: 100%;
   width: 71px;
   border-radius: 4px 0 0 4px;
@@ -28,11 +28,6 @@ export const GamePicBlurred = styled.div `
   align-items: center;
   background-size: cover;
   background-position: center;
-
-  canvas {
-    border-radius: 4px 0 0 4px;
-    height: 100%;
-  }
 
   p {
     height: 71px;

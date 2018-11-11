@@ -151,7 +151,7 @@ class HomeView extends Component {
         </HomeGamesContainer>
 
         <HomeButtonsWrapper>
-          <ButtonLarge buttonText={"Starta nytt spel"} redirectTo={"createGameView"} />
+          <ButtonLarge buttonText={"Starta spel"} redirectTo={"createGameView"} />
           <ButtonLarge buttonText={"Spela öppet spel"} redirectTo={"publicGamesView"} />
         </HomeButtonsWrapper>
 

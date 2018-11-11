@@ -71,17 +71,28 @@ class CreateGameView extends Component {
     this.setState({chosenPerson: "", chosenImg: ""})
   }
 
+  constructor(props) {
+      super(props)
+      this.swiper = null
+    }
+
+    goNext = () => {
+      if (this.swiper) this.swiper.slideNext();
+    }
+
+    goPrev = () => {
+      if (this.swiper) this.swiper.slidePrev();
+    }
+
   render() {
-
-
 
     const params = {
       speed: 600,
     };
     return (
-      <Swiper {...params} initialSlide={0}>
+      <Swiper {...params} initialSlide={0} ref={node => {if(node) this.swiper = node.swiper}}>
         <div>
-          <InviteToGame />
+          <InviteToGame nextSwiperSlide={this.goNext}/>
         </div>
         <CreateGameContainer>
           <h2>Jag tänker på:</h2>
@@ -115,7 +126,7 @@ class CreateGameView extends Component {
             <StarGameButton onClick={this.createGame}>
               <img src={require('./send.svg')} alt=""/>
             </StarGameButton>
-            <div className="goBack">
+            <div className="goBack" onClick={this.goPrev}>
               <DirectionButton text="Tillbaka" arrowLeft={true}/>
             </div>
           </CreateGameContainer>

@@ -65,6 +65,7 @@ export const AnswereButton = styled.div `
   border-radius: 50%;
   margin: 24px;
   border: 2px solid ${props => props.yes ? "var(--victory-blue)" : "var(--error-red)"};
+  transition: all 0.5s ease;
 `;
 
 export const IncomingGuessCard = styled.div `
@@ -78,7 +79,7 @@ export const IncomingGuessCard = styled.div `
   -moz-box-shadow: var(--box-shadow);
   box-shadow: var(--box-shadow);
 
-  .questionText {
+  .questionText, .questionTextWaiting {
     width: 100%;
     height: 70%;
     font-size: 32px;
@@ -87,6 +88,35 @@ export const IncomingGuessCard = styled.div `
     padding: 16px 0;
     border: none;
   }
+
+.questionTextWaiting {
+  color: var(--light-grey);
+  :after {
+    content: ' .';
+    animation: dots 2s steps(5, end) infinite;
+    color: var(--light-grey);
+  }
+}
+
+  @keyframes dots {
+  0%, 20% {
+    color: rgba(0,0,0,0);
+    text-shadow:
+      .25em 0 0 rgba(0,0,0,0),
+      .5em 0 0 rgba(0,0,0,0);}
+  40% {
+    color: var(--light-grey);
+    text-shadow:
+      .25em 0 0 rgba(0,0,0,0),
+      .5em 0 0 rgba(0,0,0,0);}
+  60% {
+    text-shadow:
+      .25em 0 0 var(--light-grey),
+      .5em 0 0 rgba(0,0,0,0);}
+  80%, 100% {
+    text-shadow:
+      .25em 0 0 var(--light-grey),
+      .5em 0 0 var(--light-grey);}}
 `;
 
 export const GuessCardHeader = styled.div `

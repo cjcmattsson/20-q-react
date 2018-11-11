@@ -13,4 +13,8 @@ export const NoLinkButtonContainer = styled.button `
   font-size: 16px;
   border: none;
   font-family: "Manrope Semibold";
+
+  :focus, :active {
+    outline: none;
+  }
 `;

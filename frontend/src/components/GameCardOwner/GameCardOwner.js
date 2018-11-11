@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import firebase from '../../utils/firebase';
 import {
   GameCardLinkContainer,
-  GamePicBlurred,
+  SecretPerson,
   GameInfo
  } from './style.js';
 import { Link } from "@reach/router";
@@ -16,7 +16,6 @@ class GameCardOwner extends Component {
   _isMounted = true;
 
   componentDidMount() {
-    this.updateCanvas();
     this.checkForUnansweredGuess();
   }
 
@@ -35,22 +34,6 @@ class GameCardOwner extends Component {
       });
   }
 
-  updateCanvas = () => {
-    const ctx = this.refs.canvas.getContext('2d'),
-        img = new Image();
-    ctx.mozImageSmoothingEnabled = false;
-    ctx.webkitImageSmoothingEnabled = false;
-    ctx.imageSmoothingEnabled = false;
-    img.onload = () => {
-      var size = 15 * 0.01,
-          w = this.refs.canvas.width * size,
-          h = this.refs.canvas.height * size;
-      ctx.drawImage(img, 0, 0, w, h);
-      ctx.drawImage(this.refs.canvas, 0, 0, w, h, 0, 0, this.refs.canvas.width, this.refs.canvas.height);
-    };
-    img.src = this.props.image;
-  }
-
   componentWillUnmount() {
     this._isMounted = true;
   }
@@ -60,10 +43,9 @@ class GameCardOwner extends Component {
     return (
       <GameCardLinkContainer>
         <Link to={this.props.redirectTo}>
-          <GamePicBlurred>
-            <canvas ref="canvas" width={"100%"} height={"100%"}/>
+          <SecretPerson style={{backgroundImage: `url(${this.props.image})`}}>
             <p>{this.props.remainingGuesses}</p>
-          </GamePicBlurred>
+          </SecretPerson>
           <GameInfo answere={this.state.newQuestionRecieved}>
             <div className="statusAndOpponent">
               {this.state.newQuestionRecieved ? <h3>Din tur!</h3> : <h3>Väntar på fråga...</h3>}

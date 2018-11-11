@@ -158,7 +158,7 @@ class GameOwnerView extends Component {
             </GameHeader>
 
             <AnswereGuessContainer>
-              <AnswereButton yes>
+              <AnswereButton yes style={{opacity: lastGuess ? 1 : 0.3}}>
                 <img
                   onClick={() => this.answereQuestion(lastGuess[0], true)}
                   src={require('./icons/yes.svg')}
@@ -168,7 +168,7 @@ class GameOwnerView extends Component {
                 <GuessCardHeader>
                   <div className="guessInfo">
                     <p>{`${20-thisGame.remainingGuesses}`}</p>
-                    <div className="lastGuesser" style={{backgroundImage: `url(${opponents.photo})`}}></div>
+                    <div className="lastGuesser" style={{backgroundImage: opponents && `url(${opponents.photo})`}}></div>
                   </div>
                 </GuessCardHeader>
                 {lastGuess ?
@@ -176,12 +176,12 @@ class GameOwnerView extends Component {
                     <div className="questionText">{lastGuess[1].guess && lastGuess[1].guess}</div>
                   </div>
                   : <div>
-                    <div className="questionText">Väntar på nästa fråga</div>
+                    <div className="questionTextWaiting">Väntar på nästa fråga</div>
                   </div>
                 }
               </IncomingGuessCard>
 
-              <AnswereButton>
+              <AnswereButton style={{opacity: lastGuess ? 1 : 0.3}}>
                 <img
                   onClick={() => this.answereQuestion(lastGuess[0], false)}
                   src={require('./icons/no.svg')}
