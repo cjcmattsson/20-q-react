@@ -55,6 +55,11 @@ export const GameContainer = styled.div `
   p {
     margin: 0;
   }
+
+  .guessWhoItIs {
+    width: 100%;
+    max-width: 314px;
+  }
 `;
 
 export const GameHeader = styled.div `
@@ -91,6 +96,7 @@ export const GameHeader = styled.div `
 `;
 
 export const GuessCard = styled.div `
+  transition: all 1s ease;
   animation: ${moveCard} 1s linear;
   background-color: white;
   width: 100%;
@@ -158,18 +164,6 @@ export const GuessCardHeader = styled.div `
   }
 `;
 
-export const GuessWhoItIs = styled.div `
-  color: white;
-  width: 70%;
-  height: 61px;
-  border-radius: 50px;
-  background-color: var(--strong-pink);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-transform: uppercase;
-`;
-
 export const GameFooter = styled.div `
   width: 100%;
   display: flex;
@@ -207,5 +201,111 @@ export const History = styled.div `
     p {
       margin: 0;
     }
+  }
+`;
+
+const size = ({sizeOfCard}) => {
+  if (sizeOfCard === false) return "enlarge";
+  else if (sizeOfCard === true) return "shrink";
+}
+
+export const GuessWhoItIsContainer = styled.div `
+  background-color: white;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  height: 100vh;
+  width: 100vw;
+  padding: 47px;
+  padding-top: 150px;
+  animation-name: ${size};
+  animation-duration: 1s;
+
+@keyframes enlarge {
+    0%   {opacity: 0;}
+    100% {opacity: 1;}
+}
+
+@keyframes shrink {
+    0%   {opacity: 1;}
+    100% {opacity: 0;}
+}
+
+  h2 {
+    font-size: 24px;
+    margin: 0 0 16px;
+  }
+
+  .secretPerson {
+    height: 38px;
+    width: 100%;
+    font-size: 32px;
+    border: none;
+    padding-left: 0;
+    margin-bottom: 12px;
+
+    :focus {
+      outline: none;
+    }
+  }
+
+  .goBack {
+    position: absolute;
+    bottom: 20px;
+    left: 47px;
+  }
+`;
+
+export const SearchResultWrapper = styled.div `
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+
+  @keyframes fadein {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+`;
+
+export const SearchResult = styled.div `
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin: 10px 0 0;
+  animation: fadein 0.5s;
+
+  .profilePic {
+    height: 38px;
+    width: 38px;
+    background-position: center;
+    background-size: contain;
+    background-color: white;
+  }
+
+  p {
+    font-size: 16px;
+    margin: 0;
+    padding-left: 8px;
+    flex: 1;
+    text-align: left;
+    display: flex;
+    align-items: center;
+  }
+
+
+`;
+
+export const StarGameButton = styled.div `
+  position: absolute;
+  bottom: 25vh;
+  right: 46px;
+  height: 38px;
+  width: 38px;
+
+  img {
+    height: 100%;
+    width: 100%;
   }
 `;

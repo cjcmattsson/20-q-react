@@ -7,6 +7,7 @@ import CreateGameView from '../CreateGameView/CreateGameView';
 import PublicGamesView from '../PublicGamesView/PublicGamesView';
 import GameGuesserView from '../GameGuesserView/GameGuesserView';
 import GameOwnerView from '../GameOwnerView/GameOwnerView';
+import GuessWhoItIs from '../GuessWhoItIs/GuessWhoItIs';
 import { Router } from "@reach/router";
 
 class App extends Component {
@@ -41,6 +42,7 @@ class App extends Component {
           <PublicGamesView user={user} path="/publicGamesView" />
           <GameGuesserView path="/gameGuesserView/:gameID" />
           <GameOwnerView path="/gameOwnerView/:gameID" />
+          <GuessWhoItIs path="/guess" />
         </Router>
       </div>
     );

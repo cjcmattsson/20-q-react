@@ -5,6 +5,7 @@ import Lottie from 'react-lottie';
 import HistoryContainer from '../HistoryContainer/HistoryContainer';
 import DirectionButton from '../DirectionButton/DirectionButton';
 import BackToHome from '../BackToHome/BackToHome';
+import NoLinkButton from '../NoLinkButton/NoLinkButton';
 import {
   optionsSend,
   optionsWaiting,
@@ -19,7 +20,10 @@ import {
   GameFooter,
   History,
   GuessCardHeader,
-  GuessWhoItIs
+  GuessWhoItIsContainer,
+  SearchResultWrapper,
+  SearchResult,
+  StarGameButton,
 } from './style';
 
 class GameGuesserView extends Component {
@@ -33,6 +37,14 @@ class GameGuesserView extends Component {
     answere: null,
     answereRecieved: false,
     lastGuess: null,
+
+    secretPerson : "",
+    wikiApiRequest: [],
+    chosenPerson: "",
+    chosenImg: "",
+    guessWhoItIs: false,
+    unMountGuess: false,
+    resultOfGuess: null,
   }
 
   _isMounted = true;
@@ -58,6 +70,82 @@ class GameGuesserView extends Component {
       this.checkIfAnswereRecieved();
     }
   }
+
+  searchWikiApi = () => {
+    if (this.state.secretPerson) {
+      fetch(`https://sv.wikipedia.org/w/api.php?action=query&format=json&prop=pageimages%7Cpageterms&generator=prefixsearch&formatversion=2&piprop=thumbnail&pithumbsize=200&pilimit=3&wbptterms=description&gpssearch=${this.state.secretPerson}&gpslimit=3&origin=*`)
+      .then(res => res.json())
+      .then((result) => {
+        console.log(result);
+        if (result.query) {
+          const searchResults = result.query.pages;
+          this.setState({wikiApiRequest: searchResults})
+          console.log(this.state.wikiApiRequest);
+        }
+      })
+    }
+    if (this.state.wikiApiRequest === []) {
+      this.setState({wikiApiRequest: false})
+    }
+  }
+
+  selectSecretPerson = (person) => {
+    const name = person.title;
+    const image = person.thumbnail ? person.thumbnail.source : "https://banner2.kisspng.com/20180131/fvw/kisspng-question-mark-icon-question-mark-5a7214f2980a92.2259030715174259066228.jpg";
+    this.setState({chosenPerson: name, chosenImg: image, wikiApiRequest: []})
+  }
+
+  unSelectPerson = () => {
+    this.setState({chosenPerson: "", chosenImg: ""})
+  }
+
+  mountGuess = () => {
+    this.setState({guessWhoItIs: true,})
+  }
+
+  unMountGuess = () => {
+    this.setState({unMountGuess: true})
+    setTimeout(() => {
+      this.setState({guessWhoItIs: false, unMountGuess: false})
+    }, 1000)
+  }
+
+  seeIfCorrectAnswere = () => {
+    let correctAnswere = this.state.thisGame.secretPerson;
+    let guess = this.state.chosenPerson;
+    console.log(correctAnswere == guess);
+    if (correctAnswere == guess) {
+      {/*RÄTT means CORRECT in swedish*/}
+      this.setState({resultOfGuess: "rätt"})
+      firebase.database().ref(`games/${this.props.gameID}`)
+      .push({
+        theGuessersGuess: this.state.guessInputField,
+      })
+    } else {
+      {/*FEL means WRONG in swedish*/}
+      this.setState({resultOfGuess: "fel"})
+    }
+  }
+
+  sendGuess = (game) => {
+    firebase.database().ref(`games/${this.props.gameID}/guesses`)
+    .push({
+      guess: this.state.guessInputField,
+    })
+    firebase.database().ref(`games/${this.props.gameID}/remainingGuesses`)
+    .transaction((remainingGuesses) => {
+      if (remainingGuesses) {
+        remainingGuesses = remainingGuesses - 1;
+      }
+      return remainingGuesses;
+    })
+    this.setState({questionIsNotSent: false})
+    setTimeout(() => {
+      this.setState({waitingForAnswere: true});
+      localStorage.setItem('waitingForAnswere', true);
+    }, 1200);
+  }
+
 
   checkIfThereAreAnyGuesses = () => {
       firebase.database().ref(`games/${this.props.gameID}/guesses`).on('value', (data) => {
@@ -89,6 +177,13 @@ class GameGuesserView extends Component {
     .on('value', (data) => {
         this.setState({thisGame: data.val()})
         console.log(data.val());
+        if (data.val().waitingForAnswere) {
+          firebase.database()
+          .ref(`games/${this.props.gameID}`)
+          .update({
+            waitingForAnswere: false,
+          });
+        }
     });
   }
 
@@ -135,6 +230,9 @@ class GameGuesserView extends Component {
   handleChange = (e) => {
     if (this._isMounted) {
       this.setState({ [e.target.className] : e.target.value});
+      if (e.target.value === "") {
+        this.setState({wikiApiRequest: []})
+      }
     }
   }
 
@@ -165,7 +263,14 @@ class GameGuesserView extends Component {
       }
     };
 
-    const {thisGame, thisGamesGuesses, questionIsNotSent, waitingForAnswere} = this.state;
+    const {
+      thisGame,
+      thisGamesGuesses,
+      questionIsNotSent,
+      waitingForAnswere,
+      guessWhoItIs,
+      resultOfGuess,
+    } = this.state;
 
     return(
       <AllGameContainer answere={this.state.answere}>
@@ -189,11 +294,47 @@ class GameGuesserView extends Component {
           <History>
             <HistoryContainer guesses={thisGamesGuesses} />
             <div className="historyFooter">
-              <DirectionButton text="Tillbaka" arrowRight={true} swipe={this.goNext}/>
+              <DirectionButton text={"Tillbaka"} arrowRight={true} swipe={this.goNext}/>
             </div>
           </History>
 
           <GameContainer>
+            {guessWhoItIs && <GuessWhoItIsContainer sizeOfCard={this.state.unMountGuess}>
+              <h2>{resultOfGuess ? `Du gissade ${resultOfGuess}!` : `Jag tror att det är:`}</h2>
+              {this.state.chosenPerson ?
+                <SearchResult>
+                  <div className="profilePic" style={{backgroundImage: this.state.chosenImg && `url(${this.state.chosenImg})`}}></div>
+                  <p>{this.state.chosenPerson}</p>
+                  <div onClick={this.unSelectPerson}>X</div>
+                </SearchResult> :
+                <input
+                  onChange={this.handleChange}
+                  value={this.state.secretPerson}
+                  onKeyUp={this.searchWikiApi}
+                  name="secretPerson"
+                  type="text"
+                  className="secretPerson"
+                  placeholder="Tänk på att du bara har en gissning"/>
+                }
+                <SearchResultWrapper>
+                  {this.state.wikiApiRequest &&
+                    this.state.wikiApiRequest.map((person, key) => {
+                      return (
+                        <SearchResult key={key} onClick={() => {this.selectSecretPerson(person)}}>
+                          <div className="profilePic" style={{backgroundImage: person.thumbnail ? `url(${person.thumbnail.source})` : `url(${"https://banner2.kisspng.com/20180131/fvw/kisspng-question-mark-icon-question-mark-5a7214f2980a92.2259030715174259066228.jpg"})`}}></div>
+                          <p>{person.title}</p>
+                        </SearchResult>
+                      )
+                    })
+                  }
+                </SearchResultWrapper>
+                <StarGameButton onClick={this.seeIfCorrectAnswere}>
+                  <img src={require('./send.svg')} alt=""/>
+                </StarGameButton>
+                <div className="goBack" onClick={this.unMountGuess}>
+                  <DirectionButton text="Tillbaka" arrowLeft={true}/>
+                </div>
+              </GuessWhoItIsContainer>}
             <GameHeader>
               <div className="blurredImage" style={{backgroundImage: `url(${thisGame.secretPersonImage})`}}></div>
               <div className="headerText">
@@ -246,7 +387,9 @@ class GameGuesserView extends Component {
                 </div>
               </GuessCard>
 
-              <GuessWhoItIs>Jag tror jag vet!</GuessWhoItIs>
+              <div className="guessWhoItIs">
+                <NoLinkButton function={this.mountGuess} color={"var(--strong-pink)"} text={"Jag vill gissa!"} />
+              </div>
 
               <GameFooter>
                 <DirectionButton text="Historik" arrowLeft={true} swipe={this.goPrev}/>

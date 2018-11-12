@@ -21,8 +21,6 @@ class InviteToGame extends Component {
 
   state = {
     users: false,
-    invitedUsers: false,
-    selectedPlayer: false,
     searchField: "",
     searchResult: false,
   }
@@ -40,39 +38,14 @@ class InviteToGame extends Component {
     })
   }
 
-  invited = [];
-  addUser = (event) => {
-    let invitedList = this.invited;
-    if (!invitedList.includes(event.target.value)) {
-      this.invited.push(event.target.value)
-      this.setState({invitedUsers: invitedList})
-      console.log(this.state.invitedUsers);
-      let oneUser = firebase.database().ref(`users`).orderByChild('uid').equalTo(`${event.target.value}`);
-      if (oneUser) {
-        oneUser.on('value', (snapshot) => {
-          if (snapshot.val()) {
-            console.log(Object.values(snapshot.val())[0]);
-            this.setState({selectedPlayer: Object.values(snapshot.val())[0]})
-          }
-        })
-      }
-    } else {
-      for(var i = invitedList.length - 1; i >= 0; i--) {
-        if(invitedList[i] === event.target.value) {
-          invitedList.splice(i, 1);
-          console.log(this.state.invitedUsers);
-        }
-      }
-    }
-  }
-
   searchUsers = () => {
     let searchString = `${this.state.searchField}`;
-    let userSearch = firebase.database().ref(`users`).orderByChild('name').startAt(`${searchString}`).endAt(`${searchString}\uf8ff`);
+    let userSearch = firebase.database().ref(`users`).orderByChild('name').equalTo(`${searchString}`);
     if (userSearch) {
       userSearch.on('value', (data) => {
         if (data.val()) {
           console.log(data.val());
+          this.setState({searchResult: data.val()})
         }
       })
     }
@@ -87,7 +60,7 @@ class InviteToGame extends Component {
   }
 
   render() {
-    const {users, selectedPlayer, searchField, searchResult} = this.state;
+    const {users, searchField, searchResult} = this.state;
 
     return (
       <InvitePeopleToPlay>
@@ -104,13 +77,13 @@ class InviteToGame extends Component {
           </div>
           <input type="text" onChange={this.handleChange} name="searchField" placeholder="Sök" value={searchField}/>
         </InvitePageHeader>
-          {selectedPlayer
+          {this.props.selectedPlayer
             ? <StartGameSection>
                 <InvitedUsers>
-                  <div className="image" style={{backgroundImage: `url(${selectedPlayer.photo})`}}></div>
+                  <div className="image" style={{backgroundImage: `url(${this.props.selectedPlayer.photo})`}}></div>
                   <div className="text">
                     <p>Spela med:</p>
-                    <p>{selectedPlayer.name}</p>
+                    <p>{this.props.selectedPlayer.name}</p>
                   </div>
                 </InvitedUsers>
                 <NoLinkButton text={"Starta spel"} color={"var(--strong-pink)"} function={this.props.nextSwiperSlide}/>
@@ -122,7 +95,7 @@ class InviteToGame extends Component {
             return (user.name &&
               <OneUserInviteCard
                 key={key}
-                myFunc={this.addUser}
+                myFunc={this.props.addUser}
                 name={user.name}
                 photo={user.photo}
                 for={key}

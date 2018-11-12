@@ -16,7 +16,35 @@ class CreateGameView extends Component {
     secretPerson : "",
     wikiApiRequest: [],
     chosenPerson: "",
+    invitedUsers: false,
+    selectedPlayer: false,
     chosenImg: "",
+  }
+
+  invited = [];
+  addUser = (event) => {
+    let invitedList = this.invited;
+    if (!invitedList.includes(event.target.value)) {
+      this.invited.push(event.target.value)
+      this.setState({invitedUsers: invitedList})
+      console.log(this.state.invitedUsers);
+      let oneUser = firebase.database().ref(`users`).orderByChild('uid').equalTo(`${event.target.value}`);
+      if (oneUser) {
+        oneUser.on('value', (snapshot) => {
+          if (snapshot.val()) {
+            console.log(Object.values(snapshot.val())[0]);
+            this.setState({selectedPlayer: Object.values(snapshot.val())[0]})
+          }
+        })
+      }
+    } else {
+      for(var i = invitedList.length - 1; i >= 0; i--) {
+        if(invitedList[i] === event.target.value) {
+          invitedList.splice(i, 1);
+          console.log(this.state.invitedUsers);
+        }
+      }
+    }
   }
 
   searchWikiApi = () => {
@@ -55,7 +83,10 @@ class CreateGameView extends Component {
       gameOwnerId: firebase.auth().currentUser.uid,
       gameOwnerName: firebase.auth().currentUser.displayName,
       gameOwnerImage: firebase.auth().currentUser.photoURL ? firebase.auth().currentUser.photoURL : "./images/profile-avatar.svg",
-      gameGuesserId: {},
+      gameGuesserId: this.state.selectedPlayer.uid,
+      gameGuesserImage: this.state.selectedPlayer.photo,
+      gameGuesserName: this.state.selectedPlayer.name,
+      waitingForAnswere: true,
     }
     games.push(game);
     this.setState({secretPerson: ""})
@@ -92,7 +123,7 @@ class CreateGameView extends Component {
     return (
       <Swiper {...params} initialSlide={0} ref={node => {if(node) this.swiper = node.swiper}}>
         <div>
-          <InviteToGame nextSwiperSlide={this.goNext}/>
+          <InviteToGame selectedPlayer={this.state.selectedPlayer} addUser={this.addUser} nextSwiperSlide={this.goNext}/>
         </div>
         <CreateGameContainer>
           <h2>Jag tänker på:</h2>

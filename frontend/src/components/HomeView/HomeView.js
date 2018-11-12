@@ -3,6 +3,7 @@ import { Link } from "@reach/router";
 import firebase from '../../utils/firebase';
 import GameCardOwner from '../GameCardOwner/GameCardOwner';
 import GameCardGuesser from '../GameCardGuesser/GameCardGuesser';
+import GameCardInvited from '../GameCardInvited/GameCardInvited';
 import ButtonLarge from '../ButtonLarge/ButtonLarge';
 import Lottie from 'react-lottie';
 import {
@@ -22,11 +23,14 @@ class HomeView extends Component {
     user : {},
     myGamesOwner: false,
     myGamesGuesser: false,
+    myGamesInvitedToPlay: false,
+    me: false,
   }
 
   _isMounted = true;
 
   componentDidMount() {
+    this.getMe();
     this.getYourGames();
     setTimeout(() => {
       this.checkIfRegistered();
@@ -44,10 +48,33 @@ class HomeView extends Component {
           uid: this.state.user.uid,
           name: this.state.user.displayName,
           photo: this.state.user.photoURL ? this.state.user.photoURL: "./images/profile-avatar.svg",
+          wins: 0,
+          losses: 0,
         }
         database.ref('users').push(JSON.parse(JSON.stringify(player)));
       } else {
         console.log("user is already registered");
+
+      }
+    })
+  }
+
+  getMe = () => {
+    firebase.auth().onAuthStateChanged(user => {
+      if (user) {
+        firebase.database().ref(`users`).orderByChild('uid').equalTo(`${user.uid}`).on('value', (data) => {
+          let user = Object.values(data.val());
+          if (this._isMounted) {
+            this.setState({me: user[0]})
+          }
+          })
+      } else {
+        firebase.database().ref(`users`).orderByChild('uid').equalTo(`${this.props.user.uid}`).on('value', (data) => {
+          let user = Object.values(data.val());
+          if (this._isMounted) {
+            this.setState({me: user[0]})
+          }
+          })
       }
     })
   }
@@ -71,7 +98,18 @@ class HomeView extends Component {
           guesser.on('value', (snapshot) => {
             if (this._isMounted) {
               if (snapshot.val()) {
-                this.setState({myGamesGuesser: Object.entries(snapshot.val())})
+                {/*Games where you are invited to play, pending answere*/}
+                let activeGames = [];
+                let invitedToPlay = [];
+                Object.entries(snapshot.val()).forEach(game => {
+                  if (game[1].waitingForAnswere) {
+                    invitedToPlay.push(game);
+                  } else {
+                    activeGames.push(game);
+                  }
+                })
+                this.setState({myGamesGuesser: activeGames})
+                this.setState({myGamesInvitedToPlay: invitedToPlay})
               }
             }
           })
@@ -88,9 +126,11 @@ class HomeView extends Component {
     this._isMounted = false;
   }
 
+
+
   render() {
 
-    const {myGamesOwner, myGamesGuesser} = this.state;
+    const {myGamesOwner, myGamesGuesser, myGamesInvitedToPlay, me} = this.state;
     const {user} = this.props;
     return (
       <HomeViewContainer>
@@ -110,7 +150,7 @@ class HomeView extends Component {
           <div className="profilePic" style={{backgroundImage: user.photoURL ? `url("${this.props.user.photoURL}?height=500")` : `url("./images/profile-avatar.svg")`}}></div>
           <div className="userNameAndStats">
             <h1>{user ? user.displayName : "..."}</h1>
-            <p>15 vinster / 23 förluster</p>
+            <p>{me && me.wins} vinster / {me && me.losses} förluster</p>
           </div>
         </ProfileTop>
 
@@ -145,6 +185,19 @@ class HomeView extends Component {
                 remainingGuesses={`${20-game[1].remainingGuesses}/20`}
                 owner={game[1].gameOwnerName}
                 ownerImage={game[1].gameOwnerImage}
+               />
+            })}
+            </div>
+            {/* Invited to play */}
+          <div className="gamesWrapper">
+            {myGamesInvitedToPlay &&
+              myGamesInvitedToPlay.map((game, key) => {
+              return <GameCardInvited
+                gameID={game[0]}
+                key={key}
+                redirectTo={`/gameGuesserView/${game[0]}`}
+                image={game[1].secretPersonImage}
+                owner={game[1].gameOwnerName}
                />
             })}
             </div>
