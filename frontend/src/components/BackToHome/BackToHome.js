@@ -8,7 +8,7 @@ class BackToHome extends Component {
     return (
       <BackToHomeContainer>
         <Link to="/">
-          <img src={require('./home.svg')} alt=""/>
+          <img src={this.props.white ? require('./homeWhite.svg') : require('./home.svg')} alt=""/>
         </Link>
       </BackToHomeContainer>
 

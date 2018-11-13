@@ -30,11 +30,6 @@ export const GamePicBlurred = styled.div `
   background-size: cover;
   background-position: center;
 
-  canvas {
-    border-radius: 4px 0 0 4px;
-    height: 100%;
-  }
-
   p {
     height: 71px;
     width: 71px;
@@ -73,8 +68,7 @@ export const GameInfo = styled.div `
     flex-direction: column;
     justify-content: space-between;
 
-
-    .buttons {
+    .opponent {
       display: flex;
       flex-direction: row;
       align-items: center;
@@ -91,19 +85,3 @@ export const GameInfo = styled.div `
     }
   }
 `;
-
-export const AnswereButton = styled.div `
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 31px;
-  background-color: ${props => props.color};
-  width: 92px;
-  height: 26px;
-  color: white;
-  font-size: 11px;
-  font-family: "Manrope Semibold";
-  text-transform: uppercase;
-  margin-right: 4px;
-  text-decoration: none;
-`

@@ -23,7 +23,10 @@ import {
   GuessWhoItIsContainer,
   SearchResultWrapper,
   SearchResult,
-  StarGameButton,
+  SendFinalGuess,
+  FinalGuessResultWrapper,
+  FinalGuessContent,
+  PlayAgainButton
 } from './style';
 
 class GameGuesserView extends Component {
@@ -45,6 +48,7 @@ class GameGuesserView extends Component {
     guessWhoItIs: false,
     unMountGuess: false,
     resultOfGuess: null,
+    finalGuessIsSent: false,
   }
 
   _isMounted = true;
@@ -52,6 +56,7 @@ class GameGuesserView extends Component {
   componentDidMount() {
     if (this._isMounted) {
       this.getThisGame();
+
       this.checkIfAnswereRecieved();
       if (localStorage.getItem("waitingForAnswere")) {
         this.setState({waitingForAnswere: true, questionIsNotSent: false})
@@ -59,6 +64,7 @@ class GameGuesserView extends Component {
       this.getAllGuesses();
       this.checkIfThereAreAnyGuesses();
     }
+
   }
 
   componentWillUnmount() {
@@ -70,6 +76,8 @@ class GameGuesserView extends Component {
       this.checkIfAnswereRecieved();
     }
   }
+
+/*THIS IS WHERE THE GUESS CODE GOES!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
 
   searchWikiApi = () => {
     if (this.state.secretPerson) {
@@ -96,7 +104,7 @@ class GameGuesserView extends Component {
   }
 
   unSelectPerson = () => {
-    this.setState({chosenPerson: "", chosenImg: ""})
+    this.setState({chosenPerson: "", chosenImg: "", secretPerson: ""})
   }
 
   mountGuess = () => {
@@ -113,19 +121,62 @@ class GameGuesserView extends Component {
   seeIfCorrectAnswere = () => {
     let correctAnswere = this.state.thisGame.secretPerson;
     let guess = this.state.chosenPerson;
-    console.log(correctAnswere == guess);
-    if (correctAnswere == guess) {
-      {/*RÄTT means CORRECT in swedish*/}
-      this.setState({resultOfGuess: "rätt"})
+    console.log(correctAnswere === guess);
+    if (correctAnswere === guess) {
+      this.setState({resultOfGuess: true, finalGuessIsSent: true})
       firebase.database().ref(`games/${this.props.gameID}`)
-      .push({
-        theGuessersGuess: this.state.guessInputField,
+      .update({
+        theGuessersGuess: true,
       })
+      firebase.database().ref(`users`).orderByChild('uid').equalTo(`${this.state.thisGame.gameGuesserId}`).once('value', snapshot => {
+        if (snapshot.val()) {
+          let prevWins = Object.values(snapshot.val())[0].wins;
+          let newWins = prevWins + 1;
+          snapshot.forEach(child => {
+            child.ref.update({wins: newWins})
+          })
+        }
+      })
+      firebase.database().ref(`users`).orderByChild('uid').equalTo(`${this.state.thisGame.gameOwnerId}`).once('value', snapshot => {
+        if (snapshot.val()) {
+          let prevLosses = Object.values(snapshot.val())[0].losses;
+          let newLosses = prevLosses + 1;
+          snapshot.forEach(child => {
+            child.ref.update({losses: newLosses})
+          })
+        }
+      })
+
     } else {
-      {/*FEL means WRONG in swedish*/}
-      this.setState({resultOfGuess: "fel"})
+      this.setState({resultOfGuess: false, finalGuessIsSent: true})
+      firebase.database().ref(`games/${this.props.gameID}`)
+      .update({
+        theGuessersGuess: false,
+      })
+      firebase.database().ref(`users`).orderByChild('uid').equalTo(`${this.state.thisGame.gameOwnerId}`).once('value', snapshot => {
+        if (snapshot.val()) {
+          let prevWins = Object.values(snapshot.val())[0].wins;
+          let newWins = prevWins + 1;
+          snapshot.forEach(child => {
+            child.ref.update({wins: newWins})
+          })
+        }
+      })
+      firebase.database().ref(`users`).orderByChild('uid').equalTo(`${this.state.thisGame.gameGuesserId}`).once('value', snapshot => {
+        if (snapshot.val()) {
+          let prevLosses = Object.values(snapshot.val())[0].losses;
+          let newLosses = prevLosses + 1;
+          snapshot.forEach(child => {
+            child.ref.update({losses: newLosses})
+          })
+        }
+      })
     }
   }
+
+
+/*THIS IS WHERE THE GUESS CODE GOES!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
+
 
   sendGuess = (game) => {
     firebase.database().ref(`games/${this.props.gameID}/guesses`)
@@ -177,6 +228,7 @@ class GameGuesserView extends Component {
     .on('value', (data) => {
         this.setState({thisGame: data.val()})
         console.log(data.val());
+        this.updateCanvas(data.val().secretPersonImage);
         if (data.val().waitingForAnswere) {
           firebase.database()
           .ref(`games/${this.props.gameID}`)
@@ -191,13 +243,6 @@ class GameGuesserView extends Component {
     firebase.database().ref(`games/${this.props.gameID}/guesses`)
     .push({
       guess: this.state.guessInputField,
-    })
-    firebase.database().ref(`games/${this.props.gameID}/remainingGuesses`)
-    .transaction((remainingGuesses) => {
-      if (remainingGuesses) {
-        remainingGuesses = remainingGuesses - 1;
-      }
-      return remainingGuesses;
     })
     this.setState({questionIsNotSent: false})
     setTimeout(() => {
@@ -249,6 +294,22 @@ class GameGuesserView extends Component {
       if (this.swiper) this.swiper.slidePrev();
     }
 
+    updateCanvas = (setImage) => {
+      const ctx = this.refs.canvas.getContext('2d'),
+          img = new Image();
+      ctx.mozImageSmoothingEnabled = false;
+      ctx.webkitImageSmoothingEnabled = false;
+      ctx.imageSmoothingEnabled = false;
+      img.src = setImage;
+      img.onload = () => {
+        var size = 15 * 0.01,
+            w = this.refs.canvas.width * size,
+            h = this.refs.canvas.height * size;
+        ctx.drawImage(img, 0, 0, w, h);
+        ctx.drawImage(this.refs.canvas, 0, 0, w, h, 0, 0, this.refs.canvas.width, this.refs.canvas.height);
+      };
+    }
+
   render() {
     const params = {
       speed: 600,
@@ -263,6 +324,15 @@ class GameGuesserView extends Component {
       }
     };
 
+    const optionsResultOfFinalGuess = {
+      loop: false,
+      autoplay: true,
+      animationData: this.state.resultOfGuess ? require('./anims/guessright.json') : require('./anims/guesswrong.json'),
+      rendererSettings: {
+        preserveAspectRatio: 'xMidYMid slice'
+      }
+    };
+
     const {
       thisGame,
       thisGamesGuesses,
@@ -270,6 +340,7 @@ class GameGuesserView extends Component {
       waitingForAnswere,
       guessWhoItIs,
       resultOfGuess,
+      finalGuessIsSent,
     } = this.state;
 
     return(
@@ -289,6 +360,7 @@ class GameGuesserView extends Component {
 
         <Swiper
           {...params}
+          noSwiping={guessWhoItIs}
           initialSlide={1}
           ref={node => {if(node) this.swiper = node.swiper}}>
           <History>
@@ -299,13 +371,44 @@ class GameGuesserView extends Component {
           </History>
 
           <GameContainer>
+
+
+        {/*THIS IS WHERE THE GUESS CODE GOES!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/}
+
+
             {guessWhoItIs && <GuessWhoItIsContainer sizeOfCard={this.state.unMountGuess}>
-              <h2>{resultOfGuess ? `Du gissade ${resultOfGuess}!` : `Jag tror att det är:`}</h2>
+              {finalGuessIsSent &&
+              <Lottie
+                style={{width: "100%", top: 0, left: 0, position: "absolute"}}
+                options={optionsResultOfFinalGuess}
+                isStopped={true}
+              />}
+              {finalGuessIsSent &&
+                <FinalGuessResultWrapper>
+                  <FinalGuessContent>
+                    <p>{resultOfGuess ? "Du gissade rätt!" : "Åh nej, det var fel!"}</p>
+                    <div className="image" style={{backgroundImage: `url(${thisGame.secretPersonImage})`}}> </div>
+                    <p>{resultOfGuess ? `${thisGame.secretPerson}` : `${thisGame.secretPerson} var rätt svar`} </p>
+                    <div className="playAgainButton">
+                      <p>
+                        Spela igen!
+                      </p>
+                      {resultOfGuess
+                        ? <PlayAgainButton color={"var(--error-red)"}></PlayAgainButton>
+                        : <PlayAgainButton color={"var(--victory-blue)"}></PlayAgainButton>
+                      }
+                    </div>
+                  </FinalGuessContent>
+                  <div className="goHome">
+                    <BackToHome white={true}/>
+                  </div>
+                </FinalGuessResultWrapper>
+              }
+              <h2>Jag tror att det är:</h2>
               {this.state.chosenPerson ?
-                <SearchResult>
+                <SearchResult onClick={this.unSelectPerson}>
                   <div className="profilePic" style={{backgroundImage: this.state.chosenImg && `url(${this.state.chosenImg})`}}></div>
                   <p>{this.state.chosenPerson}</p>
-                  <div onClick={this.unSelectPerson}>X</div>
                 </SearchResult> :
                 <input
                   onChange={this.handleChange}
@@ -328,15 +431,21 @@ class GameGuesserView extends Component {
                     })
                   }
                 </SearchResultWrapper>
-                <StarGameButton onClick={this.seeIfCorrectAnswere}>
+                <SendFinalGuess onClick={this.seeIfCorrectAnswere} style={{opacity: finalGuessIsSent ? 0 : 1, pointerEvents: finalGuessIsSent ? "none" : "auto"}}>
                   <img src={require('./send.svg')} alt=""/>
-                </StarGameButton>
-                <div className="goBack" onClick={this.unMountGuess}>
+                </SendFinalGuess>
+                {<div className="goBack" style={{opacity: finalGuessIsSent ? 0 : 1, pointerEvents: finalGuessIsSent ? "none" : "auto"}} onClick={this.unMountGuess}>
                   <DirectionButton text="Tillbaka" arrowLeft={true}/>
-                </div>
+                </div>}
               </GuessWhoItIsContainer>}
+
+
+        {/*THIS IS WHERE THE GUESS CODE ENDS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/}
+
             <GameHeader>
-              <div className="blurredImage" style={{backgroundImage: `url(${thisGame.secretPersonImage})`}}></div>
+              <div className="blurredImage">
+                <canvas ref="canvas" width={"100%"} height={"100%"}/>
+              </div>
               <div className="headerText">
                 <p className="guessNr">{thisGame.remainingGuesses && `${20-thisGame.remainingGuesses}/20`}</p>
                 <p className="opponent">{thisGame ? `Spelar med ${thisGame.gameOwnerName}` : `Spelar med en sköning`}</p>

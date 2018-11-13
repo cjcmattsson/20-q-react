@@ -33,8 +33,15 @@ class InviteToGame extends Component {
   getAllUsers = () => {
     firebase.database().ref(`users`).on('value', (data) => {
       const users = Object.values(data.val());
-      this.setState({users})
-      console.log(this.state.users);
+      let allUsers = [];
+      users.forEach(user => {
+        if (user.name && user.uid === this.props.user.uid) {
+          return;
+        } else {
+          allUsers.push(user);
+        }
+      })
+      this.setState({users: allUsers})
     })
   }
 
@@ -60,7 +67,7 @@ class InviteToGame extends Component {
   }
 
   render() {
-    const {users, searchField, searchResult} = this.state;
+    const {users, searchField} = this.state;
 
     return (
       <InvitePeopleToPlay>

@@ -87,6 +87,13 @@ class GameOwnerView extends Component {
     .update({
       answere: answere,
     })
+    firebase.database().ref(`games/${this.props.gameID}/remainingGuesses`)
+    .transaction((remainingGuesses) => {
+      if (remainingGuesses) {
+        remainingGuesses = remainingGuesses - 1;
+      }
+      return remainingGuesses;
+    })
     if (this._isMounted) {
       this.setState({lastGuess: false})
     }

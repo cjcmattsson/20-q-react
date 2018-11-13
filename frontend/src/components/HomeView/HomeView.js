@@ -4,6 +4,7 @@ import firebase from '../../utils/firebase';
 import GameCardOwner from '../GameCardOwner/GameCardOwner';
 import GameCardGuesser from '../GameCardGuesser/GameCardGuesser';
 import GameCardInvited from '../GameCardInvited/GameCardInvited';
+import GameCardFinished from '../GameCardFinished/GameCardFinished';
 import ButtonLarge from '../ButtonLarge/ButtonLarge';
 import Lottie from 'react-lottie';
 import {
@@ -24,6 +25,7 @@ class HomeView extends Component {
     myGamesOwner: false,
     myGamesGuesser: false,
     myGamesInvitedToPlay: false,
+    finishedGames: false,
     me: false,
   }
 
@@ -88,7 +90,15 @@ class HomeView extends Component {
           owner.on('value', (snapshot) => {
             if (this._isMounted) {
               if (snapshot.val()) {
-                this.setState({myGamesOwner: Object.entries(snapshot.val())})
+                let activeGames = [];
+                Object.entries(snapshot.val()).forEach(game => {
+                  if (game[1].theGuessersGuess === true || game[1].theGuessersGuess === false) {
+                    return;
+                  } else {
+                    activeGames.push(game);
+                  }
+                })
+                this.setState({myGamesOwner: activeGames})
               }
             }
           })
@@ -98,18 +108,21 @@ class HomeView extends Component {
           guesser.on('value', (snapshot) => {
             if (this._isMounted) {
               if (snapshot.val()) {
-                {/*Games where you are invited to play, pending answere*/}
                 let activeGames = [];
                 let invitedToPlay = [];
                 Object.entries(snapshot.val()).forEach(game => {
-                  if (game[1].waitingForAnswere) {
-                    invitedToPlay.push(game);
-                  } else {
+                  if (game[1].theGuessersGuess === true || game[1].theGuessersGuess === false) {
+                    return;
+                  } else if (!game[1].waitingForAnswere) {
                     activeGames.push(game);
+                  } else if (game[1].waitingForAnswere) {
+                    invitedToPlay.push(game);
                   }
                 })
-                this.setState({myGamesGuesser: activeGames})
-                this.setState({myGamesInvitedToPlay: invitedToPlay})
+                this.setState({
+                  myGamesGuesser: activeGames,
+                  myGamesInvitedToPlay: invitedToPlay,
+                })
               }
             }
           })
@@ -117,6 +130,8 @@ class HomeView extends Component {
       };
     })
   }
+
+
 
   logout = () => {
     firebase.auth().signOut();
@@ -130,7 +145,7 @@ class HomeView extends Component {
 
   render() {
 
-    const {myGamesOwner, myGamesGuesser, myGamesInvitedToPlay, me} = this.state;
+    const {myGamesOwner, myGamesGuesser, myGamesInvitedToPlay, finishedGames, me} = this.state;
     const {user} = this.props;
     return (
       <HomeViewContainer>
@@ -150,7 +165,7 @@ class HomeView extends Component {
           <div className="profilePic" style={{backgroundImage: user.photoURL ? `url("${this.props.user.photoURL}?height=500")` : `url("./images/profile-avatar.svg")`}}></div>
           <div className="userNameAndStats">
             <h1>{user ? user.displayName : "..."}</h1>
-            <p>{me && me.wins} vinster / {me && me.losses} förluster</p>
+            <p>{me && me.wins} {me.wins > 1 ? "vinster" : "vinst"} / {me && me.losses} {me.losses > 1 ? "förluster" : "förlust"}</p>
           </div>
         </ProfileTop>
 
@@ -198,6 +213,24 @@ class HomeView extends Component {
                 redirectTo={`/gameGuesserView/${game[0]}`}
                 image={game[1].secretPersonImage}
                 owner={game[1].gameOwnerName}
+               />
+            })}
+            </div>
+        </HomeGamesContainer>
+        <HomeGamesContainer>
+          <h2>Spela igen!</h2>
+          <div className="gamesWrapper">
+            {finishedGames &&
+              finishedGames.map((game, key) => {
+              return <GameCardFinished
+                user={this.props.user}
+                gameID={game[0]}
+                key={key}
+                image={game[1].secretPersonImage}
+                owner={game[1].gameOwnerName}
+                ownerImage={game[1].gameOwnerImage}
+                guesser={game[1].gameGuesserName}
+                guesserImage={game[1].gameGuesserImage}
                />
             })}
             </div>

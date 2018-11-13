@@ -99,7 +99,7 @@ class CreateGameView extends Component {
   }
 
   unSelectPerson = () => {
-    this.setState({chosenPerson: "", chosenImg: ""})
+    this.setState({chosenPerson: "", chosenImg: "", secretPerson: ""})
   }
 
   constructor(props) {
@@ -123,15 +123,14 @@ class CreateGameView extends Component {
     return (
       <Swiper {...params} initialSlide={0} ref={node => {if(node) this.swiper = node.swiper}}>
         <div>
-          <InviteToGame selectedPlayer={this.state.selectedPlayer} addUser={this.addUser} nextSwiperSlide={this.goNext}/>
+          <InviteToGame user={this.props.user} selectedPlayer={this.state.selectedPlayer} addUser={this.addUser} nextSwiperSlide={this.goNext}/>
         </div>
         <CreateGameContainer>
           <h2>Jag tänker på:</h2>
           {this.state.chosenPerson ?
-            <SearchResult>
+            <SearchResult onClick={this.unSelectPerson}>
               <div className="profilePic" style={{backgroundImage: this.state.chosenImg && `url(${this.state.chosenImg})`}}></div>
               <p>{this.state.chosenPerson}</p>
-              <div onClick={this.unSelectPerson}>X</div>
             </SearchResult> :
             <input
               value={this.state.secretPerson}

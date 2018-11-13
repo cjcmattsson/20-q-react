@@ -71,10 +71,18 @@ export const GameHeader = styled.div `
     .blurredImage {
       height: 61px;
       width: 61px;
-      background-color: var(--strong-pink);
-      border-radius: 2px;
-      background-position: center;
+      border-radius: 4px 0 0 4px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
       background-size: cover;
+      background-position: center;
+
+      canvas {
+        border-radius: 4px;
+        height: 100%;
+        width: 100%
+      }
     }
 
     .headerText {
@@ -254,6 +262,7 @@ export const GuessWhoItIsContainer = styled.div `
     position: absolute;
     bottom: 20px;
     left: 47px;
+    transition: all 0.5s ease;
   }
 `;
 
@@ -294,18 +303,148 @@ export const SearchResult = styled.div `
     align-items: center;
   }
 
+  .cancelGuess {
+    transition: all 0.5s ease;
+  }
+
 
 `;
 
-export const StarGameButton = styled.div `
+export const SendFinalGuess = styled.div `
   position: absolute;
-  bottom: 25vh;
+  bottom: 31.8vh;
   right: 46px;
   height: 38px;
   width: 38px;
+  transition: all 0.5s ease;
 
   img {
     height: 100%;
     width: 100%;
   }
 `;
+
+export const FinalGuessResultWrapper = styled.div `
+  height: 100vh;
+  width: 100vw;
+  padding: 25px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+
+  .goHome {
+    position: absolute;
+    bottom: 25px;
+    right: 25px;
+    fill: white;
+    animation-name: showHome;
+    animation-duration: 1s;
+    animation-fill-mode: forwards;
+    animation-delay: 3s;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  @keyframes slideInResult {
+    from {transform: translateX(100vw)}
+      to {transform: translateX(0)}
+  }
+
+  @keyframes showHome {
+    from {opacity: 0; pointer-events: none;}
+      to {opacity: 1; pointer-events: auto;}
+  }
+
+  @keyframes widenButton {
+    from {width: 0; }
+      to {width: 100%;}
+  }
+
+  @keyframes fadeInText {
+    from {opacity: 0; }
+      to {opacity: 1;}
+  }
+`;
+
+
+export const FinalGuessContent = styled.div `
+  transform: translateX(100vw);
+  width: 100%;
+  animation-name: slideInResult;
+  animation-duration: 1s;
+  animation-fill-mode: forwards;
+  animation-delay: 2.3s;
+
+  .playAgainButton {
+    width: 100%;
+    height: 61px;
+    border-radius: 31px;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    text-transform: uppercase;
+    border: none;
+    font-family: "Manrope Semibold";
+
+    p {
+      position: absolute;
+      margin: auto;
+      z-index: 10;
+      animation-name: fadeInText;
+      animation-duration: 1s;
+      animation-fill-mode: forwards;
+      animation-delay: 4.5s;
+      opacity: 0;
+    }
+  }
+
+  p {
+    color: white;
+    font-family: "Manrope Semibold";
+    font-size: 16px;
+    margin: 8px 0 24px;
+  }
+
+  p:first-child {
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+
+  .image {
+    width: 100%;
+    height: 314px;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    border-radius: 4px;
+  }
+
+`;
+
+export const PlayAgainButton = styled.div `
+  position: absolute;
+  z-index: 0;
+  left: 0;
+  width: 0;
+  animation-name: widenButton;
+  animation-duration: 1s;
+  animation-fill-mode: forwards;
+  animation-delay: 5s;
+  height: 61px;
+  border-radius: 31px;
+  background-color: ${props => props.color};
+  text-transform: uppercase;
+  border: none;
+  font-family: "Manrope Semibold";
+
+  :focus, :active {
+    outline: none;
+  }
+`
