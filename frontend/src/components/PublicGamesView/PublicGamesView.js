@@ -1,76 +1,108 @@
 import React, { Component } from 'react';
 import firebase from '../../utils/firebase';
-import { PublicGamesViewContainer } from './style';
+import GameCardJoinOpen from '../GameCardJoinOpen/GameCardJoinOpen';
+import DirectionButton from '../DirectionButton/DirectionButton';
+import NoLinkButton from '../NoLinkButton/NoLinkButton';
+import {
+  PublicGamesViewContainer,
+  PublicGamesHeader,
+  PublicGamesWrapper,
+  CreatePublicGameButton,
+  GamesList
+ } from './style';
 import { Link } from '@reach/router';
+import Lottie from 'react-lottie';
+import {
+  optionsBackgroundAnimPink,
+  optionsBackgroundAnimGrey
+} from '../utils/LottieOptions.js';
+import Swiper from 'react-id-swiper';
+
 
 class PublicGamesView extends Component {
 
   state = {
-    allGames : [],
-    user: false,
+    publicGames: null,
   }
-
-  _isMounted = true;
 
   componentDidMount() {
-    const database = firebase.database();
-    const games = database.ref('games');
-    games.on('value', (data) => {
-      console.log(Object.entries(data.val()))
-      if (this._isMounted) {
-        this.setState({allGames : Object.entries(data.val())})
-      }
-    });
-    this.getUser();
+    this.getPublicGames();
   }
 
-  getUser = () => {
-    firebase.auth().onAuthStateChanged((user) => {
-      if (user) {
-        console.log(user);
-        if (this._isMounted) {
-        this.setState({user})
+  getPublicGames = () => {
+    firebase.database().ref('games').orderByChild('gameGuesserId').equalTo(null).on('value', data => {
+      if (data.val()) {
+        let publicGames = Object.entries(data.val());
+        this.setState({publicGames})
       }
-      } else {
-        console.log("no user logged in");
-      }
-    });
-  }
-
-  joinGame = (game) => {
-    firebase.database().ref(`games/${game}`).on('value', (data) => {
-      console.log(data.val());
-    })
-    firebase.database().ref(`games/${game}`)
-    .update({
-      gameGuesserId: this.state.user.uid,
-      gameGuesserName: this.props.user.displayName,
-      gameGuesserImage: this.props.user.photoURL ? this.props.user.photoURL : "./images/profile-avatar.svg",
     })
   }
 
-  componentWillUnmount() {
-    this._isMounted = false;
-  }
+  constructor(props) {
+      super(props)
+      this.swiper = null
+    }
+
+    goNext = () => {
+      if (this.swiper) this.swiper.slideNext();
+    }
+
+    goPrev = () => {
+      if (this.swiper) this.swiper.slidePrev();
+    }
 
   render() {
+
+    const params = {
+      speed: 600,
+    };
+
+    const {publicGames} = this.state;
+
     return (
-      <PublicGamesViewContainer>
-        <h2>Gå med ett öppet spel</h2>
-        {this.state.allGames &&
-          this.state.allGames.map((game, key) => {
-            return (
-            <div key={key}>
-              <h2 onClick={() => this.joinGame(game[0])}>Play with: {game[1].gameOwnerName}</h2>
-              <p>(pssst! The correct answere is {game[1].secretPerson})</p>
-              {this.props.user.uid===game[1].gameOwnerId
-                ? <Link to={`/gameOwnerView/${game[0]}`}>Go to your game!</Link>
-                : <Link to={`/gameGuesserView/${game[0]}`}>Join game - start guessing!</Link>
-              }
-            </div>)
-          })
-        }
-      </PublicGamesViewContainer>
+      <div>
+        <PublicGamesViewContainer>
+          <Swiper {...params} ref={node => {if(node) this.swiper = node.swiper}}>
+            <PublicGamesWrapper>
+              <div className="bg">
+                <Lottie style={{position: "absolute", top: "0"}} options={optionsBackgroundAnimGrey} isStopped={false}/>
+                <Lottie style={{position: "absolute", top: "0"}} options={optionsBackgroundAnimPink} isStopped={false}/>
+              </div>
+              <PublicGamesHeader>
+                <Link to="/">
+                  <DirectionButton text="Tillbaka" arrowLeft={true}/>
+                </Link>
+              </PublicGamesHeader>
+              <h3 className="listHeader">Joina öppet spel!</h3>
+              <GamesList>
+                {publicGames && publicGames.map((game, key) => {
+                  return (
+                    <GameCardJoinOpen
+                      key={key}
+                      user={this.props.user}
+                      redirectTo={`/gameGuesserView/${game[0]}`}
+                      ownerName={game[1].gameOwnerName}
+                      ownerImage={game[1].gameOwnerImage}
+                      image={game[1].secretPersonImage}
+                    />
+                  )
+                })}
+              </GamesList>
+
+              <CreatePublicGameButton>
+                <NoLinkButton text={"Starta öppet spel"} color={"var(--strong-pink)"} function={this.goNext}/>
+              </CreatePublicGameButton>
+
+            </PublicGamesWrapper>
+            <div>
+              hejhej
+            </div>
+
+          </Swiper>
+
+
+        </PublicGamesViewContainer>
+      </div>
     )
   }
 }

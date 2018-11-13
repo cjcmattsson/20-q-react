@@ -34,6 +34,7 @@ class HomeView extends Component {
   componentDidMount() {
     this.getMe();
     this.getYourGames();
+    this.getFinishedGames();
     setTimeout(() => {
       this.checkIfRegistered();
     }, 500)
@@ -78,6 +79,7 @@ class HomeView extends Component {
           }
           })
       }
+
     })
   }
 
@@ -128,6 +130,28 @@ class HomeView extends Component {
           })
         }
       };
+    })
+  }
+
+  getFinishedGames = () => {
+    firebase.auth().onAuthStateChanged(user => {
+      let myFinishedGames = [];
+      if (user) {
+        let gamesFromDb = firebase.database().ref(`games`);
+        gamesFromDb.on('value', data => {
+          if (data.val()) {
+            let allGames = Object.entries(data.val());
+            allGames.forEach(game => {
+              if (game[1].gameGuesserId === this.props.user.uid || game[1].gameOwnerId === this.props.user.uid) {
+                if (game[1].theGuessersGuess) {
+                  myFinishedGames.push(game);
+                }
+              }
+            })
+          }
+        })
+      }
+      this.setState({finishedGames: myFinishedGames})
     })
   }
 

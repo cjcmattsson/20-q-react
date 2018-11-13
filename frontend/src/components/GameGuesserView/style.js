@@ -64,6 +64,7 @@ export const GameContainer = styled.div `
 
 export const GameHeader = styled.div `
     width: 100%;
+    max-width: 314px;
     height: 61px;
     display: flex;
     flex-direction: row;

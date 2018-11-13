@@ -300,7 +300,6 @@ class GameGuesserView extends Component {
       ctx.mozImageSmoothingEnabled = false;
       ctx.webkitImageSmoothingEnabled = false;
       ctx.imageSmoothingEnabled = false;
-      img.src = setImage;
       img.onload = () => {
         var size = 15 * 0.01,
             w = this.refs.canvas.width * size,
@@ -308,6 +307,7 @@ class GameGuesserView extends Component {
         ctx.drawImage(img, 0, 0, w, h);
         ctx.drawImage(this.refs.canvas, 0, 0, w, h, 0, 0, this.refs.canvas.width, this.refs.canvas.height);
       };
+      img.src = setImage;
     }
 
   render() {
