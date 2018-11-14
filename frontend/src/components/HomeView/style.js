@@ -18,6 +18,83 @@ export const HomeViewContainer = styled.div `
     top: 0;
     left: 0;
   }
+
+  @keyframes menuOpen {
+    from {
+      top: 24px;
+      left: 30px;
+      height: 61px;
+      width: 61px;
+      z-index: 0;
+      border-radius: 4px;
+    }
+    to {
+      border-radius: 0;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 100%;
+      z-index: 1000;
+    }
+  }
+
+  @keyframes menuClose {
+    from {
+      border-radius: 0;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 100%;
+      z-index: 1000;
+    }
+    to {
+      border-radius: 4px;
+      top: 24px;
+      left: 30px;
+      height: 61px;
+      width: 61px;
+      z-index: 0;
+
+    }
+  }
+`;
+
+const settingsSize = ({active}) => {
+  if (active === null) return "null";
+  else if (active === true) return "menuOpen";
+  else if (active === false) return "menuClose";
+}
+
+
+export const Settings = styled.div `
+  border-radius: 4px;
+  animation-name: ${settingsSize};
+  animation-duration: 0.5s;
+  animation-fill-mode: forwards;
+  position: absolute;
+  top: 24px;
+  left: 30px;
+  z-index: 0;
+  height: 61px;
+  width: 61px;
+  transition: all 1s ease;
+  background-position: center;
+  background-size: cover;
+
+  .overlay {
+    border-radius: 4px;
+    height: 100%;
+    width: 100%;
+    background-color: rgba(66, 66, 66, 0.55);
+  }
+
+  .settingsContent {
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: ${props => props.active ? 1 : 0};
+    transition: all 0.2s ease;
+  }
 `;
 
 export const ProfileTop = styled.div `

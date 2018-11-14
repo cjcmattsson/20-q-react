@@ -456,7 +456,7 @@ class GameGuesserView extends Component {
               <GuessCardHeader>
                 <div className="guessInfo">
                   <p>{`${20-thisGame.remainingGuesses}`}</p>
-                  <div className="lastGuesser"></div>
+                  <div className="lastGuesser" style={{backgroundImage: thisGame.gameOwnerImage == './images/profile-avatar.svg' ? `url(${require('./images/profile-avatar.svg')})` : `url(${thisGame.gameOwnerImage})`}}></div>
                 </div>
               </GuessCardHeader>
               {this.state.waitingForAnswere

@@ -69,6 +69,23 @@ export const AnswereButton = styled.div `
   transition: all 0.5s ease;
 `;
 
+export const CardSwiperArea = styled.div `
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 314px;
+  .swiper-container {
+    overflow: visible;
+    margin: 0;
+
+    .swiper-wrapper {
+      .swiper-slide {
+        width: 314px;
+      }
+    }
+  }
+`;
+
 export const IncomingGuessCard = styled.div `
   background-color: white;
   width: 100%;
@@ -142,7 +159,6 @@ export const GuessCardHeader = styled.div `
       border-radius: 2px;
       background-position: center;
       background-size: cover;
-      background-color: var(--strong-pink);
     }
   }
 `;

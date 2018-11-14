@@ -168,7 +168,8 @@ export const GuessCardHeader = styled.div `
       width: 25px;
       margin-left: 10px;
       border-radius: 2px;
-      background-color: var(--strong-pink);
+      background-position: center;
+      background-size: cover;
     }
   }
 `;

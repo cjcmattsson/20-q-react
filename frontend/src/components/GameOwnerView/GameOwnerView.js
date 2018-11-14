@@ -18,7 +18,8 @@ import {
   AnswereGuessContainer,
   GuessCardHeader,
   IncomingGuessCard,
-  AnswereButton
+  AnswereButton,
+  CardSwiperArea
  } from './style';
 
 class GameOwnerView extends Component {
@@ -28,6 +29,8 @@ class GameOwnerView extends Component {
     thisGamesAnsweredGuesses: [],
     lastGuess: false,
     opponents: [],
+    swipingUp: false,
+    swipingDown: false
   }
 
   _isMounted = true;
@@ -99,6 +102,7 @@ class GameOwnerView extends Component {
     }
   }
 
+
   componentWillUnmount() {
     this._isMounted = true;
   }
@@ -106,6 +110,7 @@ class GameOwnerView extends Component {
   constructor(props) {
       super(props)
       this.swiper = null
+      this.cardSwiper = React.createRef();
     }
 
     goNext = () => {
@@ -116,11 +121,36 @@ class GameOwnerView extends Component {
       if (this.swiper) this.swiper.slidePrev();
     }
 
+  value = 0;
+
+  slideSend = () => {
+    if (this.state.lastGuess) {
+      if (this.value < -60) {
+        this.answereQuestion(this.state.lastGuess[0], true)
+      } else if (this.value > 60) {
+        this.answereQuestion(this.state.lastGuess[0], false)
+      }
+    }
+  }
+
   render() {
     const {lastGuess, thisGame, thisGamesAnsweredGuesses, opponents} = this.state;
     const params = {
       speed: 600,
     };
+
+    const verticalParams = {
+      on : {
+        transitionStart: () => console.log("hello"),
+        sliderMove: () => {
+          let transformValue = this.cardSwiper.current.childNodes[0].childNodes[0].style.transform;
+          let getChangableValue = transformValue.split(',');
+          let theValue = parseInt(getChangableValue[1]);
+          this.value = theValue;
+        },
+
+      }
+    }
     return(
       <AllGameContainer>
 
@@ -154,7 +184,6 @@ class GameOwnerView extends Component {
               <DirectionButton text="Tillbaka" arrowRight={true} swipe={this.goNext}/>
             </div>
           </History>
-
           <GameContainer>
             <GameHeader>
               <div className="blurredImage" style={{backgroundImage: `url(${thisGame.secretPersonImage})`}}></div>
@@ -165,30 +194,33 @@ class GameOwnerView extends Component {
             </GameHeader>
 
             <AnswereGuessContainer>
-              <AnswereButton yes style={{opacity: lastGuess ? 1 : 0.3}}>
+              <AnswereButton yes style={{opacity: lastGuess ? 1 : 0.3, pointerEvents: lastGuess ? "auto" : "none"}}>
                 <img
                   onClick={() => this.answereQuestion(lastGuess[0], true)}
                   src={require('./icons/yes.svg')}
                   alt=""/>
               </AnswereButton>
-              <IncomingGuessCard>
-                <GuessCardHeader>
-                  <div className="guessInfo">
-                    <p>{`${20-thisGame.remainingGuesses}`}</p>
-                    <div className="lastGuesser" style={{backgroundImage: opponents && `url(${opponents.photo})`}}></div>
-                  </div>
-                </GuessCardHeader>
-                {lastGuess ?
-                  <div>
-                    <div className="questionText">{lastGuess[1].guess && lastGuess[1].guess}</div>
-                  </div>
-                  : <div>
-                    <div className="questionTextWaiting">Väntar på nästa fråga</div>
-                  </div>
-                }
-              </IncomingGuessCard>
-
-              <AnswereButton style={{opacity: lastGuess ? 1 : 0.3}}>
+              <CardSwiperArea ref={this.cardSwiper}>
+                <Swiper {...verticalParams} direction={'vertical'} style={{overflow: "visible"}}>
+                  <IncomingGuessCard onTouchEnd={this.slideSend}>
+                    <GuessCardHeader>
+                      <div className="guessInfo">
+                        <p>{`${20-thisGame.remainingGuesses}`}</p>
+                        <div className="lastGuesser" style={{backgroundImage: opponents.image ? `url(${opponents.photo})` : `url(${require('./profile-avatar.svg')})`}}></div>
+                      </div>
+                    </GuessCardHeader>
+                    {lastGuess ?
+                      <div>
+                        <div className="questionText">{lastGuess[1].guess && lastGuess[1].guess}</div>
+                      </div>
+                      : <div>
+                        <div className="questionTextWaiting">Väntar på nästa fråga</div>
+                      </div>
+                    }
+                  </IncomingGuessCard>
+                </Swiper>
+              </CardSwiperArea>
+              <AnswereButton style={{opacity: lastGuess ? 1 : 0.3, pointerEvents: lastGuess ? "auto" : "none"}}>
                 <img
                   onClick={() => this.answereQuestion(lastGuess[0], false)}
                   src={require('./icons/no.svg')}

@@ -15,8 +15,9 @@ import {
   HomeViewContainer,
   ProfileTop,
   HomeGamesContainer,
-  HomeButtonsWrapper
- } from './style';
+  HomeButtonsWrapper,
+  Settings
+} from './style';
 
 class HomeView extends Component {
 
@@ -27,6 +28,7 @@ class HomeView extends Component {
     myGamesInvitedToPlay: false,
     finishedGames: false,
     me: false,
+    settingsSize: null,
   }
 
   _isMounted = true;
@@ -70,14 +72,14 @@ class HomeView extends Component {
           if (this._isMounted) {
             this.setState({me: user[0]})
           }
-          })
+        })
       } else {
         firebase.database().ref(`users`).orderByChild('uid').equalTo(`${this.props.user.uid}`).on('value', (data) => {
           let user = Object.values(data.val());
           if (this._isMounted) {
             this.setState({me: user[0]})
           }
-          })
+        })
       }
 
     })
@@ -185,29 +187,35 @@ class HomeView extends Component {
             isStopped={false}
           />
         </div>
-        <ProfileTop>
-          <div className="profilePic" style={{backgroundImage: user.photoURL ? `url("${this.props.user.photoURL}?height=500")` : `url("./images/profile-avatar.svg")`}}></div>
-          <div className="userNameAndStats">
-            <h1>{user ? user.displayName : "..."}</h1>
-            <p>{me && me.wins} {me.wins > 1 ? "vinster" : "vinst"} / {me && me.losses} {me.losses > 1 ? "förluster" : "förlust"}</p>
-          </div>
-        </ProfileTop>
+          <Settings active={this.state.settingsSize} style={{backgroundImage: `url(${require('./bjornborgpixel.jpg')})`}}>
+            <div className="overlay"></div>
+            <div className="settingsContent">
+              <p onClick={() => this.setState({settingsSize: !this.state.settingsSize})}>CLOSE</p>
+            </div>
+          </Settings>
+      <ProfileTop>
+        <div onClick={() => this.setState({settingsSize: !this.state.settingsSize})} className="profilePic" style={{backgroundImage: user.photoURL ? `url("${this.props.user.photoURL}?height=500")` : `url("./images/profile-avatar.svg")`}}></div>
+        <div className="userNameAndStats">
+          <h1>{user ? user.displayName : "..."}</h1>
+          <p>{me && me.wins} {me.wins > 1 ? "vinster" : "vinst"} / {me && me.losses} {me.losses > 1 ? "förluster" : "förlust"}</p>
+        </div>
+      </ProfileTop>
 
-        <HomeGamesContainer>
-          <h2>Spel du hostar</h2>
-          <div className="gamesWrapper">
-            {myGamesOwner &&
-              myGamesOwner.map((game, key) => {
-                return <GameCardOwner
-                  gameID={game[0]}
-                  key={key}
-                  image={game[1].secretPersonImage}
-                  redirectTo={`/gameOwnerView/${game[0]}`}
-                  remainingGuesses={`${20-game[1].remainingGuesses}/20`}
-                  guesser={game[1].gameGuesserName}
-                  opponentImage={game[1].gameGuesserImage}
-                />
-              })}
+      <HomeGamesContainer>
+        <h2>Spel du hostar</h2>
+        <div className="gamesWrapper">
+          {myGamesOwner &&
+            myGamesOwner.map((game, key) => {
+              return <GameCardOwner
+                gameID={game[0]}
+                key={key}
+                image={game[1].secretPersonImage}
+                redirectTo={`/gameOwnerView/${game[0]}`}
+                remainingGuesses={`${20-game[1].remainingGuesses}/20`}
+                guesser={game[1].gameGuesserName}
+                opponentImage={game[1].gameGuesserImage}
+              />
+            })}
           </div>
         </HomeGamesContainer>
 
@@ -216,60 +224,60 @@ class HomeView extends Component {
           <div className="gamesWrapper">
             {myGamesGuesser &&
               myGamesGuesser.map((game, key) => {
-              return <GameCardGuesser
-                gameID={game[0]}
-                key={key}
-                image={game[1].secretPersonImage}
-                redirectTo={`/gameGuesserView/${game[0]}`}
-                remainingGuesses={`${20-game[1].remainingGuesses}/20`}
-                owner={game[1].gameOwnerName}
-                ownerImage={game[1].gameOwnerImage}
-               />
-            })}
+                return <GameCardGuesser
+                  gameID={game[0]}
+                  key={key}
+                  image={game[1].secretPersonImage}
+                  redirectTo={`/gameGuesserView/${game[0]}`}
+                  remainingGuesses={`${20-game[1].remainingGuesses}/20`}
+                  owner={game[1].gameOwnerName}
+                  ownerImage={game[1].gameOwnerImage}
+                />
+              })}
             </div>
             {/* Invited to play */}
-          <div className="gamesWrapper">
-            {myGamesInvitedToPlay &&
-              myGamesInvitedToPlay.map((game, key) => {
-              return <GameCardInvited
-                gameID={game[0]}
-                key={key}
-                redirectTo={`/gameGuesserView/${game[0]}`}
-                image={game[1].secretPersonImage}
-                owner={game[1].gameOwnerName}
-               />
-            })}
-            </div>
-        </HomeGamesContainer>
-        <HomeGamesContainer>
-          <h2>Spela igen!</h2>
-          <div className="gamesWrapper">
-            {finishedGames &&
-              finishedGames.map((game, key) => {
-              return <GameCardFinished
-                user={this.props.user}
-                gameID={game[0]}
-                key={key}
-                image={game[1].secretPersonImage}
-                owner={game[1].gameOwnerName}
-                ownerImage={game[1].gameOwnerImage}
-                guesser={game[1].gameGuesserName}
-                guesserImage={game[1].gameGuesserImage}
-               />
-            })}
-            </div>
-        </HomeGamesContainer>
+            <div className="gamesWrapper">
+              {myGamesInvitedToPlay &&
+                myGamesInvitedToPlay.map((game, key) => {
+                  return <GameCardInvited
+                    gameID={game[0]}
+                    key={key}
+                    redirectTo={`/gameGuesserView/${game[0]}`}
+                    image={game[1].secretPersonImage}
+                    owner={game[1].gameOwnerName}
+                  />
+                })}
+              </div>
+            </HomeGamesContainer>
+            <HomeGamesContainer>
+              <h2>Spela igen!</h2>
+              <div className="gamesWrapper">
+                {finishedGames &&
+                  finishedGames.map((game, key) => {
+                    return <GameCardFinished
+                      user={this.props.user}
+                      gameID={game[0]}
+                      key={key}
+                      image={game[1].secretPersonImage}
+                      owner={game[1].gameOwnerName}
+                      ownerImage={game[1].gameOwnerImage}
+                      guesser={game[1].gameGuesserName}
+                      guesserImage={game[1].gameGuesserImage}
+                    />
+                  })}
+                </div>
+              </HomeGamesContainer>
 
-        <HomeButtonsWrapper>
-          <ButtonLarge buttonText={"Starta spel"} redirectTo={"createGameView"} />
-          <ButtonLarge buttonText={"Spela öppet spel"} redirectTo={"publicGamesView"} />
-        </HomeButtonsWrapper>
+              <HomeButtonsWrapper>
+                <ButtonLarge buttonText={"Starta spel"} redirectTo={"createGameView"} />
+                <ButtonLarge buttonText={"Spela öppet spel"} redirectTo={"publicGamesView"} />
+              </HomeButtonsWrapper>
 
-        <Link className="logout" onClick={this.logout} to="/">Logout</Link>
+              <Link className="logout" onClick={this.logout} to="/">Logout</Link>
 
-      </HomeViewContainer>
-    )
-  }
-}
+            </HomeViewContainer>
+          )
+        }
+      }
 
-export default HomeView;
+      export default HomeView;
