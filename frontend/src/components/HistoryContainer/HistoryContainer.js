@@ -13,11 +13,13 @@ class HistoryContainer extends Component {
   render() {
     const {guesses} = this.props;
     let z = 0;
+    let nr = 0;
     return (
       <GuessListContainer ref={this.container}>
         {guesses && guesses.map((guess, key) => {
           key < guesses.length/2 ? z++ : z--;
-          return <HistoryGuess styleProps={{zIndex: `${z}`}} key={key} guessInfo={guess[1]} />
+          nr ++;
+          return <HistoryGuess nr={nr} styleProps={{zIndex: `${z}`}} key={key} guessInfo={guess[1]} />
         })}
       </GuessListContainer>
     )

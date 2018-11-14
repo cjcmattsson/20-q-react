@@ -30,16 +30,29 @@ export const AllGameContainer = styled.div `
 }
 
 @keyframes correct {
-    0% {transform: translateY(0)}
-    50% {transform: translateY(-20px)}
-    100% {transform: translateY(0)}
+  0% {transform: translateY(0)}
+  10% {transform: translateY(-20px)}
+  35% {transform: translateY(0)}
+  65% {transform: translateX(0)}
+  85% {transform: translateX(-100vw)}
+  100% {transform: translateX(-100vw)}
 }
 @keyframes wrong {
-    0% {transform: translateY(0)}
-    50% {transform: translateY(20px)}
-    100% {transform: translateY(0)}
+  0% {transform: translateY(0)}
+  20% {transform: translateY(20px)}
+  40% {transform: translateY(0)}
+  75% {transform: translateX(0)}
+  100% {transform: translateX(-100vw)}
 }
 
+.secondHidden {
+  padding: 0 30px;
+  left: 0;
+  display: flex;
+  flex-direction: row;
+  width: 200vw;
+  justify-content: space-between;
+}
 
 `;
 
@@ -106,7 +119,7 @@ export const GameHeader = styled.div `
 
 export const GuessCard = styled.div `
   transition: all 1s ease;
-  animation: ${moveCard} 1s linear;
+  animation: ${moveCard} 3s linear;
   background-color: white;
   width: 100%;
   max-width: 314px;
@@ -260,12 +273,6 @@ export const GuessWhoItIsContainer = styled.div `
     }
   }
 
-  .goBack {
-    position: absolute;
-    bottom: 20px;
-    left: 47px;
-    transition: all 0.5s ease;
-  }
 `;
 
 export const SearchResultWrapper = styled.div `

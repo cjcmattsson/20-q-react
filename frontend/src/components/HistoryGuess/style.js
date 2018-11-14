@@ -22,11 +22,26 @@ export const GuessContainer = styled.div `
     height: 100%;
     width: 71px;
     border-radius: 4px 0 0 4px;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    padding: 8px;
+
+    p {margin: 0}
+
+    .answere {
+      font-family: "Manrope Semibold";
+      font-size: 23px;
+    }
+    .number {
+      font-family: "Manrope Light";
+      font-size: 16px;
+    }
   }
 
   .guessQuestion {
     text-align: left;
-    padding: 12px;
+    padding: 12px 16px;
     flex: 1;
     height: 100%;
     border-radius: 0 4px 4px 0;

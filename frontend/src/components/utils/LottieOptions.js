@@ -14,6 +14,15 @@ export const optionsWaiting = {
     preserveAspectRatio: 'xMidYMid slice'
   }
 };
+
+export const optionsWaitingAutoplay = {
+  loop: true,
+  autoplay: true,
+  animationData: require('./anims/blobload.json'),
+  rendererSettings: {
+    preserveAspectRatio: 'xMidYMid slice'
+  }
+};
 export const optionsBackgroundAnimPink = {
   loop: true,
   autoplay: true,

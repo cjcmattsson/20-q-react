@@ -219,7 +219,7 @@ class GameGuesserView extends Component {
           guessInputField: "",
         })
       }
-    }, 2500)
+    }, 4000)
   }
 
   getThisGame = () => {
@@ -453,6 +453,7 @@ class GameGuesserView extends Component {
             </GameHeader>
 
             <GuessCard answere={this.state.answere}>
+
               <GuessCardHeader>
                 <div className="guessInfo">
                   <p>{`${20-thisGame.remainingGuesses}`}</p>

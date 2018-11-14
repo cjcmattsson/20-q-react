@@ -163,6 +163,20 @@ export const GuessCardHeader = styled.div `
   }
 `;
 
+export const GuessCardFooter = styled.div `
+  width: 100%;
+  height: 50px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+
+  .waitingAnim {
+    height: 100%;
+    width: 50px;
+    transform: scale(0)
+  }
+`;
+
 
 export const GameFooter = styled.div `
   width: 100%;

@@ -3,6 +3,7 @@ import firebase from '../../utils/firebase';
 import Swiper from 'react-id-swiper';
 import Lottie from 'react-lottie';
 import {
+  optionsWaitingAutoplay,
   optionsBackgroundAnimPink,
   optionsBackgroundAnimGrey
 } from '../utils/LottieOptions.js';
@@ -18,6 +19,7 @@ import {
   AnswereGuessContainer,
   GuessCardHeader,
   IncomingGuessCard,
+  GuessCardFooter,
   AnswereButton,
   CardSwiperArea
  } from './style';
@@ -181,7 +183,7 @@ class GameOwnerView extends Component {
               </div>
             })}*/}
             <div className="historyFooter">
-              <DirectionButton text="Tillbaka" arrowRight={true} swipe={this.goNext}/>
+              <DirectionButton text="Fråga" arrowRight={true} swipe={this.goNext}/>
             </div>
           </History>
           <GameContainer>
@@ -210,13 +212,21 @@ class GameOwnerView extends Component {
                       </div>
                     </GuessCardHeader>
                     {lastGuess ?
-                      <div>
                         <div className="questionText">{lastGuess[1].guess && lastGuess[1].guess}</div>
-                      </div>
-                      : <div>
-                        <div className="questionTextWaiting">Väntar på nästa fråga</div>
-                      </div>
+                      : <div className="questionTextWaiting">Väntar på nästa fråga</div>
                     }
+                    <GuessCardFooter>
+                      {lastGuess
+                        ? <div>No anim</div>
+                        : <div className="waitingAnim">
+                          <Lottie options={optionsWaitingAutoplay}
+                            height={50}
+                            width={50}
+                            isStopped={false}
+                          />
+                        </div>
+                      }
+                    </GuessCardFooter>
                   </IncomingGuessCard>
                 </Swiper>
               </CardSwiperArea>
@@ -229,7 +239,7 @@ class GameOwnerView extends Component {
             </AnswereGuessContainer>
 
             <GameFooter>
-              <DirectionButton text="Historik" arrowLeft={true} swipe={this.goPrev}/>
+              <DirectionButton text="Ställda frågor" arrowLeft={true} swipe={this.goPrev}/>
               <BackToHome />
             </GameFooter>
 
