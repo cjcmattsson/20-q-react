@@ -7,8 +7,9 @@ export const DirectionButtonContainer = styled.div `
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
+  transition: all 0.3s ease;
 
-  img {
+  svg {
     height: 12px;
     width: 17px;
 

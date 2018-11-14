@@ -6,6 +6,8 @@ import GameCardGuesser from '../GameCardGuesser/GameCardGuesser';
 import GameCardInvited from '../GameCardInvited/GameCardInvited';
 import GameCardFinished from '../GameCardFinished/GameCardFinished';
 import ButtonLarge from '../ButtonLarge/ButtonLarge';
+import DirectionButton from '../DirectionButton/DirectionButton';
+import NoLinkButton from '../NoLinkButton/NoLinkButton';
 import Lottie from 'react-lottie';
 import {
   optionsBackgroundAnimPink,
@@ -16,7 +18,9 @@ import {
   ProfileTop,
   HomeGamesContainer,
   HomeButtonsWrapper,
-  Settings
+  Settings,
+  SettingsHeader,
+  SettingsTitle
 } from './style';
 
 class HomeView extends Component {
@@ -52,7 +56,7 @@ class HomeView extends Component {
         let player = {
           uid: this.state.user.uid,
           name: this.state.user.displayName,
-          photo: this.state.user.photoURL ? this.state.user.photoURL: "./images/profile-avatar.svg",
+          photo: this.state.user.photoURL ? this.state.user.photoURL: "./bjornborgpixel.jpg",
           wins: 0,
           losses: 0,
         }
@@ -190,11 +194,33 @@ class HomeView extends Component {
           <Settings active={this.state.settingsSize} style={{backgroundImage: `url(${require('./bjornborgpixel.jpg')})`}}>
             <div className="overlay"></div>
             <div className="settingsContent">
-              <p onClick={() => this.setState({settingsSize: !this.state.settingsSize})}>CLOSE</p>
+              <SettingsHeader>
+                <div onClick={() => this.setState({settingsSize: !this.state.settingsSize})}>
+                  <DirectionButton
+                    text={"Tillbaka"}
+                    textColor={"#FFFFFF"}
+                    arrowLeft={true}
+                    arrowColor={"#FFFFFF"}/>
+                </div>
+                <Link className="logout" onClick={this.logout} to="/">Logga ut</Link>
+              </SettingsHeader>
+              <SettingsTitle>
+                <h2>Byt profilbild</h2>
+              </SettingsTitle>
+              <SettingsTitle>
+                <h2>Byt användarnamn</h2>
+              </SettingsTitle>
+              <SettingsTitle>
+                <h2>Byt lösenord</h2>
+              </SettingsTitle>
+              <SettingsTitle>
+                <h2>Radera konto</h2>
+              </SettingsTitle>
+              <NoLinkButton text={"Logga in med facebook"} color={"var(--victory-blue)"}/>
             </div>
           </Settings>
       <ProfileTop>
-        <div onClick={() => this.setState({settingsSize: !this.state.settingsSize})} className="profilePic" style={{backgroundImage: user.photoURL ? `url("${this.props.user.photoURL}?height=500")` : `url("./images/profile-avatar.svg")`}}></div>
+        <div onClick={() => this.setState({settingsSize: !this.state.settingsSize})} className="profilePic" style={{backgroundImage: user.photoURL ? `url("${this.props.user.photoURL}?height=500")` : `url("./bjornborgpixel.jpg")`}}></div>
         <div className="userNameAndStats">
           <h1>{user ? user.displayName : "..."}</h1>
           <p>{me && me.wins} {me.wins > 1 ? "vinster" : "vinst"} / {me && me.losses} {me.losses > 1 ? "förluster" : "förlust"}</p>
@@ -202,8 +228,19 @@ class HomeView extends Component {
       </ProfileTop>
 
       <HomeGamesContainer>
-        <h2>Spel du hostar</h2>
+        <h2>Aktiva spel</h2>
         <div className="gamesWrapper">
+          {/* Invited to play */}
+          {myGamesInvitedToPlay &&
+            myGamesInvitedToPlay.map((game, key) => {
+              return <GameCardInvited
+                gameID={game[0]}
+                key={key}
+                redirectTo={`/gameGuesserView/${game[0]}`}
+                image={game[1].secretPersonImage}
+                owner={game[1].gameOwnerName}
+              />
+            })}
           {myGamesOwner &&
             myGamesOwner.map((game, key) => {
               return <GameCardOwner
@@ -216,41 +253,22 @@ class HomeView extends Component {
                 opponentImage={game[1].gameGuesserImage}
               />
             })}
-          </div>
-        </HomeGamesContainer>
-
-        <HomeGamesContainer>
-          <h2>Spel du gissar på</h2>
-          <div className="gamesWrapper">
-            {myGamesGuesser &&
-              myGamesGuesser.map((game, key) => {
-                return <GameCardGuesser
-                  gameID={game[0]}
-                  key={key}
-                  image={game[1].secretPersonImage}
-                  redirectTo={`/gameGuesserView/${game[0]}`}
-                  remainingGuesses={`${20-game[1].remainingGuesses}/20`}
-                  owner={game[1].gameOwnerName}
-                  ownerImage={game[1].gameOwnerImage}
-                />
-              })}
-            </div>
-            {/* Invited to play */}
-            <div className="gamesWrapper">
-              {myGamesInvitedToPlay &&
-                myGamesInvitedToPlay.map((game, key) => {
-                  return <GameCardInvited
+              {myGamesGuesser &&
+                myGamesGuesser.map((game, key) => {
+                  return <GameCardGuesser
                     gameID={game[0]}
                     key={key}
-                    redirectTo={`/gameGuesserView/${game[0]}`}
                     image={game[1].secretPersonImage}
+                    redirectTo={`/gameGuesserView/${game[0]}`}
+                    remainingGuesses={`${20-game[1].remainingGuesses}/20`}
                     owner={game[1].gameOwnerName}
+                    ownerImage={game[1].gameOwnerImage}
                   />
                 })}
-              </div>
-            </HomeGamesContainer>
-            <HomeGamesContainer>
-              <h2>Spela igen!</h2>
+          </div>
+        </HomeGamesContainer>
+            {finishedGames.length && <HomeGamesContainer>
+              <h2>Spela igen</h2>
               <div className="gamesWrapper">
                 {finishedGames &&
                   finishedGames.map((game, key) => {
@@ -266,14 +284,12 @@ class HomeView extends Component {
                     />
                   })}
                 </div>
-              </HomeGamesContainer>
+              </HomeGamesContainer>}
 
               <HomeButtonsWrapper>
                 <ButtonLarge buttonText={"Starta spel"} redirectTo={"createGameView"} />
                 <ButtonLarge buttonText={"Spela öppet spel"} redirectTo={"publicGamesView"} />
               </HomeButtonsWrapper>
-
-              <Link className="logout" onClick={this.logout} to="/">Logout</Link>
 
             </HomeViewContainer>
           )

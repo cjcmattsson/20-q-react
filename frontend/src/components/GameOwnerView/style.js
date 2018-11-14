@@ -1,7 +1,27 @@
 import styled from 'styled-components';
 
+const blobColor = ({answere}) => {
+  if (answere === null) return "var(--soft-pink)";
+  else if (answere === true) return "var(--victory-blue)";
+  else if (answere === false) return "var(--error-red)";
+}
+
+const blobSize = ({answere}) => {
+  if (answere === null) return "1";
+  else if (answere === true || answere === false) return "5";
+}
+
 export const AllGameContainer = styled.div `
   color: var(--text-grey);
+
+  .bg div:nth-child(2) svg g g path {
+    z-index: 100;
+    transform: scale(${blobSize});
+    fill: ${blobColor};
+    transition-property: transform,fill;
+    transition-duration: 1s;
+    transition-timing-function: ease;
+  }
 `;
 
 export const GameContainer = styled.div `
@@ -37,6 +57,7 @@ export const GameHeader = styled.div `
     .headerText {
       padding-left: 10px;
       text-align: left;
+      transition: all 0.5s ease;
 
       p {
         margin: 0;
@@ -44,7 +65,11 @@ export const GameHeader = styled.div `
 
       .guessNr {
         font-size: 32px;
-      }
+        font-family: "Manrope Semibold";
+
+        span {
+          font-family: "Manrope Light";
+        }
       .secretPerson {
         font-size: 16px;
       }
@@ -84,9 +109,26 @@ export const CardSwiperArea = styled.div `
       }
     }
   }
+
+  @keyframes questionArrived {
+    0% {transform: translateY(0)}
+    50% {transform: translateY(-15px)}
+    100% {transform: translateY(0)}
+  }
+
 `;
 
+const questionInc = ({questionArrived}) => {
+  if (questionArrived) return "questionArrived";
+  else if (questionArrived === false) return "nothing";
+}
+
+
+
 export const IncomingGuessCard = styled.div `
+  animation-name: ${questionInc};
+  animation-duration: 1s;
+  animation-fill-mode: forwards;
   background-color: white;
   width: 100%;
   max-width: 314px;
@@ -163,18 +205,56 @@ export const GuessCardHeader = styled.div `
   }
 `;
 
+const minifyWaiting = ({questionArrived}) => {
+  if (questionArrived) return "minify";
+  else if (questionArrived === false) return "nothing";
+}
+
 export const GuessCardFooter = styled.div `
   width: 100%;
   height: 50px;
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   justify-content: flex-end;
+  flex-direction: row;
 
-  .waitingAnim {
-    height: 100%;
-    width: 50px;
-    transform: scale(0)
+  @keyframes minify {
+    from {transform: scale(1)}
+    to {transform: scale(0)}
   }
+
+  @keyframes moveText {
+    from {
+      transform: translateX(25px);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+
+  .response {
+    color: black;
+    font-size: 23px;
+    font-family: "Manrope Semibold";
+    transform: translateX(25px);
+    opacity: 0;
+    animation-name: moveText;
+    animation-duration: 0.5s;
+    animation-fill-mode: forwards;
+  }
+
+`;
+
+export const WaitingAnim = styled.div `
+  height: 100%;
+  width: 50px;
+  transform: scale(1);
+  animation-name: ${minifyWaiting};
+  animation-duration: 0.5s;
+  animation-delay: 1s;
+  animation-fill-mode: forwards;
 `;
 
 

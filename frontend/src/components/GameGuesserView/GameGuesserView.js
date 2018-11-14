@@ -34,6 +34,7 @@ class GameGuesserView extends Component {
   state = {
     guessInputField: "",
     thisGame: false,
+    ownerName: false,
     thisGamesGuesses: false,
     questionIsNotSent: true,
     waitingForAnswere: false,
@@ -226,7 +227,8 @@ class GameGuesserView extends Component {
     firebase.database()
     .ref(`games/${this.props.gameID}`)
     .on('value', (data) => {
-        this.setState({thisGame: data.val()})
+        let ownerName = data.val().gameOwnerName.split(" ");
+        this.setState({thisGame: data.val(), ownerName: ownerName[0]})
         console.log(data.val());
         this.updateCanvas(data.val().secretPersonImage);
         if (data.val().waitingForAnswere) {
@@ -341,6 +343,7 @@ class GameGuesserView extends Component {
       guessWhoItIs,
       resultOfGuess,
       finalGuessIsSent,
+      answereRecieved
     } = this.state;
 
     return(
@@ -400,7 +403,7 @@ class GameGuesserView extends Component {
                     </div>
                   </FinalGuessContent>
                   <div className="goHome">
-                    <BackToHome white={true}/>
+                    <BackToHome iconColor={"#FFFFFF"}/>
                   </div>
                 </FinalGuessResultWrapper>
               }
@@ -446,9 +449,9 @@ class GameGuesserView extends Component {
               <div className="blurredImage">
                 <canvas ref="canvas" width={"100%"} height={"100%"}/>
               </div>
-              <div className="headerText">
-                <p className="guessNr">{thisGame.remainingGuesses && `${20-thisGame.remainingGuesses}/20`}</p>
-                <p className="opponent">{thisGame ? `Spelar med ${thisGame.gameOwnerName}` : `Spelar med en sköning`}</p>
+              <div className="headerText" style={{color: answereRecieved ? "white" : "var(--text-grey)"}}>
+                <p className="guessNr">{thisGame.remainingGuesses && `${20-thisGame.remainingGuesses}`}<span>/20</span></p>
+                <p className="opponent">{thisGame ? `Spelar med ${this.state.ownerName}` : `Spelar med en sköning`}</p>
               </div>
             </GameHeader>
 
@@ -457,7 +460,7 @@ class GameGuesserView extends Component {
               <GuessCardHeader>
                 <div className="guessInfo">
                   <p>{`${20-thisGame.remainingGuesses}`}</p>
-                  <div className="lastGuesser" style={{backgroundImage: thisGame.gameOwnerImage == './images/profile-avatar.svg' ? `url(${require('./images/profile-avatar.svg')})` : `url(${thisGame.gameOwnerImage})`}}></div>
+                  <div className="lastGuesser" style={{backgroundImage: thisGame.gameOwnerImage === './bjornborgpixel.jpg' ? `url(${require('./bjornborgpixel.jpg')})` : `url(${thisGame.gameOwnerImage})`}}></div>
                 </div>
               </GuessCardHeader>
               {this.state.waitingForAnswere
@@ -470,12 +473,15 @@ class GameGuesserView extends Component {
                 }
                 <div className="sendGuessWrapper">
                   {this.state.answereRecieved ?
-                    <div className="sendGuessButton">
-                      <Lottie options={optionsAnswereRecieved}
-                        height={50}
-                        width={50}
-                        isStopped={false}
-                      />
+                    <div className="response">
+                      <p>{this.state.answere ? "Ja!" : "Nej!"}</p>
+                      <div className="sendGuessButton">
+                        <Lottie options={optionsAnswereRecieved}
+                          height={50}
+                          width={50}
+                          isStopped={false}
+                        />
+                      </div>
                     </div>
                     : waitingForAnswere
                     ? <div className="sendGuessButton">
@@ -502,8 +508,14 @@ class GameGuesserView extends Component {
               </div>
 
               <GameFooter>
-                <DirectionButton text="Historik" arrowLeft={true} swipe={this.goPrev}/>
-                <BackToHome />
+                <DirectionButton
+                  textColor={answereRecieved ? "white" : "var(--text-grey)"}
+                  text="Historik"
+                  arrowLeft={true}
+                  swipe={this.goPrev}
+                  arrowColor={answereRecieved ? "#FFFFFF" : "var(--text-grey)"}
+                />
+                <BackToHome iconColor={answereRecieved ? "white" : "var(--text-grey)"} />
               </GameFooter>
 
             </GameContainer>

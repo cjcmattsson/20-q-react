@@ -48,7 +48,7 @@ class GameCardFinished extends Component {
           <div className="textAndButtons">
             <h3>{`Du ${this.state.result ? "vann" : "förlorade"}!`}</h3>
             <div className="opponent">
-              <div className="imageHere" style={{backgroundImage: this.state.image ? `url(${this.state.image})` : `url("./images/profile-avatar.svg")`}}> </div>
+              <div className="imageHere" style={{backgroundImage: this.state.image ? `url(${this.state.image})` : `url("./bjornborgpixel.jpg")`}}> </div>
               <p>{this.state.name}</p>
             </div>
           </div>

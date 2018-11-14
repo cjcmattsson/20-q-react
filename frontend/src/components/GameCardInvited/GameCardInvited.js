@@ -11,12 +11,14 @@ import { Link } from "@reach/router";
 class GameCardInvited extends Component {
 
   state = {
-
+    owner: false,
   }
 
   _isMounted = true;
 
   componentDidMount() {
+    let name = this.props.owner.split(" ");
+    this.setState({owner: name[0]})
     this.updateCanvas();
   }
 
@@ -56,7 +58,7 @@ class GameCardInvited extends Component {
         </GamePicBlurred>
         <GameInfo answere={this.state.answereRecieved}>
           <div className="textAndButtons">
-            <h3>{this.props.owner} vill spela</h3>
+            <h3>{this.state.owner} vill spela</h3>
             <div className="buttons">
               <Link to={this.props.redirectTo}>
                 <AnswereButton color={"var(--victory-blue)"}>Acceptera</AnswereButton>

@@ -109,6 +109,12 @@ export const GameHeader = styled.div `
 
       .guessNr {
         font-size: 32px;
+        font-family: "Manrope Semibold";
+        transition: all 0.3s ease;
+
+        span {
+          font-family: "Manrope Light";
+        }
       }
       .opponent {
         font-size: 16px;
@@ -151,6 +157,35 @@ export const GuessCard = styled.div `
     display: flex;
     align-items: flex-end;
     justify-content: flex-end;
+    flex-direction: row;
+
+    .response {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+
+      @keyframes moveText {
+        from {
+          transform: translateX(25px) translateY(7px);
+          opacity: 0;
+        }
+        to {
+          transform: translateX(0) translateY(7px);
+          opacity: 1;
+        }
+      }
+
+      p {
+        color: black;
+        font-size: 23px;
+        font-family: "Manrope Semibold";
+        transform: translateX(25px) translateY(7px);
+        opacity: 0;
+        animation-name: moveText;
+        animation-duration: 0.5s;
+        animation-fill-mode: forwards;
+      }
+    }
 
     .sendGuessButton {
       transform: translateY(7px) translateX(5px);

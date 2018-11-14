@@ -89,11 +89,45 @@ export const Settings = styled.div `
   }
 
   .settingsContent {
+    padding: 24px 30px;
     position: absolute;
     top: 0;
     left: 0;
+    width: 100%;
     opacity: ${props => props.active ? 1 : 0};
-    transition: all 0.2s ease;
+    transition: all 1s ease;
+
+    p {
+      margin: 0;
+    }
+  }
+`;
+
+export const SettingsHeader = styled.div `
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+
+  a {
+    color: white;
+    text-decoration: none;
+  }
+`
+
+export const SettingsTitle = styled.div `
+  width: 100%;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  margin: 12px 0;
+
+  h2 {
+    margin: 0;
+    font-size: 28px;
+    color: white;
+    font-family: "Manrope Semibold";
   }
 `;
 

@@ -12,11 +12,16 @@ export const BackToHomeContainer = styled.div `
     align-items: center;
     justify-content: center;
 
-    img {
+
+    svg {
       background-position: center;
       background-size: contain;
       height: 100%;
       width: 100%;
+
+      g path {
+        transition: all 0.3s ease;
+      }
     }
   }
 `;

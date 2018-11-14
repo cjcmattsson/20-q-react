@@ -87,8 +87,12 @@ export const CreateGameContainer = styled.div `
 
   .goBack {
     position: absolute;
-    bottom: 20px;
-    left: 47px;
+    bottom: 25px;
+    left: 25px;
+
+    p {
+      margin: 0;
+    }
   }
 `;
 

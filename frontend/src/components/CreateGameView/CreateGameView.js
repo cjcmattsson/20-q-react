@@ -82,7 +82,7 @@ class CreateGameView extends Component {
       remainingGuesses: 19,
       gameOwnerId: firebase.auth().currentUser.uid,
       gameOwnerName: firebase.auth().currentUser.displayName,
-      gameOwnerImage: firebase.auth().currentUser.photoURL ? firebase.auth().currentUser.photoURL : "./images/profile-avatar.svg",
+      gameOwnerImage: firebase.auth().currentUser.photoURL ? firebase.auth().currentUser.photoURL : "./bjornborgpixel.jpg",
       gameGuesserId: this.state.selectedPlayer.uid,
       gameGuesserImage: this.state.selectedPlayer.photo,
       gameGuesserName: this.state.selectedPlayer.name,

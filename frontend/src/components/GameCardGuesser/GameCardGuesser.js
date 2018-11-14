@@ -69,7 +69,7 @@ class GameCardGuesser extends Component {
               {this.state.answereRecieved ? <h3>Din tur!</h3> : <h3>Väntar på svar...</h3>}
               <div className="opponent">
                 {this.props.owner && <div className="imageHere" style={{backgroundImage: this.props.owner && `url(${this.props.ownerImage})`}}> </div> }
-                {this.props.guesser && <div className="imageHere" style={{backgroundImage: this.props.guesser ? `url(${this.props.opponentImage})` : `url("./images/profile-avatar.svg")`}}> </div> }
+                {this.props.guesser && <div className="imageHere" style={{backgroundImage: this.props.guesser ? `url(${this.props.opponentImage})` : `url("./bjornborgpixel.jpg")`}}> </div> }
                 {this.props.owner && <p>{this.props.owner}</p>}
                 {this.props.guesser && <p>{this.props.guesser}</p>}
               </div>

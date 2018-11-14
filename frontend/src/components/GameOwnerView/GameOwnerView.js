@@ -21,7 +21,8 @@ import {
   IncomingGuessCard,
   GuessCardFooter,
   AnswereButton,
-  CardSwiperArea
+  CardSwiperArea,
+  WaitingAnim
  } from './style';
 
 class GameOwnerView extends Component {
@@ -31,8 +32,8 @@ class GameOwnerView extends Component {
     thisGamesAnsweredGuesses: [],
     lastGuess: false,
     opponents: [],
-    swipingUp: false,
-    swipingDown: false
+    answereToQuestion: null,
+    response: false,
   }
 
   _isMounted = true;
@@ -128,15 +129,25 @@ class GameOwnerView extends Component {
   slideSend = () => {
     if (this.state.lastGuess) {
       if (this.value < -60) {
-        this.answereQuestion(this.state.lastGuess[0], true)
+        this.setState({answereToQuestion: true, response: "Ja!"})
+        setTimeout(() => {
+          this.answereQuestion(this.state.lastGuess[0], true);
+          this.setState({answereToQuestion: null, response: false})
+          this.value = 0;
+        }, 3000)
       } else if (this.value > 60) {
-        this.answereQuestion(this.state.lastGuess[0], false)
+        this.setState({answereToQuestion: false, response: "Nej!"})
+        setTimeout(() => {
+          this.answereQuestion(this.state.lastGuess[0], false);
+          this.setState({answereToQuestion: null, response: false})
+          this.value = 0;
+        }, 3000)
       }
     }
   }
 
   render() {
-    const {lastGuess, thisGame, thisGamesAnsweredGuesses, opponents} = this.state;
+    const {lastGuess, thisGame, thisGamesAnsweredGuesses, opponents, answereToQuestion, response} = this.state;
     const params = {
       speed: 600,
     };
@@ -154,7 +165,7 @@ class GameOwnerView extends Component {
       }
     }
     return(
-      <AllGameContainer>
+      <AllGameContainer answere={answereToQuestion}>
 
         <div className="bg">
           <Lottie
@@ -189,26 +200,28 @@ class GameOwnerView extends Component {
           <GameContainer>
             <GameHeader>
               <div className="blurredImage" style={{backgroundImage: `url(${thisGame.secretPersonImage})`}}></div>
-              <div className="headerText">
-                <p className="guessNr">{thisGame.remainingGuesses && `${20-thisGame.remainingGuesses}/20`}</p>
+              <div className="headerText" style={{color: response ? "white" : "var(--text-grey)"}}>
+                <p className="guessNr">{thisGame.remainingGuesses && `${20-thisGame.remainingGuesses}`}<span>/20</span></p>
                 <p className="secretPerson">{thisGame && thisGame.secretPerson}</p>
               </div>
             </GameHeader>
 
             <AnswereGuessContainer>
-              <AnswereButton yes style={{opacity: lastGuess ? 1 : 0.3, pointerEvents: lastGuess ? "auto" : "none"}}>
-                <img
-                  onClick={() => this.answereQuestion(lastGuess[0], true)}
-                  src={require('./icons/yes.svg')}
-                  alt=""/>
-              </AnswereButton>
+              <div style={{opacity: response ? 0 : 1, transition: "all 0.3s ease"}}>
+                <AnswereButton yes style={{opacity: lastGuess ? 1 : 0.3, pointerEvents: lastGuess ? "auto" : "none"}}>
+                  <img
+                    onClick={() => this.answereQuestion(lastGuess[0], true)}
+                    src={require('./icons/yes.svg')}
+                    alt=""/>
+                </AnswereButton>
+              </div>
               <CardSwiperArea ref={this.cardSwiper}>
                 <Swiper {...verticalParams} direction={'vertical'} style={{overflow: "visible"}}>
-                  <IncomingGuessCard onTouchEnd={this.slideSend}>
+                  <IncomingGuessCard onTouchEnd={this.slideSend} questionArrived={lastGuess}>
                     <GuessCardHeader>
                       <div className="guessInfo">
                         <p>{`${20-thisGame.remainingGuesses}`}</p>
-                        <div className="lastGuesser" style={{backgroundImage: opponents.image ? `url(${opponents.photo})` : `url(${require('./profile-avatar.svg')})`}}></div>
+                        <div className="lastGuesser" style={{backgroundImage: opponents.image ? `url(${opponents.photo})` : `url(${require('./bjornborgpixel.jpg')})`}}></div>
                       </div>
                     </GuessCardHeader>
                     {lastGuess ?
@@ -216,31 +229,36 @@ class GameOwnerView extends Component {
                       : <div className="questionTextWaiting">Väntar på nästa fråga</div>
                     }
                     <GuessCardFooter>
-                      {lastGuess
-                        ? <div>No anim</div>
-                        : <div className="waitingAnim">
+                      {response && <p className="response">{response}</p>}
+                      <WaitingAnim questionArrived={lastGuess}>
                           <Lottie options={optionsWaitingAutoplay}
                             height={50}
                             width={50}
-                            isStopped={false}
-                          />
-                        </div>
-                      }
+                            isStopped={false}/>
+                      </WaitingAnim>
                     </GuessCardFooter>
                   </IncomingGuessCard>
                 </Swiper>
               </CardSwiperArea>
-              <AnswereButton style={{opacity: lastGuess ? 1 : 0.3, pointerEvents: lastGuess ? "auto" : "none"}}>
-                <img
-                  onClick={() => this.answereQuestion(lastGuess[0], false)}
-                  src={require('./icons/no.svg')}
-                  alt=""/>
-              </AnswereButton>
+              <div style={{opacity: response ? 0 : 1, transition: "all 0.3s ease"}}>
+                <AnswereButton style={{opacity: lastGuess ? 1 : 0.3, pointerEvents: lastGuess ? "auto" : "none"}}>
+                  <img
+                    onClick={() => this.answereQuestion(lastGuess[0], false)}
+                    src={require('./icons/no.svg')}
+                    alt=""/>
+                </AnswereButton>
+              </div>
             </AnswereGuessContainer>
 
             <GameFooter>
-              <DirectionButton text="Ställda frågor" arrowLeft={true} swipe={this.goPrev}/>
-              <BackToHome />
+              <DirectionButton
+                textColor={response ? "white" : "var(--text-grey)"}
+                text="Historik"
+                arrowLeft={true}
+                swipe={this.goPrev}
+                arrowColor={response ? "#FFFFFF" : "var(--text-grey)"}
+              />
+              <BackToHome iconColor={response ? "white" : "var(--text-grey)"} />
             </GameFooter>
 
           </GameContainer>
