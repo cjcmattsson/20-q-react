@@ -147,6 +147,10 @@ export const GuessCard = styled.div `
     border: none;
     font-family: 'Roboto', sans-serif;
 
+    &:placeholder {
+      color: var(--light-grey);
+    }
+
     &:focus {
       outline: none;
     }
@@ -210,6 +214,36 @@ export const GuessCardHeader = styled.div `
     display: flex;
     flex-direction: row;
     align-items: center;
+
+    .waitingDots {
+      font-family: "Manrope Semibold";
+      font-size: 16px;
+      :after {
+        content: '.';
+        animation: dots 2s steps(5, end) infinite;
+        color: var(--light-grey);
+      }
+    }
+
+    @keyframes dots {
+    0%, 20% {
+      color: rgba(0,0,0,0);
+      text-shadow:
+        .25em 0 0 rgba(0,0,0,0),
+        .5em 0 0 rgba(0,0,0,0);}
+    40% {
+      color: var(--light-grey);
+      text-shadow:
+        .25em 0 0 rgba(0,0,0,0),
+        .5em 0 0 rgba(0,0,0,0);}
+    60% {
+      text-shadow:
+        .25em 0 0 var(--light-grey),
+        .5em 0 0 rgba(0,0,0,0);}
+    80%, 100% {
+      text-shadow:
+        .25em 0 0 var(--light-grey),
+        .5em 0 0 var(--light-grey);}}
 
     .lastGuesser {
       height: 25px;

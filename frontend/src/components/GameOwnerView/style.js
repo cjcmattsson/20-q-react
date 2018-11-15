@@ -90,7 +90,6 @@ export const AnswereButton = styled.div `
   width: 61px;
   border-radius: 50%;
   margin: 24px;
-  border: 2px solid ${props => props.yes ? "var(--victory-blue)" : "var(--error-red)"};
   transition: all 0.5s ease;
 `;
 
@@ -152,7 +151,7 @@ export const IncomingGuessCard = styled.div `
 .questionTextWaiting {
   color: var(--light-grey);
   :after {
-    content: ' .';
+    content: '.';
     animation: dots 2s steps(5, end) infinite;
     color: var(--light-grey);
   }

@@ -458,10 +458,15 @@ class GameGuesserView extends Component {
             <GuessCard answere={this.state.answere}>
 
               <GuessCardHeader>
-                <div className="guessInfo">
-                  <p>{`${20-thisGame.remainingGuesses}`}</p>
-                  <div className="lastGuesser" style={{backgroundImage: thisGame.gameOwnerImage === './bjornborgpixel.jpg' ? `url(${require('./bjornborgpixel.jpg')})` : `url(${thisGame.gameOwnerImage})`}}></div>
-                </div>
+                {!answereRecieved & waitingForAnswere
+                  ? <div className="guessInfo">
+                      <p className="waitingDots">Väntar på svar</p>
+                    </div>
+                  : <div className="guessInfo">
+                      <p>{`${20-thisGame.remainingGuesses}`}</p>
+                      <div className="lastGuesser" style={{backgroundImage: thisGame.gameOwnerImage === './bjornborgpixel.jpg' ? `url(${require('./bjornborgpixel.jpg')})` : `url(${thisGame.gameOwnerImage})`}}></div>
+                    </div>
+              }
               </GuessCardHeader>
               {this.state.waitingForAnswere
                 ? <div className="guessInputField">{this.state.lastGuess}</div>

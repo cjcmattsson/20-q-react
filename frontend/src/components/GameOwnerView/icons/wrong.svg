@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 38 38">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #ff7979;
+      }
+
+      .cls-2 {
+        fill: none;
+        stroke: #fff;
+        stroke-width: 2px;
+      }
+    </style>
+  </defs>
+  <g id="no" transform="translate(-157 -447)">
+    <circle id="Ellipse_8" data-name="Ellipse 8" class="cls-1" cx="19" cy="19" r="19" transform="translate(157 447)"/>
+    <g id="kryss" transform="translate(171.328 461.328)">
+      <path id="Path_43" data-name="Path 43" class="cls-2" d="M7,9.967,16.967,0" transform="translate(-7 0)"/>
+      <path id="Path_44" data-name="Path 44" class="cls-2" d="M0,9.967,9.967,0" transform="translate(0 9.967) rotate(-90)"/>
+    </g>
+  </g>
+</svg>

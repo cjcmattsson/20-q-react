@@ -221,7 +221,7 @@ class GameOwnerView extends Component {
                     <GuessCardHeader>
                       <div className="guessInfo">
                         <p>{`${20-thisGame.remainingGuesses}`}</p>
-                        <div className="lastGuesser" style={{backgroundImage: opponents.image ? `url(${opponents.photo})` : `url(${require('./bjornborgpixel.jpg')})`}}></div>
+                        <div className="lastGuesser" style={{backgroundImage: opponents.photo ? `url(${opponents.photo})` : `url(${require('./bjornborgpixel.jpg')})`}}></div>
                       </div>
                     </GuessCardHeader>
                     {lastGuess ?
