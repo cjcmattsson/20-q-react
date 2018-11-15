@@ -22,6 +22,11 @@ export const AllGameContainer = styled.div `
     transition-duration: 1s;
     transition-timing-function: ease;
   }
+
+  .bg div {
+    -webkit-transform: translateY(${props => props.slideValue/3}px);
+    transform: translateY(${props => props.slideValue/3}px);
+  }
 `;
 
 export const GameContainer = styled.div `
@@ -77,12 +82,25 @@ export const GameHeader = styled.div `
   }
 `;
 
+const slideLeft = ({slide}) => {
+  if (slide === true) return "slideLeft";
+  else if (slide === false) return "nothing";
+}
+
 export const AnswereGuessContainer = styled.div `
   width: 100%;
   height: auto;
   display: flex;
   flex-direction: column;
   align-items: center;
+
+  @keyframes slideLeft {
+    0% {transform: translateX(0)}
+    50% {transform: translateX(-100vw);}
+    51% {transform: translateX(100vw);}
+    100% {transform: translateX(0);}
+  }
+
 `;
 
 export const AnswereButton = styled.div `
@@ -98,6 +116,9 @@ export const CardSwiperArea = styled.div `
   align-items: center;
   justify-content: center;
   width: 314px;
+  animation-name: ${slideLeft};
+  animation-duration: 1s;
+  animation-fill-mode: forwards;
   .swiper-container {
     overflow: visible;
     margin: 0;
@@ -133,6 +154,9 @@ export const IncomingGuessCard = styled.div `
   max-width: 314px;
   height: 314px;
   padding: 15px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   border-radius: 4px;
   -webkit-box-shadow: var(--box-shadow);
   -moz-box-shadow: var(--box-shadow);
@@ -211,7 +235,6 @@ const minifyWaiting = ({questionArrived}) => {
 
 export const GuessCardFooter = styled.div `
   width: 100%;
-  height: 50px;
   display: flex;
   align-items: center;
   justify-content: flex-end;
@@ -228,8 +251,16 @@ export const GuessCardFooter = styled.div `
       opacity: 0;
     }
     to {
-      transform: translateX(0);
+      transform: translateX(-5px);
       opacity: 1;
+    }
+  }
+  @keyframes enlargeImage {
+    from {
+      transform: scale(0);
+    }
+    to {
+      transform: scale(1);
     }
   }
 
@@ -240,6 +271,14 @@ export const GuessCardFooter = styled.div `
     transform: translateX(25px);
     opacity: 0;
     animation-name: moveText;
+    animation-duration: 0.5s;
+    animation-fill-mode: forwards;
+  }
+
+  img {
+    height: 38px;
+    transform: scale(0);
+    animation-name: enlargeImage;
     animation-duration: 0.5s;
     animation-fill-mode: forwards;
   }

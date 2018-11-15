@@ -41,6 +41,7 @@ class GameGuesserView extends Component {
     answere: null,
     answereRecieved: false,
     lastGuess: null,
+    slideLeft: false,
 
     secretPerson : "",
     wikiApiRequest: [],
@@ -178,20 +179,12 @@ class GameGuesserView extends Component {
 
 /*THIS IS WHERE THE GUESS CODE GOES!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
 
-
   sendGuess = (game) => {
     firebase.database().ref(`games/${this.props.gameID}/guesses`)
     .push({
       guess: this.state.guessInputField,
     })
-    firebase.database().ref(`games/${this.props.gameID}/remainingGuesses`)
-    .transaction((remainingGuesses) => {
-      if (remainingGuesses) {
-        remainingGuesses = remainingGuesses - 1;
-      }
-      return remainingGuesses;
-    })
-    this.setState({questionIsNotSent: false})
+    this.setState({questionIsNotSent: false, slideLeft: false,})
     setTimeout(() => {
       this.setState({waitingForAnswere: true});
       localStorage.setItem('waitingForAnswere', true);
@@ -218,6 +211,7 @@ class GameGuesserView extends Component {
           waitingForAnswere: false,
           lastGuess: false,
           guessInputField: "",
+          slideLeft: true,
         })
       }
     }, 4000)
@@ -239,18 +233,6 @@ class GameGuesserView extends Component {
           });
         }
     });
-  }
-
-  sendGuess = (game) => {
-    firebase.database().ref(`games/${this.props.gameID}/guesses`)
-    .push({
-      guess: this.state.guessInputField,
-    })
-    this.setState({questionIsNotSent: false})
-    setTimeout(() => {
-      this.setState({waitingForAnswere: true});
-      localStorage.setItem('waitingForAnswere', true);
-    }, 1200);
   }
 
   getAllGuesses = () => {
@@ -328,7 +310,7 @@ class GameGuesserView extends Component {
 
     const optionsResultOfFinalGuess = {
       loop: false,
-      autoplay: true,
+      autoplay: false,
       animationData: this.state.resultOfGuess ? require('./anims/guessright.json') : require('./anims/guesswrong.json'),
       rendererSettings: {
         preserveAspectRatio: 'xMidYMid slice'
@@ -380,12 +362,13 @@ class GameGuesserView extends Component {
 
 
             {guessWhoItIs && <GuessWhoItIsContainer sizeOfCard={this.state.unMountGuess}>
-              {finalGuessIsSent &&
+              <div style={{pointerEvents: "none"}}>
               <Lottie
                 style={{width: "100%", top: 0, left: 0, position: "absolute"}}
                 options={optionsResultOfFinalGuess}
-                isStopped={true}
-              />}
+                isStopped={!finalGuessIsSent}
+              />
+            </div>
               {finalGuessIsSent &&
                 <FinalGuessResultWrapper>
                   <FinalGuessContent>
@@ -420,26 +403,24 @@ class GameGuesserView extends Component {
                   name="secretPerson"
                   type="text"
                   className="secretPerson"
-                  placeholder="Tänk på att du bara har en gissning"/>
+                  placeholder="Du har en gissning..."/>
                 }
                 <SearchResultWrapper>
                   {this.state.wikiApiRequest &&
                     this.state.wikiApiRequest.map((person, key) => {
                       return (
                         <SearchResult key={key} onClick={() => {this.selectSecretPerson(person)}}>
-                          <div className="profilePic" style={{backgroundImage: person.thumbnail ? `url(${person.thumbnail.source})` : `url(${"https://banner2.kisspng.com/20180131/fvw/kisspng-question-mark-icon-question-mark-5a7214f2980a92.2259030715174259066228.jpg"})`}}></div>
+                          <div className="profilePic" style={{backgroundImage: person.thumbnail ? `url(${person.thumbnail.source})` : `url(${"https://cdn.shopify.com/s/files/1/1369/3615/products/Mysterypack_300x300.jpg?v=1530037632"})`}}></div>
                           <p>{person.title}</p>
                         </SearchResult>
                       )
                     })
                   }
                 </SearchResultWrapper>
-                <SendFinalGuess onClick={this.seeIfCorrectAnswere} style={{opacity: finalGuessIsSent ? 0 : 1, pointerEvents: finalGuessIsSent ? "none" : "auto"}}>
-                  <img src={require('./send.svg')} alt=""/>
-                </SendFinalGuess>
-                {<div className="goBack" style={{opacity: finalGuessIsSent ? 0 : 1, pointerEvents: finalGuessIsSent ? "none" : "auto"}} onClick={this.unMountGuess}>
+                <SendFinalGuess onClick={this.seeIfCorrectAnswere} style={{pointerEvents: finalGuessIsSent ? "none" : "auto"}}></SendFinalGuess>
+                <div className="goBack" style={{opacity: finalGuessIsSent ? 0 : 1, pointerEvents: finalGuessIsSent ? "none" : "auto"}} onClick={this.unMountGuess}>
                   <DirectionButton text="Tillbaka" arrowLeft={true}/>
-                </div>}
+                </div>
               </GuessWhoItIsContainer>}
 
 
@@ -455,7 +436,7 @@ class GameGuesserView extends Component {
               </div>
             </GameHeader>
 
-            <GuessCard answere={this.state.answere}>
+            <GuessCard answere={this.state.answere} slide={this.state.slideLeft}>
 
               <GuessCardHeader>
                 {!answereRecieved & waitingForAnswere

@@ -82,7 +82,10 @@ class GameOwnerView extends Component {
         console.log(answeredQuestionsList);
         if (this._isMounted) {
           this.setState({thisGamesAnsweredGuesses: answeredQuestionsList})
-          this.setState({lastGuess: Object.entries(data.val()).slice(-1)[0][1].answere ? false : Object.entries(data.val()).slice(-1)[0]})
+          this.setState({
+            lastGuess: Object.entries(data.val()).slice(-1)[0][1].answere ? false : Object.entries(data.val()).slice(-1)[0],
+            slideLeft: false,
+          })
         }
       }
     });
@@ -114,6 +117,7 @@ class GameOwnerView extends Component {
       super(props)
       this.swiper = null
       this.cardSwiper = React.createRef();
+      this.gameContainer = React.createRef();
     }
 
     goNext = () => {
@@ -132,14 +136,14 @@ class GameOwnerView extends Component {
         this.setState({answereToQuestion: true, response: "Ja!"})
         setTimeout(() => {
           this.answereQuestion(this.state.lastGuess[0], true);
-          this.setState({answereToQuestion: null, response: false})
+          this.setState({answereToQuestion: null, response: false, slideLeft: true})
           this.value = 0;
         }, 3000)
       } else if (this.value > 60) {
         this.setState({answereToQuestion: false, response: "Nej!"})
         setTimeout(() => {
           this.answereQuestion(this.state.lastGuess[0], false);
-          this.setState({answereToQuestion: null, response: false})
+          this.setState({answereToQuestion: null, response: false, slideLeft: true})
           this.value = 0;
         }, 3000)
       }
@@ -154,7 +158,7 @@ class GameOwnerView extends Component {
 
     const verticalParams = {
       on : {
-        transitionStart: () => console.log("hello"),
+        transitionStart: () => this.setState({slideValue: 0}),
         sliderMove: () => {
           let transformValue = this.cardSwiper.current.childNodes[0].childNodes[0].style.transform;
           let getChangableValue = transformValue.split(',');
@@ -165,9 +169,9 @@ class GameOwnerView extends Component {
       }
     }
     return(
-      <AllGameContainer answere={answereToQuestion}>
+      <AllGameContainer ref={this.gameContainer} answere={answereToQuestion}>
 
-        <div className="bg">
+        <div className="bg" >
           <Lottie
             style={{width: "100%", position: "absolute"}}
             options={optionsBackgroundAnimGrey}
@@ -210,12 +214,11 @@ class GameOwnerView extends Component {
               <div style={{opacity: response ? 0 : 1, transition: "all 0.3s ease"}}>
                 <AnswereButton yes style={{opacity: lastGuess ? 1 : 0.3, pointerEvents: lastGuess ? "auto" : "none"}}>
                   <img
-                    onClick={() => this.answereQuestion(lastGuess[0], true)}
                     src={require('./icons/yes.svg')}
                     alt=""/>
                 </AnswereButton>
               </div>
-              <CardSwiperArea ref={this.cardSwiper}>
+              <CardSwiperArea ref={this.cardSwiper} slide={this.state.slideLeft}>
                 <Swiper {...verticalParams} direction={'vertical'} style={{overflow: "visible"}}>
                   <IncomingGuessCard onTouchEnd={this.slideSend} questionArrived={lastGuess}>
                     <GuessCardHeader>
@@ -224,18 +227,21 @@ class GameOwnerView extends Component {
                         <div className="lastGuesser" style={{backgroundImage: opponents.photo ? `url(${opponents.photo})` : `url(${require('./bjornborgpixel.jpg')})`}}></div>
                       </div>
                     </GuessCardHeader>
-                    {lastGuess ?
-                        <div className="questionText">{lastGuess[1].guess && lastGuess[1].guess}</div>
+                    {lastGuess
+                      ? <div className="questionText">{lastGuess[1].guess && lastGuess[1].guess}</div>
                       : <div className="questionTextWaiting">Väntar på nästa fråga</div>
                     }
                     <GuessCardFooter>
                       {response && <p className="response">{response}</p>}
-                      <WaitingAnim questionArrived={lastGuess}>
-                          <Lottie options={optionsWaitingAutoplay}
-                            height={50}
-                            width={50}
-                            isStopped={false}/>
-                      </WaitingAnim>
+                      {!response
+                        ?  <WaitingAnim questionArrived={lastGuess}>
+                            <Lottie options={optionsWaitingAutoplay}
+                              height={50}
+                              width={50}
+                              isStopped={false}/>
+                            </WaitingAnim>
+                        : <img src={response === "Ja!" ? require('./icons/correct.svg') : require('./icons/wrong.svg')} alt=""/>
+                      }
                     </GuessCardFooter>
                   </IncomingGuessCard>
                 </Swiper>
@@ -243,7 +249,6 @@ class GameOwnerView extends Component {
               <div style={{opacity: response ? 0 : 1, transition: "all 0.3s ease"}}>
                 <AnswereButton style={{opacity: lastGuess ? 1 : 0.3, pointerEvents: lastGuess ? "auto" : "none"}}>
                   <img
-                    onClick={() => this.answereQuestion(lastGuess[0], false)}
                     src={require('./icons/no.svg')}
                     alt=""/>
                 </AnswereButton>

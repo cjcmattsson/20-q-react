@@ -3,6 +3,7 @@ import firebase from '../../utils/firebase';
 import Swiper from 'react-id-swiper';
 import DirectionButton from '../DirectionButton/DirectionButton';
 import InviteToGame from '../InviteToGame/InviteToGame';
+import { Link } from '@reach/router';
 import {
   CreateGameContainer,
   SearchResultWrapper,
@@ -126,7 +127,7 @@ class CreateGameView extends Component {
           <InviteToGame user={this.props.user} selectedPlayer={this.state.selectedPlayer} addUser={this.addUser} nextSwiperSlide={this.goNext}/>
         </div>
         <CreateGameContainer>
-          <h2>Jag tänker på:</h2>
+          <h2>Jag tänker på en person:</h2>
           {this.state.chosenPerson ?
             <SearchResult onClick={this.unSelectPerson}>
               <div className="profilePic" style={{backgroundImage: this.state.chosenImg && `url(${this.state.chosenImg})`}}></div>
@@ -146,7 +147,7 @@ class CreateGameView extends Component {
                 this.state.wikiApiRequest.map((person, key) => {
                   return (
                     <SearchResult key={key} onClick={() => {this.selectSecretPerson(person)}}>
-                      <div className="profilePic" style={{backgroundImage: person.thumbnail ? `url(${person.thumbnail.source})` : `url(${"https://banner2.kisspng.com/20180131/fvw/kisspng-question-mark-icon-question-mark-5a7214f2980a92.2259030715174259066228.jpg"})`}}></div>
+                      <div className="profilePic" style={{backgroundImage: person.thumbnail ? `url(${person.thumbnail.source})` : `url(${"https://cdn.shopify.com/s/files/1/1369/3615/products/Mysterypack_300x300.jpg?v=1530037632"})`}}></div>
                       <p>{person.title}</p>
                     </SearchResult>
                   )
@@ -154,7 +155,9 @@ class CreateGameView extends Component {
               }
             </SearchResultWrapper>
             <StarGameButton onClick={this.createGame}>
-              <img src={require('./send.svg')} alt=""/>
+              <Link to={"/"}>
+                <img src={require('./send.svg')} alt=""/>
+              </Link>
             </StarGameButton>
             <div className="goBack" onClick={this.goPrev}>
               <DirectionButton text="Tillbaka" arrowLeft={true}/>

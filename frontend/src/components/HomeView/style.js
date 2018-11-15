@@ -69,7 +69,7 @@ const settingsSize = ({active}) => {
 export const Settings = styled.div `
   border-radius: 4px;
   animation-name: ${settingsSize};
-  animation-duration: 0.5s;
+  animation-duration: 0.2s;
   animation-fill-mode: forwards;
   position: absolute;
   top: 24px;
@@ -95,7 +95,7 @@ export const Settings = styled.div `
     left: 0;
     width: 100%;
     opacity: ${props => props.active ? 1 : 0};
-    transition: all 1s ease;
+    transition: all 0.2s ease;
 
     p {
       margin: 0;

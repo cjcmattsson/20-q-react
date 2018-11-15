@@ -11,10 +11,9 @@ const blobSize = ({answere}) => {
   else if (answere === true || answere === false) return "5";
 }
 
-const moveCard = ({answere}) => {
-  if (answere === null) return "nothing";
-  else if (answere === true) return "correct";
-  else if (answere === false) return "wrong";
+const slideLeft = ({slide}) => {
+  if (slide === true) return "slideLeft";
+  else if (slide === false) return "nothing";
 }
 
 export const AllGameContainer = styled.div `
@@ -29,22 +28,6 @@ export const AllGameContainer = styled.div `
   transition-timing-function: ease;
 }
 
-@keyframes correct {
-  0% {transform: translateY(0)}
-  10% {transform: translateY(-20px)}
-  35% {transform: translateY(0)}
-  65% {transform: translateX(0)}
-  85% {transform: translateX(-100vw)}
-  100% {transform: translateX(-100vw)}
-}
-@keyframes wrong {
-  0% {transform: translateY(0)}
-  20% {transform: translateY(20px)}
-  40% {transform: translateY(0)}
-  75% {transform: translateX(0)}
-  100% {transform: translateX(-100vw)}
-}
-
 .secondHidden {
   padding: 0 30px;
   left: 0;
@@ -52,6 +35,13 @@ export const AllGameContainer = styled.div `
   flex-direction: row;
   width: 200vw;
   justify-content: space-between;
+}
+
+@keyframes slideLeft {
+  0% {transform: translateX(0)}
+  50% {transform: translateX(-100vw);}
+  51% {transform: translateX(100vw);}
+  100% {transform: translateX(0);}
 }
 
 `;
@@ -125,12 +115,17 @@ export const GameHeader = styled.div `
 
 export const GuessCard = styled.div `
   transition: all 1s ease;
-  animation: ${moveCard} 3s linear;
   background-color: white;
+  animation-name: ${slideLeft};
+  animation-duration: 1s;
+  animation-fill-mode: forwards;
   width: 100%;
   max-width: 314px;
   height: 314px;
   padding: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   border-radius: 4px;
   -webkit-box-shadow: var(--box-shadow);
   -moz-box-shadow: var(--box-shadow);
@@ -170,11 +165,11 @@ export const GuessCard = styled.div `
 
       @keyframes moveText {
         from {
-          transform: translateX(25px) translateY(7px);
+          transform: translateX(25px);
           opacity: 0;
         }
         to {
-          transform: translateX(0) translateY(7px);
+          transform: translateX(0);
           opacity: 1;
         }
       }
@@ -183,7 +178,7 @@ export const GuessCard = styled.div `
         color: black;
         font-size: 23px;
         font-family: "Manrope Semibold";
-        transform: translateX(25px) translateY(7px);
+        transform: translateX(25px);
         opacity: 0;
         animation-name: moveText;
         animation-duration: 0.5s;
@@ -192,9 +187,7 @@ export const GuessCard = styled.div `
     }
 
     .sendGuessButton {
-      transform: translateY(7px) translateX(5px);
-      height: 50px;
-      width: 50px;
+
     }
   }
 `;
@@ -325,8 +318,10 @@ export const GuessWhoItIsContainer = styled.div `
 }
 
   h2 {
-    font-size: 24px;
+    font-size: 20px;
     margin: 0 0 16px;
+    font-family: "Manrope Semibold";
+    color: var(--text-grey);
   }
 
   .secretPerson {
@@ -340,6 +335,12 @@ export const GuessWhoItIsContainer = styled.div `
     :focus {
       outline: none;
     }
+  }
+
+  .goBack {
+    position: absolute;
+    bottom: 25px;
+    left: 25px;
   }
 
 `;
@@ -391,15 +392,10 @@ export const SearchResult = styled.div `
 export const SendFinalGuess = styled.div `
   position: absolute;
   bottom: 31.8vh;
-  right: 46px;
-  height: 38px;
-  width: 38px;
+  right: 35px;
+  height: 50px;
+  width: 50px;
   transition: all 0.5s ease;
-
-  img {
-    height: 100%;
-    width: 100%;
-  }
 `;
 
 export const FinalGuessResultWrapper = styled.div `

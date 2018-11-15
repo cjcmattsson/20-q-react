@@ -267,7 +267,7 @@ class HomeView extends Component {
                 })}
           </div>
         </HomeGamesContainer>
-            {finishedGames.length && <HomeGamesContainer>
+            <HomeGamesContainer>
               <h2>Spela igen</h2>
               <div className="gamesWrapper">
                 {finishedGames &&
@@ -284,7 +284,7 @@ class HomeView extends Component {
                     />
                   })}
                 </div>
-              </HomeGamesContainer>}
+              </HomeGamesContainer>
 
               <HomeButtonsWrapper>
                 <ButtonLarge buttonText={"Starta spel"} redirectTo={"createGameView"} />

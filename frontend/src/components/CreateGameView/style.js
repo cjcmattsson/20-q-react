@@ -68,8 +68,10 @@ export const CreateGameContainer = styled.div `
   padding-top: 150px;
 
   h2 {
-    font-size: 24px;
+    font-size: 20px;
     margin: 0 0 16px;
+    font-family: "Manrope Semibold";
+    color: var(--text-grey);
   }
 
   .searchField {
