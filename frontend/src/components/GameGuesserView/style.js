@@ -16,7 +16,13 @@ const slideLeft = ({slide}) => {
   else if (slide === false) return "nothing";
 }
 
+const scaleUpCard = ({scale}) => {
+  if (scale === true) return "scaleUpCard";
+  else if (scale === false) return "nothing";
+}
+
 export const AllGameContainer = styled.div `
+  background-color: white;
   color: var(--text-grey);
 
 .bg div:nth-child(2) svg g g path {
@@ -38,10 +44,17 @@ export const AllGameContainer = styled.div `
 }
 
 @keyframes slideLeft {
-  0% {transform: translateX(0)}
+  0% {transform: translateX(0);}
   50% {transform: translateX(-100vw);}
   51% {transform: translateX(100vw);}
   100% {transform: translateX(0);}
+}
+
+@keyframes scaleUpCard {
+  0% {transform: scaleY(1)}
+  30% {transform: scaleY(0.9)}
+  60% {transform: scale(7);}
+  100% {transform: scale(7);}
 }
 
 `;
@@ -113,6 +126,16 @@ export const GameHeader = styled.div `
   }
 `;
 
+export const GuessCardScaleWrapper = styled.div `
+  height: 314px;
+  width: 100%;
+  max-width: 314px;
+  background-color: transparent;
+  animation-name: ${scaleUpCard};
+  animation-duration: 1.5s;
+  animation-fill-mode: forwards;
+`;
+
 export const GuessCard = styled.div `
   transition: all 1s ease;
   background-color: white;
@@ -120,8 +143,7 @@ export const GuessCard = styled.div `
   animation-duration: 1s;
   animation-fill-mode: forwards;
   width: 100%;
-  max-width: 314px;
-  height: 314px;
+  height: 100%;
   padding: 16px;
   display: flex;
   flex-direction: column;
@@ -302,10 +324,14 @@ export const GuessWhoItIsContainer = styled.div `
   z-index: 100;
   height: 100vh;
   width: 100vw;
+  opacity: 0;
   padding: 47px;
   padding-top: 150px;
   animation-name: ${size};
   animation-duration: 1s;
+  animation-fill-mode: forwards;
+  animation-delay: 0.5s;
+
 
 @keyframes enlarge {
     0%   {opacity: 0;}

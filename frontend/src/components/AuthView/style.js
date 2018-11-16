@@ -20,7 +20,11 @@ color: var(--text-grey);
   right: 20px;
   transition: all 1s ease;
   border: 0;
-  background-color: none;
+  background-color: transparent;
+
+  &:focus {
+    outline: none;
+  }
 }
 
 `;

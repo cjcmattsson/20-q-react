@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 
 export const InvitePeopleToPlay = styled.div `
+  background-color: white;
   height: 100vh;
   width: 100vw;
   display: flex;

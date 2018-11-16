@@ -5,6 +5,7 @@ import GameCardOwner from '../GameCardOwner/GameCardOwner';
 import GameCardGuesser from '../GameCardGuesser/GameCardGuesser';
 import GameCardInvited from '../GameCardInvited/GameCardInvited';
 import GameCardFinished from '../GameCardFinished/GameCardFinished';
+import SaveOnHomeScreen from '../SaveOnHomeScreen/SaveOnHomeScreen';
 import ButtonLarge from '../ButtonLarge/ButtonLarge';
 import DirectionButton from '../DirectionButton/DirectionButton';
 import NoLinkButton from '../NoLinkButton/NoLinkButton';
@@ -268,7 +269,7 @@ class HomeView extends Component {
           </div>
         </HomeGamesContainer>
             <HomeGamesContainer>
-              <h2>Spela igen</h2>
+            <h2>Spela igen</h2>
               <div className="gamesWrapper">
                 {finishedGames &&
                   finishedGames.map((game, key) => {
@@ -290,6 +291,8 @@ class HomeView extends Component {
                 <ButtonLarge buttonText={"Starta spel"} redirectTo={"createGameView"} />
                 <ButtonLarge buttonText={"Spela öppet spel"} redirectTo={"publicGamesView"} />
               </HomeButtonsWrapper>
+
+              {!myGamesOwner && <SaveOnHomeScreen/>}
 
             </HomeViewContainer>
           )

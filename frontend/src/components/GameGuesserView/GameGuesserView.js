@@ -17,6 +17,7 @@ import {
   GameContainer,
   GameHeader,
   GuessCard,
+  GuessCardScaleWrapper,
   GameFooter,
   History,
   GuessCardHeader,
@@ -419,7 +420,7 @@ class GameGuesserView extends Component {
                 </SearchResultWrapper>
                 <SendFinalGuess onClick={this.seeIfCorrectAnswere} style={{pointerEvents: finalGuessIsSent ? "none" : "auto"}}></SendFinalGuess>
                 <div className="goBack" style={{opacity: finalGuessIsSent ? 0 : 1, pointerEvents: finalGuessIsSent ? "none" : "auto"}} onClick={this.unMountGuess}>
-                  <DirectionButton text="Tillbaka" arrowLeft={true}/>
+                  <DirectionButton text="Ställ fler frågor" arrowLeft={true}/>
                 </div>
               </GuessWhoItIsContainer>}
 
@@ -436,6 +437,7 @@ class GameGuesserView extends Component {
               </div>
             </GameHeader>
 
+            <GuessCardScaleWrapper scale={guessWhoItIs}>
             <GuessCard answere={this.state.answere} slide={this.state.slideLeft}>
 
               <GuessCardHeader>
@@ -488,6 +490,7 @@ class GameGuesserView extends Component {
                   }
                 </div>
               </GuessCard>
+              </GuessCardScaleWrapper>
 
               <div className="guessWhoItIs">
                 <NoLinkButton function={this.mountGuess} color={"var(--strong-pink)"} text={"Jag vill gissa!"} />

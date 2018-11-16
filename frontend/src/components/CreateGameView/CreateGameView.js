@@ -74,23 +74,25 @@ class CreateGameView extends Component {
   }
 
   createGame = (e) => {
-    e.preventDefault();
-    const database = firebase.database();
-    const games = database.ref('games');
-    const game = {
-      secretPerson: this.state.chosenPerson,
-      secretPersonImage: this.state.chosenImg,
-      remainingGuesses: 19,
-      gameOwnerId: firebase.auth().currentUser.uid,
-      gameOwnerName: firebase.auth().currentUser.displayName,
-      gameOwnerImage: firebase.auth().currentUser.photoURL ? firebase.auth().currentUser.photoURL : "./bjornborgpixel.jpg",
-      gameGuesserId: this.state.selectedPlayer.uid,
-      gameGuesserImage: this.state.selectedPlayer.photo,
-      gameGuesserName: this.state.selectedPlayer.name,
-      waitingForAnswere: true,
+    if (this.state.chosenPerson) {
+      e.preventDefault();
+      const database = firebase.database();
+      const games = database.ref('games');
+      const game = {
+        secretPerson: this.state.chosenPerson,
+        secretPersonImage: this.state.chosenImg,
+        remainingGuesses: 19,
+        gameOwnerId: firebase.auth().currentUser.uid,
+        gameOwnerName: firebase.auth().currentUser.displayName,
+        gameOwnerImage: firebase.auth().currentUser.photoURL ? firebase.auth().currentUser.photoURL : "./bjornborgpixel.jpg",
+        gameGuesserId: this.state.selectedPlayer.uid,
+        gameGuesserImage: this.state.selectedPlayer.photo,
+        gameGuesserName: this.state.selectedPlayer.name,
+        waitingForAnswere: true,
+      }
+      games.push(game);
+      this.setState({secretPerson: ""})
     }
-    games.push(game);
-    this.setState({secretPerson: ""})
   }
 
   selectSecretPerson = (person) => {
@@ -104,17 +106,17 @@ class CreateGameView extends Component {
   }
 
   constructor(props) {
-      super(props)
-      this.swiper = null
-    }
+    super(props)
+    this.swiper = null
+  }
 
-    goNext = () => {
-      if (this.swiper) this.swiper.slideNext();
-    }
+  goNext = () => {
+    if (this.swiper) this.swiper.slideNext();
+  }
 
-    goPrev = () => {
-      if (this.swiper) this.swiper.slidePrev();
-    }
+  goPrev = () => {
+    if (this.swiper) this.swiper.slidePrev();
+  }
 
   render() {
 
@@ -158,14 +160,14 @@ class CreateGameView extends Component {
               <Link to={"/"}>
                 <img src={require('./send.svg')} alt=""/>
               </Link>
-            </StarGameButton>
-            <div className="goBack" onClick={this.goPrev}>
-              <DirectionButton text="Tillbaka" arrowLeft={true}/>
-            </div>
-          </CreateGameContainer>
-        </Swiper>
-      )
-    }
+          </StarGameButton>
+          <div className="goBack" onClick={this.goPrev}>
+            <DirectionButton text="Tillbaka" arrowLeft={true}/>
+          </div>
+        </CreateGameContainer>
+      </Swiper>
+    )
   }
+}
 
-  export default CreateGameView;
+export default CreateGameView;

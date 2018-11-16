@@ -3,6 +3,7 @@ import styled from 'styled-components';
 export const PublicGamesViewContainer = styled.div `
   height: 100vh;
   width: 100vw;
+  background-color: white;
 
 `;
 export const PublicGamesWrapper = styled.div `

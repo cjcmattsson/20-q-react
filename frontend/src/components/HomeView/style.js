@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 
 export const HomeViewContainer = styled.div `
+  background-color: white;
   padding: 24px 30px;
   display: flex;
   flex-direction: column;
@@ -17,6 +18,7 @@ export const HomeViewContainer = styled.div `
     position: absolute;
     top: 0;
     left: 0;
+    background-color: white;
   }
 
   @keyframes menuOpen {
@@ -77,9 +79,11 @@ export const Settings = styled.div `
   z-index: 0;
   height: 61px;
   width: 61px;
-  transition: all 1s ease;
+  opacity: 0;
+  transition: all 0.2s ease;
   background-position: center;
   background-size: cover;
+  opacity: ${props => props.active ? 1 : 0};
 
   .overlay {
     border-radius: 4px;
@@ -94,8 +98,8 @@ export const Settings = styled.div `
     top: 0;
     left: 0;
     width: 100%;
-    opacity: ${props => props.active ? 1 : 0};
     transition: all 0.2s ease;
+    opacity: ${props => props.active ? 1 : 0};
 
     p {
       margin: 0;

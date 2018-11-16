@@ -7,7 +7,7 @@ import CreateGameView from '../CreateGameView/CreateGameView';
 import PublicGamesView from '../PublicGamesView/PublicGamesView';
 import GameGuesserView from '../GameGuesserView/GameGuesserView';
 import GameOwnerView from '../GameOwnerView/GameOwnerView';
-import { Router } from "@reach/router";
+import FadeTransitionRouter from './FadeTransitionRouter';
 
 class App extends Component {
 
@@ -34,14 +34,14 @@ class App extends Component {
   render() {
     const {user} = this.state;
     return (
-      <div className="App">
-        <Router>
+      <div className="app">
+        <FadeTransitionRouter>
           {user ? (<HomeView user={user} path="/" />) : (<AuthView path="/" />)}
-          <CreateGameView user={user} path="/createGameView" />
-          <PublicGamesView user={user} path="/publicGamesView" />
-          <GameGuesserView path="/gameGuesserView/:gameID" />
-          <GameOwnerView path="/gameOwnerView/:gameID" />
-        </Router>
+          <CreateGameView className="page" user={user} path="/createGameView" />
+          <PublicGamesView className="page" user={user} path="/publicGamesView" />
+          <GameGuesserView className="page" path="/gameGuesserView/:gameID" />
+          <GameOwnerView className="page" path="/gameOwnerView/:gameID" />
+        </FadeTransitionRouter>
       </div>
     );
   }

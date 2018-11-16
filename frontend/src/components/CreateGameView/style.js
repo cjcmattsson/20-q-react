@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 
 export const InvitePeopleToPlay = styled.div `
+  background-color: white;
   height: 100vh;
   width: 100vw;
   display: flex;
@@ -66,6 +67,7 @@ export const CreateGameContainer = styled.div `
   width: 100vw;
   padding: 47px;
   padding-top: 150px;
+  background-color: white;
 
   h2 {
     font-size: 20px;

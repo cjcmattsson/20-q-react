@@ -13,6 +13,7 @@ const blobSize = ({answere}) => {
 
 export const AllGameContainer = styled.div `
   color: var(--text-grey);
+  background-color: white;
 
   .bg div:nth-child(2) svg g g path {
     z-index: 100;
