@@ -48,7 +48,7 @@ class GameCardOwner extends Component {
           </SecretPerson>
           <GameInfo answere={this.state.newQuestionRecieved}>
             <div className="statusAndOpponent">
-              {this.state.newQuestionRecieved ? <h3>Din tur!</h3> : <h3>Väntar på fråga...</h3>}
+              {this.state.newQuestionRecieved ? <h3>Din tur att svara!</h3> : <h3>Väntar på fråga...</h3>}
               <div className="opponent">
                 {this.props.owner && <div className="imageHere" style={{backgroundImage: this.props.owner && `url(${this.props.ownerImage})`}}> </div> }
                 {this.props.guesser && <div className="imageHere" style={{backgroundImage: this.props.guesser ? `url(${this.props.opponentImage})` : `url("./bjornborgpixel.jpg")`}}> </div> }

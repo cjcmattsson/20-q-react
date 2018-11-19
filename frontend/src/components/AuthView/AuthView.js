@@ -2,10 +2,12 @@ import React, { Component } from 'react';
 import firebase from '../../utils/firebase';
 import Lottie from 'react-lottie';
 import NoLinkButton from '../NoLinkButton/NoLinkButton';
+import DirectionButton from '../DirectionButton/DirectionButton';
 import Swiper from 'react-id-swiper';
 import {
   optionsBackgroundAnimPink,
-  optionsBackgroundAnimGrey
+  optionsBackgroundAnimGrey,
+  optionsWaitingAutoplay
 } from '../utils/LottieOptions.js';
 import {
   AuthViewContainer,
@@ -81,7 +83,9 @@ constructor(props) {
           <Lottie style={{width: "100%", position: "absolute"}} options={optionsBackgroundAnimPink} isStopped={false} />
         </div>
         <AuthHeader>
-          <div className="blob"></div>
+          <div className="blob">
+            <Lottie options={optionsWaitingAutoplay} isStopped={false} />
+          </div>
           <WelcomeMessage>
             <h2>Hej kompis!</h2>
             <p>Här börjar din 20 frågor-resa</p>
@@ -144,7 +148,13 @@ constructor(props) {
           />
 
         </RandomContentWrapper>
-        <button className="loginOrCreateUser" onClick={this.state.login ? this.goPrev : this.goNext}>{this.state.login ? "Skapa account" : "Redan medlem?"}</button>
+        <div className="loginOrCreateUser">
+          <DirectionButton
+            text={this.state.login ? "Skapa användare" : "Logga in"}
+            swipe={this.state.login ? this.goPrev : this.goNext}
+            arrowLeft={this.state.login}
+            arrowRight={!this.state.login}/>
+        </div>
       </AuthViewContainer>
     )
   }

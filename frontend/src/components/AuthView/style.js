@@ -22,6 +22,10 @@ color: var(--text-grey);
   border: 0;
   background-color: transparent;
 
+  p {
+    margin: 0;
+  }
+
   &:focus {
     outline: none;
   }
@@ -41,8 +45,6 @@ export const AuthHeader = styled.div `
   .blob {
     height: 51px;
     width: 51px;
-    background-color: var(--strong-pink);
-    border-radius: 50%;
   }
 `;
 
@@ -55,7 +57,10 @@ export const WelcomeMessage = styled.div `
 
   h2, p {margin: 0;}
   h2 {font-size: 23px;}
-  p {font-size: 16px;}
+  p {
+    font-size: 16px;
+    font-family: "Manrope Semibold";
+  }
 `;
 
 export const UserInfoContainer = styled.div `
@@ -112,8 +117,9 @@ export const UserInputFields = styled.div `
   div p {
     text-align: right;
     font-weight: 500;
-    font-size: 12px;
+    font-size: 11px;
     margin-top: -10px;
+    font-family: "Manrope Bold";
   }
 `;
 

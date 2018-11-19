@@ -6,6 +6,7 @@ export const optionsSend = {
     preserveAspectRatio: 'xMidYMid slice'
   }
 };
+
 export const optionsWaiting = {
   loop: true,
   autoplay: false,

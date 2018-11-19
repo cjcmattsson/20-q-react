@@ -286,7 +286,7 @@ class GameGuesserView extends Component {
       ctx.webkitImageSmoothingEnabled = false;
       ctx.imageSmoothingEnabled = false;
       img.onload = () => {
-        var size = 15 * 0.01,
+        var size = 7.5 * 0.01,
             w = this.refs.canvas.width * size,
             h = this.refs.canvas.height * size;
         ctx.drawImage(img, 0, 0, w, h);
@@ -438,7 +438,7 @@ class GameGuesserView extends Component {
             </GameHeader>
 
             <GuessCardScaleWrapper scale={guessWhoItIs}>
-            <GuessCard answere={this.state.answere} slide={this.state.slideLeft}>
+            <GuessCard answere={this.state.answere} slide={this.state.slideLeft} opacity={guessWhoItIs}>
 
               <GuessCardHeader>
                 {!answereRecieved & waitingForAnswere
@@ -499,7 +499,7 @@ class GameGuesserView extends Component {
               <GameFooter>
                 <DirectionButton
                   textColor={answereRecieved ? "white" : "var(--text-grey)"}
-                  text="Historik"
+                  text="Ställda frågor"
                   arrowLeft={true}
                   swipe={this.goPrev}
                   arrowColor={answereRecieved ? "#FFFFFF" : "var(--text-grey)"}

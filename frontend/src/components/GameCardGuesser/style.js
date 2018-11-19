@@ -83,6 +83,10 @@ export const GameInfo = styled.div `
     flex-direction: column;
     justify-content: space-between;
 
+    h3 {
+      font-family: "Manrope Semibold"
+    }
+
 
     .opponent {
       display: flex;

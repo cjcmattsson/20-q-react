@@ -21,6 +21,11 @@ const scaleUpCard = ({scale}) => {
   else if (scale === false) return "nothing";
 }
 
+const fadeOut = ({opacity}) => {
+  if (opacity === true) return "fadeOutText";
+  else if (opacity === false) return "nothing";
+}
+
 export const AllGameContainer = styled.div `
   background-color: white;
   color: var(--text-grey);
@@ -44,17 +49,26 @@ export const AllGameContainer = styled.div `
 }
 
 @keyframes slideLeft {
-  0% {transform: translateX(0);}
-  50% {transform: translateX(-100vw);}
-  51% {transform: translateX(100vw);}
+  0% {transform: translateX(0)}
+  50% {transform: translateX(-100vw); opacity: 1}
+  51% {opacity: 0;}
+  52% {transform: translateX(100vw);}
+  53% {opacity: 1}
   100% {transform: translateX(0);}
 }
 
 @keyframes scaleUpCard {
   0% {transform: scaleY(1)}
-  30% {transform: scaleY(0.9)}
-  60% {transform: scale(7);}
-  100% {transform: scale(7);}
+  30% {
+    transform: scaleY(0.9);
+  }
+  60% {transform: scale(3);}
+  100% {transform: scale(3);}
+}
+
+@keyframes fadeOutText {
+  0% {opacity: 1}
+  100% {opacity: 0}
 }
 
 `;
@@ -108,6 +122,7 @@ export const GameHeader = styled.div `
 
       p {
         margin: 0;
+        margin-top: -2px;
       }
 
       .guessNr {
@@ -121,6 +136,7 @@ export const GameHeader = styled.div `
       }
       .opponent {
         font-size: 16px;
+        font-family: "Manrope Semibold";
       }
     }
   }
@@ -154,6 +170,9 @@ export const GuessCard = styled.div `
   box-shadow: var(--box-shadow);
 
   .guessInputField {
+    animation-name: ${fadeOut};
+    animation-duration: 0.3s;
+    animation-fill-mode: forwards;
     width: 100%;
     height: 70%;
     font-size: 32px;
@@ -332,7 +351,6 @@ export const GuessWhoItIsContainer = styled.div `
   animation-fill-mode: forwards;
   animation-delay: 0.5s;
 
-
 @keyframes enlarge {
     0%   {opacity: 0;}
     100% {opacity: 1;}
@@ -344,8 +362,9 @@ export const GuessWhoItIsContainer = styled.div `
 }
 
   h2 {
-    font-size: 20px;
+    text-transform: uppercase;
     margin: 0 0 16px;
+    font-size: 16px;
     font-family: "Manrope Semibold";
     color: var(--text-grey);
   }
@@ -447,6 +466,7 @@ export const FinalGuessResultWrapper = styled.div `
     animation-delay: 3s;
     opacity: 0;
     pointer-events: none;
+    z-index: 100;
   }
 
   @keyframes slideInResult {

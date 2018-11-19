@@ -8,6 +8,7 @@ export const DirectionButtonContainer = styled.div `
   align-items: center;
   justify-content: space-between;
   transition: all 0.3s ease;
+  font-family: "Manrope Semibold";
 
   svg {
     height: 12px;

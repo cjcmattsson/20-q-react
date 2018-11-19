@@ -17,5 +17,6 @@ export const ButtonLargeContainer = styled.div `
     color: white;
     text-decoration: none;
     text-transform: uppercase;
+    font-family: "Manrope Semibold";
   }
 `;

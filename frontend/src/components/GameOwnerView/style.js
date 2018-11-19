@@ -67,6 +67,8 @@ export const GameHeader = styled.div `
 
       p {
         margin: 0;
+        margin-top: -2px;
+        font-family: "Manrope Semibold";
       }
 
       .guessNr {
@@ -78,6 +80,7 @@ export const GameHeader = styled.div `
         }
       .secretPerson {
         font-size: 16px;
+        font-family: "Manrope Semibold";
       }
     }
   }
@@ -97,8 +100,10 @@ export const AnswereGuessContainer = styled.div `
 
   @keyframes slideLeft {
     0% {transform: translateX(0)}
-    50% {transform: translateX(-100vw);}
-    51% {transform: translateX(100vw);}
+    50% {transform: translateX(-100vw); opacity: 1}
+    51% {opacity: 0;}
+    52% {transform: translateX(100vw);}
+    53% {opacity: 1}
     100% {transform: translateX(0);}
   }
 
@@ -110,6 +115,7 @@ export const AnswereButton = styled.div `
   border-radius: 50%;
   margin: 24px;
   transition: all 0.5s ease;
+  z-index: 5;
 `;
 
 export const CardSwiperArea = styled.div `
@@ -117,6 +123,7 @@ export const CardSwiperArea = styled.div `
   align-items: center;
   justify-content: center;
   width: 314px;
+  z-index: 10;
   animation-name: ${slideLeft};
   animation-duration: 1s;
   animation-fill-mode: forwards;

@@ -42,7 +42,7 @@ class GameCardGuesser extends Component {
     ctx.webkitImageSmoothingEnabled = false;
     ctx.imageSmoothingEnabled = false;
     img.onload = () => {
-      var size = 15 * 0.01,
+      var size = 7.5 * 0.01,
           w = this.refs.canvas.width * size,
           h = this.refs.canvas.height * size;
       ctx.drawImage(img, 0, 0, w, h);
@@ -66,7 +66,7 @@ class GameCardGuesser extends Component {
           </GamePicBlurred>
           <GameInfo answere={this.state.answereRecieved}>
             <div className="statusAndOpponent">
-              {this.state.answereRecieved ? <h3>Din tur!</h3> : <h3>Väntar på svar...</h3>}
+              {this.state.answereRecieved ? <h3>Din tur att fråga!</h3> : <h3>Väntar på svar...</h3>}
               <div className="opponent">
                 {this.props.owner && <div className="imageHere" style={{backgroundImage: this.props.owner && `url(${this.props.ownerImage})`}}> </div> }
                 {this.props.guesser && <div className="imageHere" style={{backgroundImage: this.props.guesser ? `url(${this.props.opponentImage})` : `url("./bjornborgpixel.jpg")`}}> </div> }

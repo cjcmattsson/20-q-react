@@ -212,7 +212,11 @@ class GameOwnerView extends Component {
 
             <AnswereGuessContainer>
               <div style={{opacity: response ? 0 : 1, transition: "all 0.3s ease"}}>
-                <AnswereButton yes style={{opacity: lastGuess ? 1 : 0.3, pointerEvents: lastGuess ? "auto" : "none"}}>
+                <AnswereButton yes style={{
+                  opacity: lastGuess ? 1 : 0.3,
+                  pointerEvents: lastGuess ? "auto" : "none",
+
+                }}>
                   <img
                     src={require('./icons/yes.svg')}
                     alt=""/>
@@ -247,7 +251,10 @@ class GameOwnerView extends Component {
                 </Swiper>
               </CardSwiperArea>
               <div style={{opacity: response ? 0 : 1, transition: "all 0.3s ease"}}>
-                <AnswereButton style={{opacity: lastGuess ? 1 : 0.3, pointerEvents: lastGuess ? "auto" : "none"}}>
+                <AnswereButton style={{
+                  opacity: lastGuess ? 1 : 0.3,
+                  pointerEvents: lastGuess ? "auto" : "none",
+                }}>
                   <img
                     src={require('./icons/no.svg')}
                     alt=""/>
@@ -258,7 +265,7 @@ class GameOwnerView extends Component {
             <GameFooter>
               <DirectionButton
                 textColor={response ? "white" : "var(--text-grey)"}
-                text="Historik"
+                text="Ställda frågor"
                 arrowLeft={true}
                 swipe={this.goPrev}
                 arrowColor={response ? "#FFFFFF" : "var(--text-grey)"}

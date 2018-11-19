@@ -25,7 +25,7 @@ class GameCardJoinOpen extends Component {
     ctx.webkitImageSmoothingEnabled = false;
     ctx.imageSmoothingEnabled = false;
     img.onload = () => {
-      var size = 15 * 0.01,
+      var size = 7.5 * 0.01,
           w = this.refs.canvas.width * size,
           h = this.refs.canvas.height * size;
       ctx.drawImage(img, 0, 0, w, h);

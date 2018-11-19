@@ -20,6 +20,11 @@
 }
 
 @font-face {
+  font-family: 'Manrope Medium';
+  src: url('./fonts/manrope-medium.woff');
+}
+
+@font-face {
   font-family: 'Manrope Semibold';
   src: url('./fonts/manrope-semibold.woff');
 }

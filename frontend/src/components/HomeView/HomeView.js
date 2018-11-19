@@ -33,6 +33,7 @@ class HomeView extends Component {
     myGamesInvitedToPlay: false,
     finishedGames: false,
     me: false,
+    myName: false,
     settingsSize: null,
   }
 
@@ -82,7 +83,9 @@ class HomeView extends Component {
         firebase.database().ref(`users`).orderByChild('uid').equalTo(`${this.props.user.uid}`).on('value', (data) => {
           let user = Object.values(data.val());
           if (this._isMounted) {
-            this.setState({me: user[0]})
+            this.setState({
+              me: user[0]}
+            )
           }
         })
       }

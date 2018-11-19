@@ -70,8 +70,9 @@ export const CreateGameContainer = styled.div `
   background-color: white;
 
   h2 {
-    font-size: 20px;
+    font-size: 16px;
     margin: 0 0 16px;
+    text-transform: uppercase;
     font-family: "Manrope Semibold";
     color: var(--text-grey);
   }

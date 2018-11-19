@@ -85,17 +85,14 @@ class InviteToGame extends Component {
           <input type="text" onChange={this.handleChange} name="searchField" placeholder="Sök" value={searchField}/>
         </InvitePageHeader>
           {this.props.selectedPlayer
-            ? <StartGameSection>
+            && <StartGameSection>
                 <InvitedUsers>
                   <div className="image" style={{backgroundImage: `url(${this.props.selectedPlayer.photo})`}}></div>
                   <div className="text">
-                    <p>Spela med:</p>
-                    <p>{this.props.selectedPlayer.name}</p>
                   </div>
                 </InvitedUsers>
                 <NoLinkButton text={"Starta spel"} color={"var(--strong-pink)"} function={this.props.nextSwiperSlide}/>
-              </StartGameSection>
-            : <div>no one invited</div>}
+              </StartGameSection>}
         <AllUsers>
           <h2>20 frågor-vänner</h2>
           {users && users.map((user, key) => {

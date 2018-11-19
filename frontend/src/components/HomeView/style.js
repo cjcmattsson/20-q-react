@@ -113,10 +113,12 @@ export const SettingsHeader = styled.div `
   align-items: center;
   justify-content: space-between;
   margin-bottom: 16px;
+  font-family: "Manrope Semibold";
 
   a {
     color: white;
     text-decoration: none;
+
   }
 `
 
@@ -127,11 +129,25 @@ export const SettingsTitle = styled.div `
   align-items: center;
   margin: 12px 0;
 
+  @keyframes fadeInTitle {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
   h2 {
+    opacity: 0;
+    animation-name: fadeInTitle;
+    animation-delay: 1s;
+    animation-duration: 0.2s;
+    animation-fill-mode: forwards;
     margin: 0;
     font-size: 28px;
     color: white;
-    font-family: "Manrope Semibold";
+    font-family: "Manrope Medium";
   }
 `;
 
