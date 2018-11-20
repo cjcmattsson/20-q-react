@@ -98,10 +98,7 @@ class GameOwnerView extends Component {
     })
     firebase.database().ref(`games/${this.props.gameID}/remainingGuesses`)
     .transaction((remainingGuesses) => {
-      if (remainingGuesses) {
-        remainingGuesses = remainingGuesses - 1;
-      }
-      return remainingGuesses;
+      return remainingGuesses = remainingGuesses - 1;
     })
     if (this._isMounted) {
       this.setState({lastGuess: false})
@@ -110,7 +107,7 @@ class GameOwnerView extends Component {
 
 
   componentWillUnmount() {
-    this._isMounted = true;
+    this._isMounted = false;
   }
 
   constructor(props) {
@@ -205,7 +202,7 @@ class GameOwnerView extends Component {
             <GameHeader>
               <div className="blurredImage" style={{backgroundImage: `url(${thisGame.secretPersonImage})`}}></div>
               <div className="headerText" style={{color: response ? "white" : "var(--text-grey)"}}>
-                <p className="guessNr">{thisGame.remainingGuesses && `${20-thisGame.remainingGuesses}`}<span>/20</span></p>
+                <p className="guessNr">{thisGame.remainingGuesses >= 0 && `${20-thisGame.remainingGuesses}`}<span>/20</span></p>
                 <p className="secretPerson">{thisGame && thisGame.secretPerson}</p>
               </div>
             </GameHeader>

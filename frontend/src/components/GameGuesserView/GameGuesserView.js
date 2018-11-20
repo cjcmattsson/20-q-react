@@ -48,10 +48,11 @@ class GameGuesserView extends Component {
     wikiApiRequest: [],
     chosenPerson: "",
     chosenImg: "",
-    guessWhoItIs: false,
+    guessWhoItIs: null,
     unMountGuess: false,
     resultOfGuess: null,
     finalGuessIsSent: false,
+    noMoreGuesses: false,
   }
 
   _isMounted = true;
@@ -59,13 +60,13 @@ class GameGuesserView extends Component {
   componentDidMount() {
     if (this._isMounted) {
       this.getThisGame();
-
       this.checkIfAnswereRecieved();
       if (localStorage.getItem("waitingForAnswere")) {
         this.setState({waitingForAnswere: true, questionIsNotSent: false})
       }
       this.getAllGuesses();
       this.checkIfThereAreAnyGuesses();
+
     }
 
   }
@@ -80,7 +81,7 @@ class GameGuesserView extends Component {
     }
   }
 
-/*THIS IS WHERE THE GUESS CODE GOES!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
+  /*THIS IS WHERE THE GUESS CODE GOES!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
 
   searchWikiApi = () => {
     if (this.state.secretPerson) {
@@ -119,6 +120,9 @@ class GameGuesserView extends Component {
     setTimeout(() => {
       this.setState({guessWhoItIs: false, unMountGuess: false})
     }, 1000)
+    setTimeout(() => {
+      this.setState({guessWhoItIs: null,})
+    }, 3000)
   }
 
   seeIfCorrectAnswere = () => {
@@ -178,7 +182,7 @@ class GameGuesserView extends Component {
   }
 
 
-/*THIS IS WHERE THE GUESS CODE GOES!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
+  /*THIS IS WHERE THE GUESS CODE GOES!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
 
   sendGuess = (game) => {
     firebase.database().ref(`games/${this.props.gameID}/guesses`)
@@ -194,7 +198,7 @@ class GameGuesserView extends Component {
 
 
   checkIfThereAreAnyGuesses = () => {
-      firebase.database().ref(`games/${this.props.gameID}/guesses`).on('value', (data) => {
+    firebase.database().ref(`games/${this.props.gameID}/guesses`).on('value', (data) => {
       console.log(data.val());
       if (data.val() === null) {
         this.setState({waitingForAnswere: false, questionIsNotSent: true})
@@ -213,6 +217,7 @@ class GameGuesserView extends Component {
           lastGuess: false,
           guessInputField: "",
           slideLeft: true,
+          noMoreGuesses: this.state.thisGame.remainingGuesses < 0 ? true : false,
         })
       }
     }, 4000)
@@ -222,17 +227,26 @@ class GameGuesserView extends Component {
     firebase.database()
     .ref(`games/${this.props.gameID}`)
     .on('value', (data) => {
-        let ownerName = data.val().gameOwnerName.split(" ");
-        this.setState({thisGame: data.val(), ownerName: ownerName[0]})
-        console.log(data.val());
+      let ownerName = data.val().gameOwnerName.split(" ");
+      this.setState({
+        thisGame: data.val(),
+        ownerName: ownerName[0],
+        noMoreGuesses: data.val().remainingGuesses < 0 ? true : false,
+      })
+      console.log(data.val());
+      if (data.val().remainingGuesses < 0) {
+
+      }
+      if (data.val()) {
         this.updateCanvas(data.val().secretPersonImage);
-        if (data.val().waitingForAnswere) {
-          firebase.database()
-          .ref(`games/${this.props.gameID}`)
-          .update({
-            waitingForAnswere: false,
-          });
-        }
+      }
+      if (data.val().waitingForAnswere) {
+        firebase.database()
+        .ref(`games/${this.props.gameID}`)
+        .update({
+          waitingForAnswere: false,
+        });
+      }
     });
   }
 
@@ -241,8 +255,8 @@ class GameGuesserView extends Component {
     .ref(`games/${this.props.gameID}/guesses`)
     .on('value', (data) => {
       if (data.val()) {
-          this.setState({thisGamesGuesses: Object.entries(data.val())})
-          this.setState({lastGuess: Object.entries(data.val()).slice(-1)[0][1].guess});
+        this.setState({thisGamesGuesses: Object.entries(data.val())})
+        this.setState({lastGuess: Object.entries(data.val()).slice(-1)[0][1].guess});
         let latestAnswere = Object.entries(data.val()).slice(-1)[0][1].answere;
         if (latestAnswere === undefined || latestAnswere === null) {this.setState({answere: null})}
         else if (latestAnswere === true) {
@@ -267,33 +281,35 @@ class GameGuesserView extends Component {
   }
 
   constructor(props) {
-      super(props)
-      this.swiper = null
-    }
+    super(props)
+    this.swiper = null
+  }
 
-    goNext = () => {
-      if (this.swiper) this.swiper.slideNext();
-    }
+  goNext = () => {
+    if (this.swiper) this.swiper.slideNext();
+  }
 
-    goPrev = () => {
-      if (this.swiper) this.swiper.slidePrev();
-    }
+  goPrev = () => {
+    if (this.swiper) this.swiper.slidePrev();
+  }
 
-    updateCanvas = (setImage) => {
+  updateCanvas = (setImage) => {
+    if (this.refs.canvas) {
       const ctx = this.refs.canvas.getContext('2d'),
-          img = new Image();
+      img = new Image();
       ctx.mozImageSmoothingEnabled = false;
       ctx.webkitImageSmoothingEnabled = false;
       ctx.imageSmoothingEnabled = false;
       img.onload = () => {
         var size = 7.5 * 0.01,
-            w = this.refs.canvas.width * size,
-            h = this.refs.canvas.height * size;
+        w = this.refs.canvas.width * size,
+        h = this.refs.canvas.height * size;
         ctx.drawImage(img, 0, 0, w, h);
         ctx.drawImage(this.refs.canvas, 0, 0, w, h, 0, 0, this.refs.canvas.width, this.refs.canvas.height);
       };
       img.src = setImage;
     }
+  }
 
   render() {
     const params = {
@@ -359,17 +375,17 @@ class GameGuesserView extends Component {
           <GameContainer>
 
 
-        {/*THIS IS WHERE THE GUESS CODE GOES!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/}
+            {/*THIS IS WHERE THE GUESS CODE GOES!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/}
 
 
-            {guessWhoItIs && <GuessWhoItIsContainer sizeOfCard={this.state.unMountGuess}>
+            {guessWhoItIs && <GuessWhoItIsContainer sizeOfCard={this.state.unMountGuess} style={{opacity: this.state.unMountGuess ? 1 : 0}}>
               <div style={{pointerEvents: "none"}}>
-              <Lottie
-                style={{width: "100%", top: 0, left: 0, position: "absolute"}}
-                options={optionsResultOfFinalGuess}
-                isStopped={!finalGuessIsSent}
-              />
-            </div>
+                <Lottie
+                  style={{width: "100%", top: 0, left: 0, position: "absolute"}}
+                  options={optionsResultOfFinalGuess}
+                  isStopped={!finalGuessIsSent}
+                />
+              </div>
               {finalGuessIsSent &&
                 <FinalGuessResultWrapper>
                   <FinalGuessContent>
@@ -425,93 +441,99 @@ class GameGuesserView extends Component {
               </GuessWhoItIsContainer>}
 
 
-        {/*THIS IS WHERE THE GUESS CODE ENDS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/}
+              {/*THIS IS WHERE THE GUESS CODE ENDS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/}
 
-            <GameHeader>
-              <div className="blurredImage">
-                <canvas ref="canvas" width={"100%"} height={"100%"}/>
-              </div>
-              <div className="headerText" style={{color: answereRecieved ? "white" : "var(--text-grey)"}}>
-                <p className="guessNr">{thisGame.remainingGuesses && `${20-thisGame.remainingGuesses}`}<span>/20</span></p>
-                <p className="opponent">{thisGame ? `Spelar med ${this.state.ownerName}` : `Spelar med en sköning`}</p>
-              </div>
-            </GameHeader>
+              <GameHeader>
+                <div className="blurredImage">
+                  <canvas ref="canvas" width={"100%"} height={"100%"}/>
+                </div>
+                <div className="headerText" style={{color: answereRecieved ? "white" : "var(--text-grey)"}}>
+                  {thisGame.remainingGuesses >= 0
+                    ? <p className="guessNr">{answereRecieved ? `${19-thisGame.remainingGuesses}` : `${20-thisGame.remainingGuesses}`}<span>/20</span></p>
+                    : <p className="guessNr">Slut på frågor!</p>
+                  }
+                  <p className="opponent">{thisGame ? `Spelar med ${this.state.ownerName}` : `Spelar med en sköning`}</p>
+                </div>
+              </GameHeader>
 
-            <GuessCardScaleWrapper scale={guessWhoItIs}>
-            <GuessCard answere={this.state.answere} slide={this.state.slideLeft} opacity={guessWhoItIs}>
+              <GuessCardScaleWrapper scale={guessWhoItIs}>
+                <GuessCard
+                  answere={this.state.answere}
+                  slide={this.state.slideLeft}
+                  opacity={guessWhoItIs}
+                  duration={guessWhoItIs ? "0.3s" : "1.5s"}
+                  >
 
-              <GuessCardHeader>
-                {!answereRecieved & waitingForAnswere
-                  ? <div className="guessInfo">
-                      <p className="waitingDots">Väntar på svar</p>
-                    </div>
-                  : <div className="guessInfo">
+                  <GuessCardHeader>
+                    <div className="guessInfo" style={{transform: this.state.waitingForAnswere && "translateY(-29px)"}}>
                       <p>{`${20-thisGame.remainingGuesses}`}</p>
                       <div className="lastGuesser" style={{backgroundImage: thisGame.gameOwnerImage === './bjornborgpixel.jpg' ? `url(${require('./bjornborgpixel.jpg')})` : `url(${thisGame.gameOwnerImage})`}}></div>
                     </div>
-              }
-              </GuessCardHeader>
-              {this.state.waitingForAnswere
-                ? <div className="guessInputField">{this.state.lastGuess}</div>
-                : <textarea
-                  onChange={this.handleChange}
-                  className="guessInputField"
-                  value={this.state.guessInputField}
-                  placeholder="Ställ din fråga här!"> </textarea>
-                }
-                <div className="sendGuessWrapper">
-                  {this.state.answereRecieved ?
-                    <div className="response">
-                      <p>{this.state.answere ? "Ja!" : "Nej!"}</p>
-                      <div className="sendGuessButton">
-                        <Lottie options={optionsAnswereRecieved}
-                          height={50}
-                          width={50}
-                          isStopped={false}
-                        />
-                      </div>
+                    <div className="waitingFor" style={{transform: this.state.waitingForAnswere && "translateY(0)"}}>
+                      <p className="waitingDots">{answereRecieved ? "Svar inkommet" : "Väntar på svar"}</p>
                     </div>
-                    : waitingForAnswere
-                    ? <div className="sendGuessButton">
-                      <Lottie options={optionsWaiting}
-                        height={50}
-                        width={50}
-                        isStopped={questionIsNotSent}
-                      />
-                    </div>
-                    : <div className="sendGuessButton" onClick={this.sendGuess}>
-                      <Lottie options={optionsSend}
-                        height={50}
-                        width={50}
-                        isStopped={questionIsNotSent}
-                      />
-                    </div>
+                  </GuessCardHeader>
+                  {this.state.waitingForAnswere
+                    ? <div className="guessInputField">{this.state.lastGuess}</div>
+                    : <textarea
+                      onChange={this.handleChange}
+                      className="guessInputField"
+                      value={this.state.guessInputField}
+                      placeholder="Ställ din fråga här!"> </textarea>
+                    }
+                    <div className="sendGuessWrapper">
+                      {this.state.answereRecieved ?
+                        <div className="response">
+                          <p>{this.state.answere ? "Ja!" : "Nej!"}</p>
+                          <div className="sendGuessButton">
+                            <Lottie options={optionsAnswereRecieved}
+                              height={50}
+                              width={50}
+                              isStopped={false}
+                            />
+                          </div>
+                        </div>
+                        : waitingForAnswere
+                        ? <div className="sendGuessButton">
+                          <Lottie options={optionsWaiting}
+                            height={50}
+                            width={50}
+                            isStopped={questionIsNotSent}
+                          />
+                        </div>
+                        : <div className="sendGuessButton" onClick={this.sendGuess}>
+                          <Lottie options={optionsSend}
+                            height={50}
+                            width={50}
+                            isStopped={questionIsNotSent}
+                          />
+                        </div>
 
-                  }
+                      }
+                    </div>
+                  </GuessCard>
+                </GuessCardScaleWrapper>
+
+                <div className="guessWhoItIs">
+                  <NoLinkButton function={this.mountGuess} color={"var(--strong-pink)"} text={"Jag vill gissa!"} />
                 </div>
-              </GuessCard>
-              </GuessCardScaleWrapper>
 
-              <div className="guessWhoItIs">
-                <NoLinkButton function={this.mountGuess} color={"var(--strong-pink)"} text={"Jag vill gissa!"} />
-              </div>
+                <GameFooter>
+                  <DirectionButton
+                    textColor={answereRecieved ? "white" : "var(--text-grey)"}
+                    text="Ställda frågor"
+                    arrowLeft={true}
+                    swipe={this.goPrev}
+                    arrowColor={answereRecieved ? "#FFFFFF" : "var(--text-grey)"}
+                  />
+                  <BackToHome iconColor={answereRecieved ? "white" : "var(--text-grey)"} />
+                </GameFooter>
 
-              <GameFooter>
-                <DirectionButton
-                  textColor={answereRecieved ? "white" : "var(--text-grey)"}
-                  text="Ställda frågor"
-                  arrowLeft={true}
-                  swipe={this.goPrev}
-                  arrowColor={answereRecieved ? "#FFFFFF" : "var(--text-grey)"}
-                />
-                <BackToHome iconColor={answereRecieved ? "white" : "var(--text-grey)"} />
-              </GameFooter>
-
-            </GameContainer>
-          </Swiper>
-        </AllGameContainer>
-      )
+              </GameContainer>
+            </Swiper>
+          </AllGameContainer>
+        )
+      }
     }
-  }
 
-  export default GameGuesserView;
+    export default GameGuesserView;

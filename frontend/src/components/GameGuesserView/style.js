@@ -18,12 +18,14 @@ const slideLeft = ({slide}) => {
 
 const scaleUpCard = ({scale}) => {
   if (scale === true) return "scaleUpCard";
-  else if (scale === false) return "nothing";
+  else if (scale === false) return "scaleDownCard";
+  else if (scale === null) return "nothing";
 }
 
 const fadeOut = ({opacity}) => {
   if (opacity === true) return "fadeOutText";
-  else if (opacity === false) return "nothing";
+  else if (opacity === false) return "fadeItBackIn";
+  else if (opacity === null) return "nothing";
 }
 
 export const AllGameContainer = styled.div `
@@ -59,11 +61,17 @@ export const AllGameContainer = styled.div `
 
 @keyframes scaleUpCard {
   0% {transform: scaleY(1)}
-  30% {
-    transform: scaleY(0.9);
-  }
-  60% {transform: scale(3);}
-  100% {transform: scale(3);}
+  30% {transform: scaleY(0.9)}
+  60% {transform: scale(3)}
+  100% {transform: scale(3)}
+}
+
+@keyframes scaleDownCard {
+  0% {transform: scale(3)}
+  30% {transform: scale(1)}
+  60% {transform: scaleY(0.9)}
+  90% {transform: scaleY(1)}
+  100% {transform: scaleY(1)}
 }
 
 @keyframes fadeOutText {
@@ -71,6 +79,13 @@ export const AllGameContainer = styled.div `
   100% {opacity: 0}
 }
 
+@keyframes fadeItBackIn {
+  0% {opacity: 0}
+  0% {opacity: 0}
+  60% {opacity: 0}
+  70% {opacity: 0}
+  100% {opacity: 1}
+}
 `;
 
 export const GameContainer = styled.div `
@@ -171,7 +186,7 @@ export const GuessCard = styled.div `
 
   .guessInputField {
     animation-name: ${fadeOut};
-    animation-duration: 0.3s;
+    animation-duration: ${props => props.duration};
     animation-fill-mode: forwards;
     width: 100%;
     height: 70%;
@@ -234,17 +249,27 @@ export const GuessCard = styled.div `
 `;
 
 export const GuessCardHeader = styled.div `
+  position: relative;
   width: 100%;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   justify-content: space-between;
+  height: 29px;
+  overflow-y: hidden;
 
   p {
     margin: 0;
     font-size: 25px;
   }
 
-  .guessInfo {
+  .waitingFor {
+    transform: translateY(29px);
+  }
+
+  .guessInfo, .waitingFor {
+    transition: all 1s ease;
+    position: absolute;
+    height: 29px;
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -343,9 +368,9 @@ export const GuessWhoItIsContainer = styled.div `
   z-index: 100;
   height: 100vh;
   width: 100vw;
-  opacity: 0;
   padding: 47px;
   padding-top: 150px;
+  transition: all 0.5s ease;
   animation-name: ${size};
   animation-duration: 1s;
   animation-fill-mode: forwards;
@@ -383,6 +408,7 @@ export const GuessWhoItIsContainer = styled.div `
   }
 
   .goBack {
+    transition: all 0.5s ease;
     position: absolute;
     bottom: 25px;
     left: 25px;

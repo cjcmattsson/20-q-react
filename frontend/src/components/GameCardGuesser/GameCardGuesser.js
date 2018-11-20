@@ -36,6 +36,7 @@ class GameCardGuesser extends Component {
   }
 
   updateCanvas = () => {
+    if (this.refs.canvas) {
     const ctx = this.refs.canvas.getContext('2d'),
         img = new Image();
     ctx.mozImageSmoothingEnabled = false;
@@ -49,6 +50,7 @@ class GameCardGuesser extends Component {
       ctx.drawImage(this.refs.canvas, 0, 0, w, h, 0, 0, this.refs.canvas.width, this.refs.canvas.height);
     };
     img.src = this.props.image;
+  }
   }
 
   componentWillUnmount() {

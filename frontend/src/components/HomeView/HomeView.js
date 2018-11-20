@@ -31,10 +31,11 @@ class HomeView extends Component {
     myGamesOwner: false,
     myGamesGuesser: false,
     myGamesInvitedToPlay: false,
-    finishedGames: false,
     me: false,
     myName: false,
     settingsSize: null,
+    ownerFinished: false,
+    guesserFinished: false,
   }
 
   _isMounted = true;
@@ -145,23 +146,28 @@ class HomeView extends Component {
 
   getFinishedGames = () => {
     firebase.auth().onAuthStateChanged(user => {
-      let myFinishedGames = [];
       if (user) {
-        let gamesFromDb = firebase.database().ref(`games`);
-        gamesFromDb.on('value', data => {
-          if (data.val()) {
-            let allGames = Object.entries(data.val());
-            allGames.forEach(game => {
-              if (game[1].gameGuesserId === this.props.user.uid || game[1].gameOwnerId === this.props.user.uid) {
-                if (game[1].theGuessersGuess) {
-                  myFinishedGames.push(game);
-                }
-              }
-            })
-          }
+        let ownerGamesFromDb = firebase.database().ref(`games`).orderByChild('gameOwnerId').equalTo(`${user.uid}`);
+        ownerGamesFromDb.on('value', data => {
+          let ownerFinished = [];
+          Object.entries(data.val()).forEach(game => {
+            if (game[1].theGuessersGuess !== null && game[1].theGuessersGuess !== undefined) {
+              ownerFinished.push(game);
+            }
+          })
+          this.setState({ownerFinished: ownerFinished})
+        })
+        let guesserGamesFromDb = firebase.database().ref(`games`).orderByChild('gameGuesserId').equalTo(`${user.uid}`);
+        guesserGamesFromDb.on('value', data => {
+          let guesserFinished = [];
+          Object.entries(data.val()).forEach(game => {
+            if (game[1].theGuessersGuess !== null && game[1].theGuessersGuess !== undefined) {
+              guesserFinished.push(game);
+            }
+          })
+          this.setState({guesserFinished: guesserFinished})
         })
       }
-      this.setState({finishedGames: myFinishedGames})
     })
   }
 
@@ -179,7 +185,7 @@ class HomeView extends Component {
 
   render() {
 
-    const {myGamesOwner, myGamesGuesser, myGamesInvitedToPlay, finishedGames, me} = this.state;
+    const {myGamesOwner, myGamesGuesser, myGamesInvitedToPlay, me} = this.state;
     const {user} = this.props;
     return (
       <HomeViewContainer>
@@ -274,8 +280,21 @@ class HomeView extends Component {
             <HomeGamesContainer>
             <h2>Spela igen</h2>
               <div className="gamesWrapper">
-                {finishedGames &&
-                  finishedGames.map((game, key) => {
+                {this.state.ownerFinished &&
+                  this.state.ownerFinished.map((game, key) => {
+                    return <GameCardFinished
+                      user={this.props.user}
+                      gameID={game[0]}
+                      key={key}
+                      image={game[1].secretPersonImage}
+                      owner={game[1].gameOwnerName}
+                      ownerImage={game[1].gameOwnerImage}
+                      guesser={game[1].gameGuesserName}
+                      guesserImage={game[1].gameGuesserImage}
+                    />
+                  })}
+                {this.state.guesserFinished &&
+                  this.state.guesserFinished.map((game, key) => {
                     return <GameCardFinished
                       user={this.props.user}
                       gameID={game[0]}
