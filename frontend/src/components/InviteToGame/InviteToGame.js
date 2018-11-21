@@ -21,14 +21,14 @@ class InviteToGame extends Component {
 
   state = {
     users: false,
-    searchField: "",
-    searchResult: false,
+    searchField: '',
   }
 
   componentDidMount() {
     this.getAllUsers();
-    this.searchUsers();
   }
+
+  filteredUsers = [];
 
   getAllUsers = () => {
     firebase.database().ref(`users`).on('value', (data) => {
@@ -38,37 +38,34 @@ class InviteToGame extends Component {
         if (user.name && user.uid === this.props.user.uid) {
           return;
         } else {
-          allUsers.push(user);
+          if (user.name && user.uid) {
+            allUsers.push(user);
+          }
         }
       })
       this.setState({users: allUsers})
     })
   }
 
-  searchUsers = () => {
-    let searchString = `${this.state.searchField}`;
-    let userSearch = firebase.database().ref(`users`).orderByChild('name').equalTo(`${searchString}`);
-    if (userSearch) {
-      userSearch.on('value', (data) => {
-        if (data.val()) {
-          console.log(data.val());
-          this.setState({searchResult: data.val()})
-        }
-      })
-    }
-  }
-
   handleChange = (e) => {
-    this.setState({ [e.target.name] : e.target.value,});
+    this.setState({ [e.target.name] : e.target.value});
   }
 
-  componentDidUpdate() {
-    this.searchUsers();
-  }
+
 
   render() {
-    const {users, searchField} = this.state;
+    const {searchField} = this.state;
 
+    if (this.state.users) {
+      this.filteredUsers = this.state.users.filter(user => {
+        if (user.name) {
+          return user.name.toLowerCase().includes(this.state.searchField.toLowerCase());
+        }
+        return "";
+      })
+    }
+
+    console.log(this.filteredUsers);
     return (
       <InvitePeopleToPlay>
         <div className="bg">
@@ -82,7 +79,7 @@ class InviteToGame extends Component {
             </Link>
             <p>Välj en motståndare</p>
           </div>
-          <input type="text" name="searchField" placeholder="Sök" value={searchField}/>
+          <input type="text" onChange={this.handleChange} name="searchField" placeholder="Sök" value={searchField}/>
         </InvitePageHeader>
           {this.props.selectedPlayer
             && <StartGameSection>
@@ -95,9 +92,8 @@ class InviteToGame extends Component {
               </StartGameSection>}
         <AllUsers>
           <h2>20 frågor-vänner</h2>
-          {users && users.map((user, key) => {
-            return (user.name &&
-              <OneUserInviteCard
+          {this.filteredUsers && this.filteredUsers.map((user, key) => {
+              return <OneUserInviteCard
                 key={key}
                 myFunc={this.props.addUser}
                 name={user.name}
@@ -105,7 +101,6 @@ class InviteToGame extends Component {
                 for={key}
                 value={user.uid}
                 id={key}/>
-            )
           })}
         </AllUsers>
       </InvitePeopleToPlay>

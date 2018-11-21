@@ -178,6 +178,13 @@ export const IncomingGuessCard = styled.div `
     display: inline-block;
     padding: 16px 0;
     border: none;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    word-break: break-word;
+    -ms-hyphens: auto;
+    -moz-hyphens: auto;
+    -webkit-hyphens: auto;
+    hyphens: auto;
   }
 
 .questionTextWaiting {

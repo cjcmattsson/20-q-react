@@ -197,6 +197,13 @@ export const GuessCard = styled.div `
     color: var(--text-grey);
     border: none;
     font-family: 'Roboto', sans-serif;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    word-break: break-word;
+    -ms-hyphens: auto;
+    -moz-hyphens: auto;
+    -webkit-hyphens: auto;
+    hyphens: auto;
 
     &:placeholder {
       color: var(--light-grey);

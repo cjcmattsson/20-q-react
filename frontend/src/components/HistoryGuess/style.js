@@ -32,6 +32,7 @@ export const GuessContainer = styled.div `
     .answere {
       font-family: "Manrope Semibold";
       font-size: 23px;
+
     }
     .number {
       font-family: "Manrope Light";
@@ -47,6 +48,9 @@ export const GuessContainer = styled.div `
     border-radius: 0 4px 4px 0;
     background-color: white;
     margin: 0;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    word-break: break-word;
   }
 }
 
