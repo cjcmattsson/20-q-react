@@ -465,12 +465,12 @@ class GameGuesserView extends Component {
                   >
 
                   <GuessCardHeader>
-                    <div className="guessInfo" style={{transform: this.state.waitingForAnswere && "translateY(-29px)"}}>
-                      <p>{`${20-thisGame.remainingGuesses}`}</p>
+                    <div className="guessInfo" style={{transform: this.state.waitingForAnswere & !answereRecieved ? "translateY(-29px)" : "translateY(0)"}}>
+                      <p>{answereRecieved ? `${19-thisGame.remainingGuesses}` : `${20-thisGame.remainingGuesses}`}</p>
                       <div className="lastGuesser" style={{backgroundImage: thisGame.gameOwnerImage === './bjornborgpixel.jpg' ? `url(${require('./bjornborgpixel.jpg')})` : `url(${thisGame.gameOwnerImage})`}}></div>
                     </div>
-                    <div className="waitingFor" style={{transform: this.state.waitingForAnswere && "translateY(0)"}}>
-                      <p className="waitingDots">{answereRecieved ? "Svar inkommet" : "Väntar på svar"}</p>
+                    <div className="waitingFor" style={{transform: this.state.waitingForAnswere & !answereRecieved ? "translateY(0)" : "translateY(29px)"}}>
+                      <p className="waitingDots">Väntar på svar</p>
                     </div>
                   </GuessCardHeader>
                   {this.state.waitingForAnswere

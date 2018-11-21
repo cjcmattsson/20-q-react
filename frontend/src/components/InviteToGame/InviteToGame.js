@@ -82,7 +82,7 @@ class InviteToGame extends Component {
             </Link>
             <p>Välj en motståndare</p>
           </div>
-          <input type="text" onChange={this.handleChange} name="searchField" placeholder="Sök" value={searchField}/>
+          <input type="text" name="searchField" placeholder="Sök" value={searchField}/>
         </InvitePageHeader>
           {this.props.selectedPlayer
             && <StartGameSection>

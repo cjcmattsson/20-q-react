@@ -187,13 +187,6 @@ class GameOwnerView extends Component {
           ref={node => {if(node) this.swiper = node.swiper}}>
           <History>
             <HistoryContainer guesses={thisGamesAnsweredGuesses} />
-            {/*{thisGamesAnsweredGuesses && thisGamesAnsweredGuesses.slice(0).reverse().map((game, key) => {
-              return <div key={key}>
-                <p>{game[1].guess}</p>
-                <button onClick={() => this.answereQuestion(game[0], true)}>Yes</button>
-                <button onClick={() => this.answereQuestion(game[0], false)}>No</button>
-              </div>
-            })}*/}
             <div className="historyFooter">
               <DirectionButton text="Fråga" arrowRight={true} swipe={this.goNext}/>
             </div>
