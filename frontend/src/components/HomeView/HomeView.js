@@ -75,18 +75,22 @@ class HomeView extends Component {
     firebase.auth().onAuthStateChanged(user => {
       if (user) {
         firebase.database().ref(`users`).orderByChild('uid').equalTo(`${user.uid}`).on('value', (data) => {
-          let user = Object.values(data.val());
-          if (this._isMounted) {
-            this.setState({me: user[0]})
+          if (data.val()) {
+            let user = Object.values(data.val());
+            if (this._isMounted) {
+              this.setState({me: user[0]})
+            }
           }
         })
       } else {
         firebase.database().ref(`users`).orderByChild('uid').equalTo(`${this.props.user.uid}`).on('value', (data) => {
-          let user = Object.values(data.val());
-          if (this._isMounted) {
-            this.setState({
-              me: user[0]}
-            )
+          if (data.val()) {
+            let user = Object.values(data.val());
+            if (this._isMounted) {
+              this.setState({
+                me: user[0]}
+              )
+            }
           }
         })
       }
@@ -150,22 +154,26 @@ class HomeView extends Component {
         let ownerGamesFromDb = firebase.database().ref(`games`).orderByChild('gameOwnerId').equalTo(`${user.uid}`);
         ownerGamesFromDb.on('value', data => {
           let ownerFinished = [];
-          Object.entries(data.val()).forEach(game => {
-            if (game[1].theGuessersGuess !== null && game[1].theGuessersGuess !== undefined) {
-              ownerFinished.push(game);
-            }
-          })
-          this.setState({ownerFinished: ownerFinished})
+          if (data.val()) {
+            Object.entries(data.val()).forEach(game => {
+              if (game[1].theGuessersGuess !== null && game[1].theGuessersGuess !== undefined) {
+                ownerFinished.push(game);
+              }
+            })
+            this.setState({ownerFinished: ownerFinished})
+          }
         })
         let guesserGamesFromDb = firebase.database().ref(`games`).orderByChild('gameGuesserId').equalTo(`${user.uid}`);
         guesserGamesFromDb.on('value', data => {
           let guesserFinished = [];
-          Object.entries(data.val()).forEach(game => {
-            if (game[1].theGuessersGuess !== null && game[1].theGuessersGuess !== undefined) {
-              guesserFinished.push(game);
-            }
-          })
-          this.setState({guesserFinished: guesserFinished})
+          if (data.val()) {
+            Object.entries(data.val()).forEach(game => {
+              if (game[1].theGuessersGuess !== null && game[1].theGuessersGuess !== undefined) {
+                guesserFinished.push(game);
+              }
+            })
+            this.setState({guesserFinished: guesserFinished})
+          }
         })
       }
     })
@@ -201,124 +209,128 @@ class HomeView extends Component {
             isStopped={false}
           />
         </div>
-          <Settings active={this.state.settingsSize} style={{backgroundImage: `url(${require('./bjornborgpixel.jpg')})`}}>
-            <div className="overlay"></div>
-            <div className="settingsContent">
-              <SettingsHeader>
-                <div onClick={() => this.setState({settingsSize: !this.state.settingsSize})}>
-                  <DirectionButton
-                    text={"Tillbaka"}
-                    textColor={"#FFFFFF"}
-                    arrowLeft={true}
-                    arrowColor={"#FFFFFF"}/>
-                </div>
-                <Link className="logout" onClick={this.logout} to="/">Logga ut</Link>
-              </SettingsHeader>
-              <SettingsTitle>
-                <h2>Byt profilbild</h2>
-              </SettingsTitle>
-              <SettingsTitle>
-                <h2>Byt användarnamn</h2>
-              </SettingsTitle>
-              <SettingsTitle>
-                <h2>Byt lösenord</h2>
-              </SettingsTitle>
-              <SettingsTitle>
-                <h2>Radera konto</h2>
-              </SettingsTitle>
-              <NoLinkButton text={"Logga in med facebook"} color={"var(--victory-blue)"}/>
-            </div>
-          </Settings>
-      <ProfileTop>
-        <div onClick={() => this.setState({settingsSize: !this.state.settingsSize})} className="profilePic" style={{backgroundImage: user.photoURL ? `url("${this.props.user.photoURL}?height=500")` : `url("./bjornborgpixel.jpg")`}}></div>
-        <div className="userNameAndStats">
-          <h1>{user ? user.displayName : "..."}</h1>
-          <p>{me && me.wins} {me.wins > 1 ? "vinster" : "vinst"} / {me && me.losses} {me.losses > 1 ? "förluster" : "förlust"}</p>
-        </div>
-      </ProfileTop>
+        <Settings active={this.state.settingsSize} style={{backgroundImage: `url(${require('./bjornborgpixel.jpg')})`}}>
+        <div className="overlay"></div>
+        <div className="settingsContent">
+          <SettingsHeader>
+            <div onClick={() => this.setState({settingsSize: !this.state.settingsSize})}>
+              <DirectionButton
+                text={"Tillbaka"}
+                textColor={"#FFFFFF"}
+                arrowLeft={true}
+                arrowColor={"#FFFFFF"}/>
+              </div>
+              <Link className="logout" onClick={this.logout} to="/">Logga ut</Link>
+            </SettingsHeader>
+            <SettingsTitle>
+              <h2>Byt profilbild</h2>
+            </SettingsTitle>
+            <SettingsTitle>
+              <h2>Byt användarnamn</h2>
+            </SettingsTitle>
+            <SettingsTitle>
+              <h2>Byt lösenord</h2>
+            </SettingsTitle>
+            <SettingsTitle>
+              <h2>Radera konto</h2>
+            </SettingsTitle>
+            <NoLinkButton text={"Logga in med facebook"} color={"var(--victory-blue)"}/>
+          </div>
+        </Settings>
+        <ProfileTop>
+          <div onClick={() => this.setState({settingsSize: !this.state.settingsSize})} className="profilePic" style={{backgroundImage: user.photoURL ? `url("${this.props.user.photoURL}?height=500")` : `url("./bjornborgpixel.jpg")`}}></div>
+          <div className="userNameAndStats">
+            <h1>{user ? user.displayName : "..."}</h1>
+            <p>{me && me.wins} {me.wins > 1 ? "vinster" : "vinst"} / {me && me.losses} {me.losses > 1 ? "förluster" : "förlust"}</p>
+          </div>
+        </ProfileTop>
 
-      <HomeGamesContainer>
-        <h2>Aktiva spel</h2>
-        <div className="gamesWrapper">
-          {/* Invited to play */}
-          {myGamesInvitedToPlay &&
-            myGamesInvitedToPlay.map((game, key) => {
-              return <GameCardInvited
-                gameID={game[0]}
-                key={key}
-                redirectTo={`/gameGuesserView/${game[0]}`}
-                image={game[1].secretPersonImage}
-                owner={game[1].gameOwnerName}
-              />
-            })}
-          {myGamesOwner &&
-            myGamesOwner.map((game, key) => {
-              return <GameCardOwner
-                gameID={game[0]}
-                key={key}
-                image={game[1].secretPersonImage}
-                redirectTo={`/gameOwnerView/${game[0]}`}
-                remainingGuesses={`${20-game[1].remainingGuesses}/20`}
-                guesser={game[1].gameGuesserName}
-                opponentImage={game[1].gameGuesserImage}
-              />
-            })}
-              {myGamesGuesser &&
-                myGamesGuesser.map((game, key) => {
-                  return <GameCardGuesser
+
+          <HomeGamesContainer>
+            <h2>Aktiva spel</h2>
+            <div className="gamesWrapper">
+              {/* Invited to play */}
+              {myGamesInvitedToPlay &&
+                myGamesInvitedToPlay.map((game, key) => {
+                  return <GameCardInvited
                     gameID={game[0]}
                     key={key}
-                    image={game[1].secretPersonImage}
                     redirectTo={`/gameGuesserView/${game[0]}`}
-                    remainingGuesses={`${20-game[1].remainingGuesses}/20`}
+                    image={game[1].secretPersonImage}
                     owner={game[1].gameOwnerName}
-                    ownerImage={game[1].gameOwnerImage}
                   />
                 })}
-          </div>
-        </HomeGamesContainer>
-            <HomeGamesContainer>
-            <h2>Spela igen</h2>
-              <div className="gamesWrapper">
-                {this.state.ownerFinished &&
-                  this.state.ownerFinished.map((game, key) => {
-                    return <GameCardFinished
-                      user={this.props.user}
+                {myGamesOwner &&
+                  myGamesOwner.map((game, key) => {
+                    return <GameCardOwner
                       gameID={game[0]}
                       key={key}
                       image={game[1].secretPersonImage}
-                      owner={game[1].gameOwnerName}
-                      ownerImage={game[1].gameOwnerImage}
+                      redirectTo={`/gameOwnerView/${game[0]}`}
+                      remainingGuesses={`${20-game[1].remainingGuesses}/20`}
                       guesser={game[1].gameGuesserName}
-                      guesserImage={game[1].gameGuesserImage}
+                      opponentImage={game[1].gameGuesserImage}
                     />
                   })}
-                {this.state.guesserFinished &&
-                  this.state.guesserFinished.map((game, key) => {
-                    return <GameCardFinished
-                      user={this.props.user}
-                      gameID={game[0]}
-                      key={key}
-                      image={game[1].secretPersonImage}
-                      owner={game[1].gameOwnerName}
-                      ownerImage={game[1].gameOwnerImage}
-                      guesser={game[1].gameGuesserName}
-                      guesserImage={game[1].gameGuesserImage}
-                    />
-                  })}
-                </div>
-              </HomeGamesContainer>
+                  {myGamesGuesser &&
+                    myGamesGuesser.map((game, key) => {
+                      return <GameCardGuesser
+                        gameID={game[0]}
+                        key={key}
+                        image={game[1].secretPersonImage}
+                        redirectTo={`/gameGuesserView/${game[0]}`}
+                        remainingGuesses={`${20-game[1].remainingGuesses}/20`}
+                        owner={game[1].gameOwnerName}
+                        ownerImage={game[1].gameOwnerImage}
+                      />
+                    })}
+                  </div>
+                </HomeGamesContainer>
 
-              <HomeButtonsWrapper>
-                <ButtonLarge buttonText={"Starta spel"} redirectTo={"createGameView"} />
-                <ButtonLarge buttonText={"Spela öppet spel"} redirectTo={"publicGamesView"} />
-              </HomeButtonsWrapper>
 
-              {!myGamesOwner && <SaveOnHomeScreen/>}
+                <HomeGamesContainer>
+                  <h2>Spela igen</h2>
+                  <div className="gamesWrapper">
+                    {this.state.ownerFinished &&
+                      this.state.ownerFinished.map((game, key) => {
+                        return <GameCardFinished
+                          user={this.props.user}
+                          gameID={game[0]}
+                          key={key}
+                          image={game[1].secretPersonImage}
+                          owner={game[1].gameOwnerName}
+                          ownerImage={game[1].gameOwnerImage}
+                          guesser={game[1].gameGuesserName}
+                          guesserImage={game[1].gameGuesserImage}
+                        />
+                      })}
+                      {this.state.guesserFinished &&
+                        this.state.guesserFinished.map((game, key) => {
+                          return <GameCardFinished
+                            user={this.props.user}
+                            gameID={game[0]}
+                            key={key}
+                            image={game[1].secretPersonImage}
+                            owner={game[1].gameOwnerName}
+                            ownerImage={game[1].gameOwnerImage}
+                            guesser={game[1].gameGuesserName}
+                            guesserImage={game[1].gameGuesserImage}
+                          />
+                        })}
+                      </div>
+                    </HomeGamesContainer>
 
-            </HomeViewContainer>
-          )
-        }
-      }
 
-      export default HomeView;
+                    <HomeButtonsWrapper>
+                      <ButtonLarge buttonText={"Starta spel"} redirectTo={"createGameView"} />
+                      <ButtonLarge buttonText={"Spela öppet spel"} redirectTo={"publicGamesView"} />
+                    </HomeButtonsWrapper>
+
+                    {!myGamesOwner && <SaveOnHomeScreen/>}
+
+                  </HomeViewContainer>
+                )
+              }
+            }
+
+            export default HomeView;
